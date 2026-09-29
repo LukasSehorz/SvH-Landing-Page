@@ -23,10 +23,16 @@ export function PitchCenter({ className = "" }: Readonly<{ className?: string }>
     <svg className={`pitch ${className}`} viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
       <defs>
         <Grad id={`pc-${id}`} w={600} h={600} vertical />
+        <linearGradient id={`pl-${id}`} gradientUnits="userSpaceOnUse" x1="0" y1="20" x2="0" y2="580">
+          <stop offset="0" stopColor="#6b78ff" stopOpacity="0" />
+          <stop offset="0.3" stopColor="#6b78ff" stopOpacity="0.55" />
+          <stop offset="0.7" stopColor="#8a7bff" stopOpacity="0.55" />
+          <stop offset="1" stopColor="#8a7bff" stopOpacity="0" />
+        </linearGradient>
       </defs>
-      <g className="glow" style={{ stroke: `url(#pc-${id})` }}>
-        <circle data-draw="" pathLength={1} cx="300" cy="300" r="214" style={{ stroke: `url(#pc-${id})` }} transform="rotate(-90 300 300)" />
-        <path data-draw="" pathLength={1} d="M300 -900 V 1500" style={{ stroke: "#6b78ff", opacity: 0.55 }} />
+      <g className="glow">
+        <circle data-draw="" pathLength={1} cx="300" cy="300" r="214" style={{ stroke: `url(#pc-${id})`, opacity: 0.75 }} transform="rotate(-90 300 300)" />
+        <path data-draw="" pathLength={1} d="M300 20 V 580" style={{ stroke: `url(#pl-${id})` }} />
       </g>
       <circle className="spot" cx="300" cy="300" r="3.5" style={{ fill: "#b9a5ff" }} />
     </svg>

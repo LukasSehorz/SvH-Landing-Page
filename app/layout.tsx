@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Inter_Tight, Mr_Dafoe } from "next/font/google";
 import "./globals.css";
-import { meta } from "./copy";
+import { meta, nav } from "./copy";
 import { company } from "./content";
 import { GTM_ID, SEARCH_CONSOLE_ID } from "./tracking";
 import SmoothScroll from "@/components/system/SmoothScroll";
@@ -47,14 +47,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="de" className={`${inter.variable} ${interTight.variable} ${script.variable}`} suppressHydrationWarning>
-      <head>
-        {/* Markiert „JavaScript läuft“, damit die Hauptzeile nicht aufblitzt, bevor sie sich aufbaut */}
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
-      </head>
+    <html lang="de" className={`${inter.variable} ${interTight.variable} ${script.variable}`}>
       <body>
         <a className="skip-link" href="#inhalt">
-          Zum Inhalt springen
+          {nav.skip}
         </a>
         {/* Kennung des Tag Manager nur als Text; geladen wird er erst nach Einwilligung */}
         <div id="gtm-id" data-gtm-id={GTM_ID} hidden />

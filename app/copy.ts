@@ -35,6 +35,7 @@ export const nav = {
   menuOpen: "Menü öffnen", // ZUSATZ (Bedienhinweis für Screenreader)
   menuClose: "Menü schließen", // ZUSATZ
   home: "SvH Consulting, zur Startseite", // ZUSATZ
+  skip: "Zum Inhalt springen", // ZUSATZ
 };
 
 export const hero = {
@@ -487,7 +488,8 @@ export const aktuelles = {
 // ZUSATZ: Einwilligung, Texte von der alten Seite übernommen
 export const einwilligung = {
   titel: "Dürfen wir mitzählen?",
-  body: "Wir würden gern sehen, welche Seiten gelesen werden und über welchen Weg Sie zu uns gefunden haben. Dafür setzt Google Analysewerkzeuge ein, die etwas auf Ihrem Gerät speichern. Ohne Ihre Zustimmung passiert davon nichts.",
+  // gekürzt gegenüber der alten Seite, damit das Feld Knopf und Überschrift nicht verdeckt
+  body: "Mit Ihrer Zustimmung zählen wir über Google, welche Seiten gelesen werden. Dabei wird etwas auf Ihrem Gerät gespeichert. Ohne Zustimmung passiert davon nichts.",
   mehr: "Einzelheiten stehen in der Datenschutzerklärung.",
   mehrHref: "/datenschutz",
   alle: "Einverstanden",

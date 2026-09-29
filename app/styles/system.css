@@ -46,12 +46,13 @@
   padding-inline: 14px 10px;
   border-radius: 999px;
 }
-.nav-mark img {
+.nav-mark .wort {
+  width: 169px;
   height: 22px;
-  width: auto;
 }
 .nav-mark .mono {
   display: none;
+  width: 18px;
   height: 30px;
 }
 
@@ -227,9 +228,7 @@
   display: flex;
   flex-direction: column;
   padding: calc(var(--nav-offset) + 8px) var(--gutter) 28px;
-  background: rgba(5, 5, 7, 0.97);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(5, 5, 7, 0.985);
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -389,9 +388,7 @@ html[data-menu-open] .mcta {
   height: 560px;
   transform: translateX(-50%);
   border-radius: 999px;
-  background: var(--grad);
-  opacity: 0.12;
-  filter: blur(120px);
+  background: radial-gradient(closest-side, rgba(124, 106, 255, 0.22), rgba(91, 140, 255, 0.08) 55%, transparent 100%);
   pointer-events: none;
 }
 .footer-grid {
@@ -401,8 +398,8 @@ html[data-menu-open] .mcta {
   gap: 48px 40px;
 }
 .footer-brand img {
+  width: 215px;
   height: 28px;
-  width: auto;
 }
 .footer-claim {
   margin-top: 22px;
@@ -504,16 +501,16 @@ html[data-menu-open] .mcta {
 .cons {
   position: fixed;
   left: max(16px, var(--gutter));
-  bottom: max(16px, 3vh);
+  bottom: 16px;
   z-index: 90;
-  width: min(440px, calc(100vw - 32px));
+  width: min(360px, calc(100vw - 32px));
 }
 .cons-card {
   position: relative;
-  padding: 24px 24px 12px;
-  border-radius: 24px;
+  padding: 18px;
+  border-radius: 20px;
   border: 1px solid var(--line);
-  background: rgba(10, 10, 15, 0.97);
+  background: rgba(10, 10, 15, 0.96);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   box-shadow: 0 30px 70px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.07);
@@ -529,28 +526,28 @@ html[data-menu-open] .mcta {
 }
 .cons-title {
   font-family: var(--font-display);
-  font-size: 21px;
+  font-size: 17px;
   font-weight: 500;
   line-height: 1.2;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
 }
 .cons-body {
-  margin-top: 10px;
-  font-size: 14.5px;
-  line-height: 1.6;
+  margin-top: 6px;
+  font-size: 13.5px;
+  line-height: 1.5;
   color: var(--ink-2);
 }
 .cons-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 18px;
+  gap: 8px;
+  margin-top: 14px;
 }
 /* Beide Knöpfe gleichwertig: gleiche Größe, gleiche Form, gleiche Schrift */
 .cons-btn {
-  height: 48px;
+  height: 44px;
   border-radius: 999px;
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 600;
   color: var(--ink);
   border: 1px solid rgba(244, 244, 246, 0.3);
@@ -561,22 +558,15 @@ html[data-menu-open] .mcta {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(244, 244, 246, 0.5);
 }
-.cons-more {
-  margin-top: 4px;
-  font-size: 13px;
-  color: var(--ink-3);
-}
-.cons-more a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 40px;
-  color: var(--ink-2);
+.cons-body a {
+  color: var(--ink);
   text-decoration: underline;
   text-underline-offset: 3px;
-  text-decoration-color: var(--line);
+  text-decoration-color: rgba(185, 165, 255, 0.45);
+  padding-block: 6px;
 }
-.cons-more a:hover {
-  color: var(--ink);
+.cons-body a:hover {
+  text-decoration-color: var(--lav);
 }
 @media (max-width: 560px) {
   .cons {
@@ -586,6 +576,9 @@ html[data-menu-open] .mcta {
     width: auto;
   }
   .cons-card {
-    padding: 20px 18px 8px;
+    padding: 14px;
+  }
+  .cons-body {
+    font-size: 13px;
   }
 }

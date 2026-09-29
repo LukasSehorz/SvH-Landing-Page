@@ -62,7 +62,8 @@ class Core {
   constructor(private canvas: HTMLCanvasElement) {
     this.ctx = canvas.getContext("2d")!;
     const rand = mulberry32(20260825);
-    for (let i = 0; i < 150; i++) {
+    const n = window.matchMedia("(max-width: 699px)").matches ? 90 : 150;
+    for (let i = 0; i < n; i++) {
       const z = rand() * 2 - 1;
       const a = rand() * Math.PI * 2;
       const rxy = Math.sqrt(1 - z * z);
@@ -103,7 +104,7 @@ class Core {
   }
 
   resize(w: number, h: number, cx: number, cy: number, R: number) {
-    this.dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+    this.dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 1.75);
     this.w = w;
     this.h = h;
     this.cx = cx;
@@ -220,19 +221,42 @@ class Core {
 /* -------------------------------------------------------- Geometrie */
 
 function geo(W: number, H: number) {
-  const mobile = W < 560;
-  const cardW = mobile ? 150 : 212;
-  const cardH = mobile ? 40 : 52;
-  const cy = H * (mobile ? 0.44 : 0.45);
+  // Mobil nach Bildschirmbreite (wie im CSS), nicht nach Bühnenbreite
+  const mobile = window.matchMedia("(max-width: 699px)").matches;
+  if (mobile) {
+    // Diagonaler Fluss: oben links hinein, unten rechts heraus
+    const cardW = Math.min(164, W * 0.47);
+    const cardH = 40;
+    const cx = W / 2;
+    const cy = H * 0.5;
+    return {
+      mobile,
+      cardW,
+      cardH,
+      cx,
+      cy,
+      R: Math.min(W * 0.25, H * 0.22),
+      visIn: 3,
+      visOut: 2,
+      inSlot: (k: number) => ({ x: 0, y: 108 - k * 46 }),
+      outSlot: (k: number) => ({ x: W - cardW, y: H - 164 + k * 46 }),
+    };
+  }
+  const cardW = 212;
+  const cardH = 52;
+  const cy = H * 0.45;
   const cx = W / 2;
-  const gap = mobile ? 52 : 68;
+  const gap = 66;
   const slotY = (k: number) => cy - cardH / 2 + (k - 1) * gap;
   return {
+    mobile,
     cardW,
     cardH,
     cx,
     cy,
-    R: Math.min(W * (mobile ? 0.3 : 0.29), H * 0.3),
+    R: Math.min(W * 0.27, H * 0.29),
+    visIn: 3,
+    visOut: 3,
     inSlot: (k: number) => ({ x: 0, y: slotY(k) }),
     outSlot: (k: number) => ({ x: W - cardW, y: slotY(k) }),
   };
@@ -283,8 +307,8 @@ export default function HeroMachine() {
     };
 
     const place = () => {
-      queue.forEach((c, k) => gsap.set(c, { x: g.inSlot(k).x, y: g.inSlot(k).y, scale: 1, autoAlpha: k < 3 ? 1 : 0 }));
-      done.forEach((c, k) => gsap.set(c, { x: g.outSlot(k).x, y: g.outSlot(k).y, scale: 1, autoAlpha: k < 3 ? 1 : 0 }));
+      queue.forEach((c, k) => gsap.set(c, { x: g.inSlot(k).x, y: g.inSlot(k).y, scale: 1, autoAlpha: k < g.visIn ? 1 : 0 }));
+      done.forEach((c, k) => gsap.set(c, { x: g.outSlot(k).x, y: g.outSlot(k).y, scale: 1, autoAlpha: k < g.visOut ? 1 : 0 }));
     };
     place();
 
@@ -316,7 +340,10 @@ export default function HeroMachine() {
         .to(
           flyer,
           {
-            motionPath: { path: [s0, { x: g.cx * 0.42, y: s0.y - 34 }, c], curviness: 1.25 },
+            motionPath: {
+              path: [s0, g.mobile ? { x: g.cx * 0.55, y: s0.y + 30 } : { x: g.cx * 0.42, y: s0.y - 34 }, c],
+              curviness: 1.25,
+            },
             scale: 0.16,
             duration: 1.05,
             ease: "power2.in",
@@ -326,16 +353,20 @@ export default function HeroMachine() {
         .to(flyer, { autoAlpha: 0, duration: 0.32, ease: "power1.in" }, 0.95)
         .add(() => core.pulse(), 1.2)
         .to(queue[1], { y: g.inSlot(0).y, duration: 0.85, ease: "expo.out" }, 0.5)
-        .to(queue[2], { y: g.inSlot(1).y, duration: 0.85, ease: "expo.out" }, 0.58)
-        .fromTo(queue[3], { y: g.inSlot(3).y, autoAlpha: 0 }, { y: g.inSlot(2).y, autoAlpha: 1, duration: 0.85, ease: "expo.out" }, 0.66)
-        .to(done[0], { y: g.outSlot(1).y, duration: 0.75, ease: "expo.out" }, 1.2)
-        .to(done[1], { y: g.outSlot(2).y, duration: 0.75, ease: "expo.out" }, 1.26)
-        .to(done[2], { y: g.outSlot(3).y, autoAlpha: 0, duration: 0.6, ease: "power2.out" }, 1.26)
+        .to(queue[2], { y: g.inSlot(1).y, autoAlpha: 1, duration: 0.85, ease: "expo.out" }, 0.58)
+        .fromTo(queue[3], { y: g.inSlot(3).y, autoAlpha: 0 }, { y: g.inSlot(2).y, autoAlpha: g.visIn > 2 ? 1 : 0, duration: 0.85, ease: "expo.out" }, 0.66);
+      done.slice(0, 3).forEach((d, k) => {
+        tl!.to(d, { y: g.outSlot(k + 1).y, autoAlpha: k + 1 < g.visOut ? 1 : 0, duration: k + 1 < g.visOut ? 0.75 : 0.6, ease: "expo.out" }, 1.2 + k * 0.06);
+      });
+      tl
         .fromTo(
           out,
           { x: c.x, y: c.y, scale: 0.16, autoAlpha: 0 },
           {
-            motionPath: { path: [c, { x: g.cx + (o0.x - g.cx) * 0.55, y: o0.y - 30 }, o0], curviness: 1.2 },
+            motionPath: {
+              path: [c, g.mobile ? { x: g.cx + 20, y: o0.y - 10 } : { x: g.cx + (o0.x - g.cx) * 0.55, y: o0.y - 30 }, o0],
+              curviness: 1.2,
+            },
             scale: 1,
             autoAlpha: 1,
             duration: 1,
@@ -421,8 +452,10 @@ export default function HeroMachine() {
           <span className="task-check">
             <Check size={13} />
           </span>
-          <span className="task-label">{TASKS[t]}</span>
-          <span className="task-badge">{hero.done}</span>
+          <span className="task-text">
+            <span className="task-label">{TASKS[t]}</span>
+            <span className="task-badge">{hero.done}</span>
+          </span>
         </div>
       ))}
       <div className="machine-counter">

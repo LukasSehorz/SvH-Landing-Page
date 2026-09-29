@@ -143,6 +143,10 @@ select {
   border-radius: 6px;
 }
 
+.nb {
+  white-space: nowrap;
+}
+
 .sr-only {
   position: absolute !important;
   width: 1px;
@@ -587,9 +591,7 @@ section[id] {
   position: absolute;
   border-radius: 999px;
   pointer-events: none;
-  filter: blur(120px);
-  opacity: 0.18;
-  background: radial-gradient(ellipse at center, var(--violet) 0%, var(--blue) 46%, transparent 72%);
+  background: radial-gradient(closest-side, rgba(124, 106, 255, 0.2), rgba(91, 140, 255, 0.07) 55%, transparent 100%);
 }
 
 .pitch {

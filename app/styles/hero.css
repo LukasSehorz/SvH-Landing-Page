@@ -23,9 +23,7 @@
   right: -12%;
   top: -18%;
   border-radius: 999px;
-  background: radial-gradient(ellipse at center, rgba(124, 106, 255, 0.55) 0%, rgba(91, 140, 255, 0.28) 45%, transparent 72%);
-  filter: blur(110px);
-  opacity: 0.42;
+  background: radial-gradient(closest-side, rgba(124, 106, 255, 0.3) 0%, rgba(91, 140, 255, 0.12) 50%, transparent 100%);
 }
 .hero-bg .veil-b {
   position: absolute;
@@ -34,9 +32,7 @@
   left: -18%;
   bottom: -30%;
   border-radius: 999px;
-  background: radial-gradient(ellipse at center, rgba(185, 165, 255, 0.4), rgba(124, 106, 255, 0.16) 50%, transparent 72%);
-  filter: blur(120px);
-  opacity: 0.35;
+  background: radial-gradient(closest-side, rgba(185, 165, 255, 0.14), rgba(124, 106, 255, 0.06) 55%, transparent 100%);
 }
 .hero-bg .dots {
   -webkit-mask-image: radial-gradient(ellipse 48% 60% at 74% 48%, #000 0%, transparent 78%);
@@ -84,6 +80,9 @@
   display: block;
   white-space: nowrap;
 }
+.hero-line-in {
+  text-wrap: balance;
+}
 .hero-title .script-text {
   font-size: 1.32em;
 }
@@ -102,7 +101,7 @@
 }
 .hero-sub {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   margin-top: 14px;
   font-size: 14.5px;
@@ -116,6 +115,7 @@
   background: var(--lav);
   box-shadow: 0 0 12px var(--violet);
   flex: 0 0 auto;
+  margin-top: 0.55em;
 }
 
 .hero-proof {
@@ -164,22 +164,90 @@
   min-height: clamp(460px, 64vh, 640px);
 }
 
-/* Vor dem Aufbau (nur mit JavaScript): nichts blitzt auf. Notbremse nach 2,5 s. */
-.js .hero:not([data-ready]) .hero-title,
-.js .hero:not([data-ready]) [data-hero-in] {
-  opacity: 0;
-  animation: hero-failsafe 0.6s ease 2.5s forwards;
+/* Auftritt rein per CSS: läuft ab dem ersten Bild, ohne auf JavaScript zu warten.
+   Zeilen steigen aus einer Maske, danach schreibt sich das Schreibschrift-Wort. */
+@property --w {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 120%;
 }
-@keyframes hero-failsafe {
+.hero-line {
+  animation: hero-clip 1.25s linear both;
+  animation-delay: var(--d, 0s);
+  clip-path: inset(-60% -30% -80% -30%);
+}
+.hero-line-in {
+  display: block;
+  animation: hero-up 1.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--d, 0s);
+}
+@keyframes hero-clip {
+  0%,
+  99% {
+    clip-path: inset(0 -12% -10% -12%);
+  }
+  100% {
+    clip-path: inset(-60% -30% -80% -30%);
+  }
+}
+@keyframes hero-up {
+  from {
+    transform: translate3d(0, 108%, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+.hero-title .script-text {
+  animation: hero-write 1.05s cubic-bezier(0.65, 0, 0.35, 1) 1.05s both;
+}
+@keyframes hero-write {
+  from {
+    --w: -16%;
+  }
+  to {
+    --w: 120%;
+  }
+}
+.hero-title .script-swoosh path {
+  stroke-dasharray: 1;
+  animation: hero-draw 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.7s both;
+}
+.hero-title .script-swoosh .s2 {
+  animation-delay: 1.9s;
+}
+@keyframes hero-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+[data-hero-in] {
+  animation: hero-in 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(0.4s + var(--i, 0) * 0.08s);
+}
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
   to {
     opacity: 1;
+    transform: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .js .hero:not([data-ready]) .hero-title,
-  .js .hero:not([data-ready]) [data-hero-in] {
-    opacity: 1;
-    animation: none;
+  .hero-line,
+  .hero-line-in,
+  .hero-title .script-text,
+  .hero-title .script-swoosh path,
+  [data-hero-in] {
+    animation: none !important;
+  }
+  .hero-title .script-swoosh path {
+    stroke-dasharray: none;
   }
 }
 
@@ -199,8 +267,7 @@
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(124, 106, 255, 0.34) 0%, rgba(91, 140, 255, 0.14) 38%, transparent 68%);
-  filter: blur(20px);
+  background: radial-gradient(closest-side, rgba(124, 106, 255, 0.32) 0%, rgba(91, 140, 255, 0.12) 50%, transparent 100%);
   pointer-events: none;
 }
 .machine-pitch {
@@ -267,13 +334,19 @@
   color: #07060f;
   flex: 0 0 auto;
 }
+.task-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
 .task-badge {
-  font-size: 11.5px;
+  margin-top: 2px;
+  font-size: 10.5px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--lav);
-  flex: 0 0 auto;
 }
 
 /* statische Anordnung (Server, ohne Bewegung) */
@@ -386,13 +459,18 @@
   }
   .hero-eyebrow {
     margin-bottom: 16px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .hero-eyebrow::before {
+    display: none;
   }
   .hero-title {
     font-size: clamp(40px, 13.2vw, 58px);
   }
   .hero-line {
     white-space: normal;
-    text-wrap: balance;
   }
   .hero-text {
     margin-top: 18px;
@@ -429,14 +507,21 @@
     margin-top: 4px;
   }
   .hero-visual {
-    height: 380px;
-    margin-top: 8px;
+    height: 420px;
+    margin-top: 4px;
   }
   .machine {
-    --card-w: 150px;
+    --card-w: min(164px, 47%);
     --card-h: 40px;
   }
+  .machine-glow,
+  .machine-pitch {
+    top: 50%;
+  }
   .task {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(14, 14, 22, 0.92);
     font-size: 12.5px;
     gap: 7px;
     padding: 0 10px 0 9px;
@@ -456,16 +541,27 @@
     height: 12px;
   }
   .task-badge {
-    display: none;
+    font-size: 9.5px;
+    margin-top: 1px;
   }
-  .task[data-slot="0"] {
-    top: calc(44% - var(--card-h) / 2 - 52px);
+  .task-in[data-slot="0"] {
+    top: 108px;
   }
-  .task[data-slot="2"] {
-    top: calc(44% - var(--card-h) / 2 + 52px);
+  .task-in[data-slot="1"] {
+    top: 62px;
   }
-  .task[data-slot="1"] {
-    top: calc(44% - var(--card-h) / 2);
+  .task-in[data-slot="2"] {
+    top: 16px;
+  }
+  .task-out[data-slot="0"] {
+    top: calc(100% - 164px);
+  }
+  .task-out[data-slot="1"] {
+    top: calc(100% - 118px);
+  }
+  .task-out[data-slot="2"],
+  .task-out[data-slot="3"] {
+    visibility: hidden;
   }
   .machine-counter {
     height: 48px;

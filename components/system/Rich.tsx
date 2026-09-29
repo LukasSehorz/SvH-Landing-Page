@@ -9,7 +9,12 @@ export default function Rich({ text, manualScript = false }: Readonly<{ text: st
       {parts.map((p, i) => {
         if (p.startsWith("*") && p.endsWith("*")) return <ScriptWord key={i} manual={manualScript}>{p.slice(1, -1)}</ScriptWord>;
         if (p.startsWith("_") && p.endsWith("_")) return <span key={i} className="grad">{p.slice(1, -1)}</span>;
-        return <Fragment key={i}>{p}</Fragment>;
+        // Bindestrich-Wörter nicht am Bindestrich trennen (E-Mails, KI-Masterplan)
+        return (
+          <Fragment key={i}>
+            {p.split(/(\S*\w-\w\S*)/g).map((w, j) => (j % 2 ? <span key={j} className="nb">{w}</span> : w))}
+          </Fragment>
+        );
       })}
     </>
   );

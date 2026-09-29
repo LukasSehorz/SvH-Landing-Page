@@ -118,7 +118,7 @@ export default function Consent() {
               {einwilligung.titel}
             </p>
             <p className="cons-body" id="cons-text">
-              {einwilligung.body}
+              {einwilligung.body} <Link href={einwilligung.mehrHref}>{einwilligung.mehr}</Link>
             </p>
             <div className="cons-buttons">
               <button type="button" className="cons-btn" onClick={() => entscheide("alle")}>
@@ -128,9 +128,6 @@ export default function Consent() {
                 {einwilligung.notwendig}
               </button>
             </div>
-            <p className="cons-more">
-              <Link href={einwilligung.mehrHref}>{einwilligung.mehr}</Link>
-            </p>
           </div>
         </motion.div>
       ) : null}
