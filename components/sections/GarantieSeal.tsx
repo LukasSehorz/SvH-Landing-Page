@@ -24,11 +24,14 @@ export default function GarantieSeal() {
       const seal = el.querySelector(".seal-body");
       const mono = el.querySelector(".seal-mono");
       const text = el.querySelector(".seal-text");
+      const disc = el.querySelector(".seal-disc");
+      const glow = el.querySelector(".seal-glow");
       gsap.set(rings, { strokeDasharray: 1, strokeDashoffset: 1 });
       gsap.set(seal, { scale: 1.05, rotate: -4, transformOrigin: "50% 50%" });
-      gsap.set([mono, text], { autoAlpha: 0 });
+      gsap.set([mono, text, disc, glow], { autoAlpha: 0 });
       const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: "top 78%", once: true } });
-      tl.to(rings, { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut", stagger: 0.12 })
+      tl.to([disc, glow], { autoAlpha: 1, duration: 1.6, ease: "power1.out" }, 0)
+        .to(rings, { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut", stagger: 0.12 }, 0)
         .to(text, { autoAlpha: 1, duration: 0.9, ease: "power1.out" }, 0.7)
         .to(mono, { autoAlpha: 1, duration: 0.7, ease: "power1.out" }, 0.9)
         .to(seal, { scale: 1, rotate: 0, duration: 1.8, ease: "expo.out" }, 0.8);
@@ -48,13 +51,13 @@ export default function GarantieSeal() {
             <stop offset="1" stopColor="#b9a5ff" />
           </linearGradient>
           <radialGradient id="seal-fill" cx="0.5" cy="0.42" r="0.6">
-            <stop offset="0" stopColor="rgba(124,106,255,0.12)" />
-            <stop offset="1" stopColor="rgba(9,9,14,0.95)" />
+            <stop offset="0" stopColor="rgba(124,106,255,0.1)" />
+            <stop offset="1" stopColor="rgba(8,8,12,0.96)" />
           </radialGradient>
           <path id="seal-path" d="M150 150 m -117 0 a 117 117 0 1 1 234 0 a 117 117 0 1 1 -234 0" />
         </defs>
         <g className="seal-body">
-          <circle cx="150" cy="150" r="140" fill="url(#seal-fill)" />
+          <circle className="seal-disc" cx="150" cy="150" r="140" fill="url(#seal-fill)" />
           <circle data-ring="" pathLength={1} cx="150" cy="150" r="142" className="seal-ring seal-ring--outer" transform="rotate(-90 150 150)" />
           <circle data-ring="" pathLength={1} cx="150" cy="150" r="134" className="seal-ring" transform="rotate(-90 150 150)" />
           <circle data-ring="" pathLength={1} cx="150" cy="150" r="100" className="seal-ring" transform="rotate(-90 150 150)" />
