@@ -1,0 +1,25 @@
+@import "tailwindcss";
+@import "./styles/base.css";
+@import "./styles/system.css";
+@import "./styles/hero.css";
+@import "./styles/chaos.css";
+@import "./styles/schalter.css";
+@import "./styles/ergebnisse.css";
+@import "./styles/geschenk.css";
+@import "./styles/spielzug.css";
+@import "./styles/garantie.css";
+@import "./styles/team.css";
+@import "./styles/abschluss.css";
+@import "./styles/pages.css";
+
+@theme {
+  --color-bg: #050507;
+  --color-bg-raise: #0b0b10;
+  --color-ink: #f4f4f6;
+  --color-acc-blue: #5b8cff;
+  --color-acc-violet: #7c6aff;
+  --color-acc-lav: #b9a5ff;
+  --font-display: var(--font-inter-tight), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-script: var(--font-script-face), "Brush Script MT", cursive;
+}

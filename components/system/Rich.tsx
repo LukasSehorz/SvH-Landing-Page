@@ -1,0 +1,21 @@
+import { Fragment } from "react";
+import ScriptWord from "./ScriptWord";
+
+/** Setzt *Wort* als Schreibschrift und _Wort_ als Verlaufswort. */
+export default function Rich({ text, manualScript = false }: Readonly<{ text: string; manualScript?: boolean }>) {
+  const parts = text.split(/(\*[^*]+\*|_[^_]+_)/g).filter(Boolean);
+  return (
+    <>
+      {parts.map((p, i) => {
+        if (p.startsWith("*") && p.endsWith("*")) return <ScriptWord key={i} manual={manualScript}>{p.slice(1, -1)}</ScriptWord>;
+        if (p.startsWith("_") && p.endsWith("_")) return <span key={i} className="grad">{p.slice(1, -1)}</span>;
+        return <Fragment key={i}>{p}</Fragment>;
+      })}
+    </>
+  );
+}
+
+/** Reiner Text ohne Auszeichnung (für Metadaten, JSON-LD, Alt-Texte). */
+export function plain(text: string): string {
+  return text.replace(/[*_]/g, "");
+}
