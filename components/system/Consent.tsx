@@ -7,7 +7,7 @@
  * lädt nichts und speichert nur die Entscheidung im Browser.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { einwilligung } from "@/app/copy";
 import { CONSENT_KEY, GTM_ID, type Einwilligung } from "@/app/tracking";
@@ -20,9 +20,10 @@ declare global {
   }
 }
 
-function gtag(..._args: unknown[]) {
+// Der Tag Manager erwartet das arguments-Objekt, kein Array
+function gtag(...args: unknown[]) {
+  void args;
   window.dataLayer = window.dataLayer || [];
-  // Der Tag Manager erwartet das arguments-Objekt, kein Array
   // eslint-disable-next-line prefer-rest-params
   window.dataLayer.push(arguments);
 }
@@ -43,42 +44,67 @@ function ladeGtm() {
   document.head.appendChild(s);
 }
 
-export default function Consent() {
-  const [stand, setStand] = useState<Einwilligung | null>(null);
-  const [gefragt, setGefragt] = useState(false);
+/* Die gemerkte Entscheidung als äußere Quelle (Browser-Ablage). Server: "server" = nichts zeigen. */
+const EVENT = "svh-einwilligung";
+function subscribe(cb: () => void) {
+  window.addEventListener(EVENT, cb);
+  window.addEventListener("storage", cb);
+  return () => {
+    window.removeEventListener(EVENT, cb);
+    window.removeEventListener("storage", cb);
+  };
+}
+function getSnapshot(): string {
+  try {
+    return window.localStorage.getItem(CONSENT_KEY) ?? "offen";
+  } catch {
+    return (window as unknown as { __svhWahl?: string }).__svhWahl ?? "offen";
+  }
+}
+const getServerSnapshot = () => "server";
 
+let defaultGesetzt = false;
+
+export default function Consent() {
+  const stand = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const offen = stand === "offen";
+
+  // Grundzustand des Consent Mode einmal setzen, bevor irgendetwas von Google lädt
   useEffect(() => {
-    window.gtag = gtag;
-    gtag("consent", "default", {
-      ad_storage: "denied",
-      ad_user_data: "denied",
-      ad_personalization: "denied",
-      analytics_storage: "denied",
-      security_storage: "granted",
-      functionality_storage: "granted",
-      wait_for_update: 500,
-    });
-    let gemerkt: string | null = null;
-    try {
-      gemerkt = window.localStorage.getItem(CONSENT_KEY);
-    } catch {
-      /* Ablage gesperrt: Frage bei jedem Aufruf */
+    if (!defaultGesetzt) {
+      defaultGesetzt = true;
+      window.gtag = gtag;
+      gtag("consent", "default", {
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        analytics_storage: "denied",
+        security_storage: "granted",
+        functionality_storage: "granted",
+        wait_for_update: 500,
+      });
     }
-    if (gemerkt === "alle" || gemerkt === "notwendig") {
-      setStand(gemerkt);
-      if (gemerkt === "alle") {
-        setzeConsent("alle");
-        ladeGtm();
+    if (stand === "alle") {
+      setzeConsent("alle");
+      ladeGtm();
+    }
+  }, [stand]);
+
+  // Widerruf aus der Fußzeile: Frage erneut stellen
+  useEffect(() => {
+    window.svhEinwilligungAendern = () => {
+      try {
+        window.localStorage.removeItem(CONSENT_KEY);
+      } catch {
+        /* nichts gespeichert */
       }
-    }
-    setGefragt(true);
-    window.svhEinwilligungAendern = () => setStand(null);
+      (window as unknown as { __svhWahl?: string }).__svhWahl = undefined;
+      window.dispatchEvent(new Event(EVENT));
+    };
     return () => {
       delete window.svhEinwilligungAendern;
     };
   }, []);
-
-  const offen = gefragt && stand === null;
 
   // Feste CTA-Leiste mobil weicht dem Feld aus
   useEffect(() => {
@@ -91,11 +117,11 @@ export default function Consent() {
     try {
       window.localStorage.setItem(CONSENT_KEY, wahl);
     } catch {
-      /* nur für diesen Aufruf */
+      (window as unknown as { __svhWahl?: string }).__svhWahl = wahl;
     }
     setzeConsent(wahl);
     if (wahl === "alle") ladeGtm();
-    setStand(wahl);
+    window.dispatchEvent(new Event(EVENT));
   }, []);
 
   return (

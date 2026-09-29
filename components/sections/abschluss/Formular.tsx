@@ -59,6 +59,39 @@ function insBild(el: Element | null, reduced: boolean, oben = 104) {
   else window.scrollTo({ top: window.scrollY + r.top - oben, behavior: reduced ? "auto" : "smooth" });
 }
 
+/** Schickt die Anfrage an /api/anfrage und übersetzt die Antwort in einen Zustand. */
+async function senden(anfrage: Anfrage & { website: string }, reduced: boolean): Promise<{ ergebnis: Status; felder?: Key[] }> {
+  const start = performance.now();
+  let ergebnis: Status = "failure";
+  let felder: Key[] | undefined;
+  try {
+    const antwort = await fetch("/api/anfrage", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(anfrage),
+    });
+    if (antwort.ok) ergebnis = "done";
+    else if (antwort.status === 503) ergebnis = "fallback";
+    else if (antwort.status === 400) {
+      const daten = (await antwort.json().catch(() => null)) as { felder?: string[] } | null;
+      felder = (daten?.felder ?? []).filter((k): k is Key => k in FELD_ID);
+      if (!felder.length) felder = undefined;
+    }
+  } catch {
+    ergebnis = "failure";
+  }
+  // Kurzer Moment für den Ladezustand, damit nichts flackert
+  const rest = 650 - (performance.now() - start);
+  if (rest > 0 && !reduced && !felder) await new Promise((r) => setTimeout(r, rest));
+  if (ergebnis === "done") window.dataLayer?.push({ event: "anfrage_gesendet", formular: "ki-workshop" });
+  return { ergebnis, felder };
+}
+
+/** Öffnet das E-Mail-Programm mit der fertigen Nachricht (Rückweg ohne Resend-Schlüssel). */
+function oeffneMailprogramm(href: string) {
+  window.location.assign(href);
+}
+
 function Fehler({ id, children }: Readonly<{ id: string; children: string }>) {
   return (
     <motion.p
@@ -259,44 +292,23 @@ export default function Formular() {
     };
 
     setStatus("sending");
-    const start = performance.now();
-    let ergebnis: Status = "failure";
-    try {
-      const antwort = await fetch("/api/anfrage", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(anfrage),
-      });
-      if (antwort.ok) ergebnis = "done";
-      else if (antwort.status === 503) ergebnis = "fallback";
-      else if (antwort.status === 400) {
-        const daten = (await antwort.json().catch(() => null)) as { felder?: Key[] } | null;
-        const felder = (daten?.felder ?? []).filter((k): k is Key => k in FELD_ID);
-        if (felder.length) {
-          const next: Partial<Record<Key, string>> = {};
-          felder.forEach((k) => (next[k] = pruefe(k) ?? E[k === "employees" ? "size" : k === "email" ? "emailInvalid" : k]));
-          setErrors(next);
-          setStatus("idle");
-          const s = Math.min(...felder.map((k) => STEP_OF[k]));
-          if (s !== step) gehe(s);
-          else fokusFeld(felder[0]);
-          return;
-        }
-      }
-    } catch {
-      ergebnis = "failure";
-    }
-    // Kurzer Moment für den Ladezustand, damit nichts flackert
-    const rest = 650 - (performance.now() - start);
-    if (rest > 0 && !reduced) await new Promise((r) => setTimeout(r, rest));
+    const { ergebnis, felder } = await senden(anfrage, reduced);
 
+    if (felder?.length) {
+      // Server meldet fehlende Angaben: zurück zum passenden Schritt
+      const next: Partial<Record<Key, string>> = {};
+      felder.forEach((k) => (next[k] = pruefe(k) ?? E[k === "employees" ? "size" : k === "email" ? "emailInvalid" : k]));
+      setErrors(next);
+      setStatus("idle");
+      const s = Math.min(...felder.map((k) => STEP_OF[k]));
+      if (s !== step) gehe(s);
+      else fokusFeld(felder[0]);
+      return;
+    }
     if (ergebnis === "fallback") {
       const href = mailtoAdresse(anfrage, company.email);
       setMailto(href);
-      window.location.href = href;
-    }
-    if (ergebnis === "done") {
-      window.dataLayer?.push({ event: "anfrage_gesendet", formular: "ki-workshop" });
+      oeffneMailprogramm(href);
     }
     focusNext.current = "result";
     setStatus(ergebnis);
@@ -343,16 +355,17 @@ export default function Formular() {
                   <>
                     <span className="frm-mark" aria-hidden="true">
                       <svg viewBox="0 0 64 64" width="64" height="64">
-                        <motion.circle
-                          cx="32"
-                          cy="32"
-                          r="30.5"
-                          className="frm-mark-ring"
-                          initial={reduced ? false : { pathLength: 0 }}
-                          animate={{ pathLength: 1 }}
-                          transition={{ duration: 0.8, ease: [0.65, 0, 0.35, 1] }}
-                          transform="rotate(-90 32 32)"
-                        />
+                        <g transform="rotate(-90 32 32)">
+                          <motion.circle
+                            cx="32"
+                            cy="32"
+                            r="30.5"
+                            className="frm-mark-ring"
+                            initial={reduced ? false : { pathLength: 0 }}
+                            animate={{ pathLength: 1 }}
+                            transition={{ duration: 0.8, ease: [0.65, 0, 0.35, 1] }}
+                          />
+                        </g>
                         <motion.path
                           d="M21 33.2 28.4 40.4 43.4 24.6"
                           className="frm-mark-tick"

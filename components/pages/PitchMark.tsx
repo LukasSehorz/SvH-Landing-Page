@@ -33,14 +33,13 @@ export function PitchCenterMark({ className = "" }: Readonly<{ className?: strin
       <g className="pm-glow">
         <circle className="pm-draw" pathLength={1} cx="300" cy="300" r="214" transform="rotate(-90 300 300)" style={{ stroke: `url(#pmc-${id})` }} />
         <path className="pm-draw pm-d2" pathLength={1} d="M300 0 V 600" style={{ stroke: `url(#pml-${id})` }} />
-        <circle className="pm-draw pm-d3" pathLength={1} cx="300" cy="300" r="92" transform="rotate(90 300 300)" style={{ stroke: `url(#pmc-${id})`, opacity: 0.35 }} />
       </g>
       <circle className="pm-spot" cx="300" cy="300" r="3.5" />
     </svg>
   );
 }
 
-/** Feiner Bogen (Mittelkreis-Ausschnitt), hängt oben in der Abschlusskarte. */
+/** Flacher Strafraumbogen, hängt oben in der Abschlusskarte (endet über der Beschriftung). */
 export function PitchArcMark({ className = "" }: Readonly<{ className?: string }>) {
   const id = useId().replace(/:/g, "");
   return (
@@ -49,7 +48,7 @@ export function PitchArcMark({ className = "" }: Readonly<{ className?: string }
         <Grad id={`pma-${id}`} x2={1000} y2={0} />
       </defs>
       <g className="pm-glow" style={{ stroke: `url(#pma-${id})` }}>
-        <path className="pm-draw" pathLength={1} d="M330 0 A 170 170 0 0 0 670 0" />
+        <path className="pm-draw" pathLength={1} d="M300 0 A 700 700 0 0 0 700 0" />
       </g>
       <circle className="pm-spot" cx="500" cy="0" r="3" />
     </svg>

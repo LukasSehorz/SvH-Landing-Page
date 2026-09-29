@@ -15,7 +15,9 @@ function Monogramm({ initials }: Readonly<{ initials: string }>) {
       <svg className="team-ring" viewBox="0 0 120 120">
         <circle cx="60" cy="60" r="59.25" />
       </svg>
-      <span className="team-ini">{initials}</span>
+      <span className="team-ini" data-len={initials.length}>
+        {initials}
+      </span>
     </span>
   );
 }

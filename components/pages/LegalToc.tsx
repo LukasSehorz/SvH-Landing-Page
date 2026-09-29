@@ -36,6 +36,7 @@ export default function LegalToc({ items, label }: Readonly<{ items: Item[]; lab
           <li key={i.id}>
             <a href={`#${i.id}`} data-active={active === i.id ? "true" : undefined} aria-current={active === i.id ? "location" : undefined}>
               {i.num ? <span className="lg-toc-num">{i.num}</span> : null}
+              {i.num ? " " : null}
               <span>{i.title}</span>
             </a>
           </li>

@@ -38,6 +38,7 @@ export default function LegalPage({ title, sections }: Readonly<{ title: string;
                 <li key={i.id}>
                   <a href={`#${i.id}`}>
                     {i.num ? <span className="lg-toc-num">{i.num}</span> : null}
+                    {i.num ? " " : null}
                     <span>{i.title}</span>
                   </a>
                 </li>
@@ -50,6 +51,7 @@ export default function LegalPage({ title, sections }: Readonly<{ title: string;
               <section key={s.id} id={s.id} className="lg-sec" aria-labelledby={`${s.id}-t`}>
                 <h2 className="lg-h2" id={`${s.id}-t`}>
                   {s.num ? <span className="lg-num">{s.num}</span> : null}
+                  {s.num ? " " : null}
                   <span>{s.title}</span>
                 </h2>
                 {s.body}

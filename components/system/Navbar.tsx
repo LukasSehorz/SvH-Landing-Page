@@ -155,11 +155,13 @@ export default function Navbar() {
     };
   }, [sheetOpen, closeSheet]);
 
-  // Menü bei Seitenwechsel schließen
-  useEffect(() => {
+  // Menü bei Seitenwechsel schließen (Vergleich im Render statt Effekt)
+  const [lastPath, setLastPath] = useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
     setSheetOpen(false);
     setDropOpen(false);
-  }, [pathname]);
+  }
 
   const showBar = !hidden || sheetOpen || dropOpen;
 
