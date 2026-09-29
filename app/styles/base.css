@@ -126,6 +126,14 @@ ol {
   list-style: none;
 }
 
+/* Überschriften ausbalancieren: keine Einzelwörter in der letzten Zeile */
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
 ::selection {
   background: rgba(124, 106, 255, 0.4);
   color: #fff;
@@ -235,6 +243,11 @@ section[id] {
 }
 .h2 .line {
   display: block;
+}
+@media (max-width: 699px) {
+  .h2 {
+    font-size: clamp(29px, 8.2vw, 34px);
+  }
 }
 
 .h3 {
