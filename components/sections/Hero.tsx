@@ -41,7 +41,9 @@ export default function Hero() {
           <ul className="hero-proof" data-hero-in="" style={{ "--i": 4 } as React.CSSProperties}>
             {hero.proof.map((p) => (
               <li key={p.big}>
-                <strong>{p.big}</strong>
+                <strong>
+                  <Rich text={p.big} />
+                </strong>
                 <span>{p.small}</span>
               </li>
             ))}

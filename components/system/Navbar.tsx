@@ -4,13 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
 import { aktuelles, cta, nav } from "@/app/copy";
 import { company } from "@/app/content";
 import Cta from "./Cta";
 import { ArrowOut, Caret, Arrow } from "./Icons";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
 const VIDEOS = aktuelles.videos.slice(0, 3);
 
 function VideoRow({ v, onPick }: { v: (typeof VIDEOS)[number]; onPick?: () => void }) {
@@ -205,36 +203,30 @@ export default function Navbar() {
                 {nav.aktuelles}
                 <Caret className="nav-caret" />
               </button>
-              <AnimatePresence>
-                {dropOpen ? (
-                  <motion.div
-                    id={panelId}
-                    className="nav-panel"
-                    initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                    transition={{ duration: 0.35, ease: EASE }}
-                    onBlur={(e) => {
-                      if (!dropRef.current?.contains(e.relatedTarget as Node)) setDropOpen(false);
-                    }}
-                  >
-                    <p className="label nav-panel-title">{nav.panelTitle}</p>
-                    <div>
-                      {VIDEOS.map((v) => (
-                        <VideoRow key={v.id} v={v} onPick={() => setDropOpen(false)} />
-                      ))}
-                    </div>
-                    <div className="nav-panel-foot">
-                      <Link href="/aktuelles" onClick={() => setDropOpen(false)}>
-                        {nav.allVideos} <Arrow size={16} />
-                      </Link>
-                      <a href={company.youtube} target="_blank" rel="noopener noreferrer">
-                        {nav.channel} <ArrowOut />
-                      </a>
-                    </div>
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
+              <div
+                id={panelId}
+                className="nav-panel"
+                data-open={dropOpen ? "true" : "false"}
+                inert={!dropOpen}
+                onBlur={(e) => {
+                  if (!dropRef.current?.contains(e.relatedTarget as Node)) setDropOpen(false);
+                }}
+              >
+                <p className="label nav-panel-title">{nav.panelTitle}</p>
+                <div>
+                  {VIDEOS.map((v) => (
+                    <VideoRow key={v.id} v={v} onPick={() => setDropOpen(false)} />
+                  ))}
+                </div>
+                <div className="nav-panel-foot">
+                  <Link href="/aktuelles" onClick={() => setDropOpen(false)}>
+                    {nav.allVideos} <Arrow size={16} />
+                  </Link>
+                  <a href={company.youtube} target="_blank" rel="noopener noreferrer">
+                    {nav.channel} <ArrowOut />
+                  </a>
+                </div>
+              </div>
             </li>
           </ul>
 
@@ -258,68 +250,53 @@ export default function Navbar() {
         </nav>
       </header>
 
-      <AnimatePresence>
-        {sheetOpen ? (
-          <motion.div
-            id={sheetId}
-            ref={sheetRef}
-            className="nav-sheet"
-            data-lenis-prevent=""
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: EASE }}
-          >
-            <nav aria-label="Menü">
-              <ul className="nav-sheet-list">
-                {nav.links.map((l, i) => (
-                  <motion.li key={l.id} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 + i * 0.05, duration: 0.5, ease: EASE }}>
-                    <Link className="nav-sheet-link" href={`${pre}${l.href}`} onClick={() => closeSheet(false)}>
-                      {l.label}
+      <div
+        id={sheetId}
+        ref={sheetRef}
+        className="nav-sheet"
+        data-open={sheetOpen ? "true" : "false"}
+        data-lenis-prevent=""
+        inert={!sheetOpen}
+        aria-hidden={!sheetOpen}
+      >
+        <nav aria-label="Menü">
+          <ul className="nav-sheet-list">
+            {nav.links.map((l, i) => (
+              <li key={l.id} style={{ "--i": i } as React.CSSProperties}>
+                <Link className="nav-sheet-link" href={`${pre}${l.href}`} onClick={() => closeSheet(false)}>
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+            <li style={{ "--i": 4 } as React.CSSProperties}>
+              <button type="button" className="nav-sheet-link" aria-expanded={sheetSub} aria-controls={`${sheetId}-sub`} onClick={() => setSheetSub((s) => !s)}>
+                {nav.aktuelles}
+                <Caret />
+              </button>
+              <div className="nav-sheet-sub" id={`${sheetId}-sub`} data-open={sheetSub ? "true" : "false"} inert={!sheetSub}>
+                <div className="nav-sheet-sub-inner">
+                  {VIDEOS.map((v) => (
+                    <VideoRow key={v.id} v={v} />
+                  ))}
+                  <div className="nav-panel-foot">
+                    <Link href="/aktuelles" onClick={() => closeSheet(false)}>
+                      {nav.allVideos} <Arrow size={16} />
                     </Link>
-                  </motion.li>
-                ))}
-                <motion.li initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.5, ease: EASE }}>
-                  <button type="button" className="nav-sheet-link" aria-expanded={sheetSub} onClick={() => setSheetSub((s) => !s)}>
-                    {nav.aktuelles}
-                    <Caret />
-                  </button>
-                  <AnimatePresence initial={false}>
-                    {sheetSub ? (
-                      <motion.div
-                        className="nav-sheet-sub"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.4, ease: EASE }}
-                      >
-                        <div className="nav-sheet-sub-inner">
-                          {VIDEOS.map((v) => (
-                            <VideoRow key={v.id} v={v} />
-                          ))}
-                          <div className="nav-panel-foot">
-                            <Link href="/aktuelles" onClick={() => closeSheet(false)}>
-                              {nav.allVideos} <Arrow size={16} />
-                            </Link>
-                            <a href={company.youtube} target="_blank" rel="noopener noreferrer">
-                              {nav.channel} <ArrowOut />
-                            </a>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ) : null}
-                  </AnimatePresence>
-                </motion.li>
-              </ul>
-            </nav>
-            <div className="nav-sheet-cta">
-              <Cta href={`${pre}#termin`} onClick={() => closeSheet(false)}>
-                {cta.main}
-              </Cta>
-            </div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+                    <a href={company.youtube} target="_blank" rel="noopener noreferrer">
+                      {nav.channel} <ArrowOut />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </nav>
+        <div className="nav-sheet-cta">
+          <Cta href={`${pre}#termin`} onClick={() => closeSheet(false)}>
+            {cta.main}
+          </Cta>
+        </div>
+      </div>
     </>
   );
 }

@@ -4,7 +4,6 @@ export type Img = { src: string; w: number; h: number };
 export const media: {
   seq: { count: number; source: string; desktop: string; mobile: string; mobileCrop: boolean };
   stills: { start: Still | null; end: Still | null };
-  bier: { wide?: Img; square?: Img } | null;
   flutlicht: Img[];
 } = {
   "seq": {
@@ -22,18 +21,6 @@ export const media: {
     "end": {
       "d": "/seq/ende-1600.webp",
       "m": "/seq/ende-m.webp"
-    }
-  },
-  "bier": {
-    "wide": {
-      "src": "/ki/bier-wide-2048.webp",
-      "w": 2048,
-      "h": 1152
-    },
-    "square": {
-      "src": "/ki/bier-quadrat-1200.webp",
-      "w": 1200,
-      "h": 1200
     }
   },
   "flutlicht": [

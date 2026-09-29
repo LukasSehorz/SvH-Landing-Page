@@ -1,0 +1,201 @@
+/* ============================================================== Garantie */
+
+.gar {
+  overflow: hidden;
+}
+.gar-grid {
+  display: grid;
+  gap: 36px;
+}
+.gar-seal-wrap {
+  display: flex;
+  justify-content: center;
+}
+.seal {
+  position: relative;
+  width: min(236px, 64vw);
+  aspect-ratio: 1;
+}
+.seal-glow {
+  position: absolute;
+  inset: -22%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(124, 106, 255, 0.16), rgba(91, 140, 255, 0.05) 55%, transparent 100%);
+  pointer-events: none;
+}
+.seal-svg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.seal-ring {
+  fill: none;
+  stroke: url(#seal-grad);
+  stroke-width: 1.2;
+}
+.seal-ring--outer {
+  stroke-width: 1.4;
+}
+.seal-ring--thin {
+  stroke-width: 0.7;
+  opacity: 0.7;
+}
+.seal-ticks line {
+  stroke: rgba(185, 165, 255, 0.55);
+  stroke-width: 0.9;
+}
+.seal-text {
+  transform-origin: 150px 150px;
+}
+.seal-text text {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  fill: #d6ccff;
+}
+.seal[data-spin] .seal-text,
+.seal[data-spin] .seal-ticks {
+  animation: seal-spin 80s linear infinite;
+  transform-origin: 150px 150px;
+}
+.seal[data-spin] .seal-ticks {
+  animation-direction: reverse;
+  animation-duration: 140s;
+}
+@keyframes seal-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.seal-star {
+  fill: url(#seal-grad);
+}
+
+.gar-title .line {
+  display: block;
+}
+.gar-title .line + .line {
+  margin-top: 0.1em;
+  color: var(--ink-2);
+}
+.gar-title {
+  margin-top: 16px;
+  max-width: 16ch;
+}
+.gar-text {
+  margin-top: 18px;
+}
+
+/* drei Schritte: mobil senkrecht mit feiner Verbindungslinie */
+.gar-steps {
+  position: relative;
+  display: grid;
+  gap: 22px;
+  margin-top: 30px;
+  counter-reset: step;
+}
+.gar-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 19.5px;
+  top: 48px;
+  bottom: -14px;
+  width: 1px;
+  background: linear-gradient(180deg, rgba(124, 106, 255, 0.55), rgba(185, 165, 255, 0.25));
+}
+.gar-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.gar-num {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(185, 165, 255, 0.45);
+  background: #0d0c18;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.gar-step-title {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  padding-top: 8px;
+}
+.gar-step .body {
+  margin-top: 4px;
+}
+.gar-capsule {
+  display: inline-flex;
+  margin-top: 30px;
+  padding: 12px 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(185, 165, 255, 0.35);
+  background: rgba(124, 106, 255, 0.08);
+  box-shadow: 0 0 30px -12px rgba(124, 106, 255, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  font-size: 16px;
+  line-height: 1.45;
+  color: #dcd3ff;
+  max-width: 36em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seal .seal-text,
+  .seal .seal-ticks {
+    animation: none !important;
+  }
+}
+
+@media (min-width: 700px) {
+  .seal {
+    width: 300px;
+  }
+  .gar-capsule {
+    border-radius: 999px;
+    padding: 12px 24px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .gar-grid {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(48px, 6vw, 110px);
+  }
+  .seal {
+    width: min(440px, 100%);
+  }
+  .gar-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .gar-step:not(:last-child)::after {
+    left: 52px;
+    right: -12px;
+    top: 19.5px;
+    bottom: auto;
+    width: auto;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(124, 106, 255, 0.55), rgba(185, 165, 255, 0.25));
+  }
+  .gar-step {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .gar-step-title {
+    padding-top: 0;
+  }
+}

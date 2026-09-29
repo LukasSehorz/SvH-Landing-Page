@@ -9,7 +9,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "motion/react";
 import { einwilligung } from "@/app/copy";
 import { CONSENT_KEY, GTM_ID, type Einwilligung } from "@/app/tracking";
 
@@ -100,19 +99,9 @@ export default function Consent() {
   }, []);
 
   return (
-    <AnimatePresence>
+    <>
       {offen ? (
-        <motion.div
-          className="cons"
-          role="dialog"
-          aria-modal="false"
-          aria-labelledby="cons-titel"
-          aria-describedby="cons-text"
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 12 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        >
+        <div className="cons" role="dialog" aria-modal="false" aria-labelledby="cons-titel" aria-describedby="cons-text">
           <div className="cons-card">
             <p className="cons-title" id="cons-titel">
               {einwilligung.titel}
@@ -129,8 +118,8 @@ export default function Consent() {
               </button>
             </div>
           </div>
-        </motion.div>
+        </div>
       ) : null}
-    </AnimatePresence>
+    </>
   );
 }

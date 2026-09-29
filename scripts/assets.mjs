@@ -34,7 +34,6 @@ async function webp(src, dst, width, quality = 78, extract) {
 const media = {
   seq: { count: 0, source: "keine", desktop: "", mobile: "", mobileCrop: false },
   stills: { start: null, end: null },
-  bier: null,
   flutlicht: [],
 };
 
@@ -76,23 +75,7 @@ for (const n of ["estera", "fuchs"]) {
   log(`Referenz ${n}`);
 }
 
-// ---------- KI: Bier ----------
-{
-  const wide = path.join(K, "bier", "kasten-bier-16x9-2048.webp");
-  const sq = path.join(K, "bier", "kasten-bier-1x1-1600.webp");
-  if (exists(wide) || exists(sq)) {
-    media.bier = {};
-    if (exists(wide)) {
-      await webp(wide, path.join(PUB, "ki", "bier-wide-2048.webp"), 2048, 80);
-      media.bier.wide = { src: "/ki/bier-wide-2048.webp", w: 2048, h: 1152 };
-    }
-    if (exists(sq)) {
-      await webp(sq, path.join(PUB, "ki", "bier-quadrat-1200.webp"), 1200, 80);
-      media.bier.square = { src: "/ki/bier-quadrat-1200.webp", w: 1200, h: 1200 };
-    }
-    log("Bierkasten");
-  }
-}
+// Bier-Motiv: laut Auftraggeber nicht auf der Landingpage (nur LinkedIn)
 
 // ---------- KI: Flutlicht ----------
 for (const i of [1, 3]) {
@@ -179,7 +162,6 @@ Erzeugt von \`scripts/assets.mjs\` am ${new Date().toISOString().slice(0, 10)}. 
 - \`aktuelles/\` aus \`assets/aktuelles/\` (Vorschaubilder des eigenen YouTube-Kanals, lokal ausgeliefert, damit ohne Einwilligung nichts an Google geht).
 - \`referenzen/\` aus \`assets/referenzen/\` (Screenshots der Kundenseiten estera.immobilien und fuchspools.com), auf 1600 px WebP verkleinert.
 - \`ki/\` und \`seq/\` aus \`assets-ki/\`: KI-generiert über kie.ai am 29.09.2026 (GPT Image 2.5 Flare für Bilder, Kling 3.0 für das Video der Bildfolge). Prompts und Modelle stehen vollständig in \`assets-ki/HERKUNFT.md\`. Keine echten Personen, keine Marken, keine Texte im Bild.
-  - \`ki/bier-*.webp\` Garantie-Motiv „Kasten Bier“
   - \`ki/flutlicht-1.webp\`, \`ki/flutlicht-3.webp\` Atmosphäre (Variante 2 bewusst nicht verwendet)
   - \`seq/d/\` Bildfolge „Vom Chaos zur Ruhe“, 1600 px, Kopie aus \`assets-ki/sequenz/desktop/\`
   - \`seq/m/\` Hochkant-Ausschnitte (9:16, 900 px hoch) aus denselben Desktop-Bildern für Telefone
@@ -195,7 +177,6 @@ export type Img = { src: string; w: number; h: number };
 export const media: {
   seq: { count: number; source: string; desktop: string; mobile: string; mobileCrop: boolean };
   stills: { start: Still | null; end: Still | null };
-  bier: { wide?: Img; square?: Img } | null;
   flutlicht: Img[];
 } = ${JSON.stringify(media, null, 2)};
 `;

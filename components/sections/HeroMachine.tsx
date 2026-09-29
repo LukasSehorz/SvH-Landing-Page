@@ -44,7 +44,6 @@ type Pt = { x: number; y: number; z: number; s: number; c: number; spoke: boolea
 class Core {
   private ctx: CanvasRenderingContext2D;
   private pts: Pt[] = [];
-  private sprites: HTMLCanvasElement[] = [];
   private hub: HTMLCanvasElement;
   private w = 0;
   private h = 0;
@@ -56,7 +55,6 @@ class Core {
   private last = 0;
   private raf = 0;
   private pulseV = 0;
-  private ring = 0;
   running = false;
 
   constructor(private canvas: HTMLCanvasElement) {
@@ -80,8 +78,7 @@ class Core {
         f: 0.5 + rand() * 0.9,
       });
     }
-    this.sprites = PALETTE.map((c) => Core.sprite(c, 0.95));
-    this.hub = Core.sprite("#e9e4ff", 1);
+    this.hub = Core.sprite("#cfc6ff", 1);
   }
 
   private static sprite(color: string, core: number) {
@@ -104,7 +101,8 @@ class Core {
   }
 
   resize(w: number, h: number, cx: number, cy: number, R: number) {
-    this.dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 1.75);
+    // volle Schärfe bis 2x (Retina), darüber keine sichtbare Verbesserung
+    this.dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.w = w;
     this.h = h;
     this.cx = cx;
@@ -117,7 +115,6 @@ class Core {
 
   pulse() {
     this.pulseV = 1;
-    this.ring = 0.001;
   }
 
   start() {
@@ -128,11 +125,7 @@ class Core {
       const dt = Math.min((now - this.last) / 1000, 0.05);
       this.last = now;
       this.t += dt;
-      this.pulseV *= Math.exp(-dt * 2.4);
-      if (this.ring > 0) {
-        this.ring += dt * 0.85;
-        if (this.ring >= 1) this.ring = 0;
-      }
+      this.pulseV *= Math.exp(-dt * 1.6);
       this.draw();
       this.raf = requestAnimationFrame(loop);
     };
@@ -148,31 +141,20 @@ class Core {
     const { ctx, dpr, t } = this;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, this.w, this.h);
-    ctx.globalCompositeOperation = "lighter";
 
     const pv = this.pulseV;
-    const R = this.R * (1 - 0.09 * pv);
-    const a = t * 0.2;
-    const b = -0.3 + Math.sin(t * 0.27) * 0.06;
+    const R = this.R * (1 - 0.035 * pv);
+    const a = t * 0.12;
+    const b = -0.32 + Math.sin(t * 0.18) * 0.04;
     const ca = Math.cos(a);
     const sa = Math.sin(a);
     const cb = Math.cos(b);
     const sb = Math.sin(b);
     const F = 3.4;
 
-    // Schockwelle beim Verarbeiten
-    if (this.ring > 0) {
-      const rr = R * (0.25 + this.ring * 1.25);
-      ctx.beginPath();
-      ctx.arc(this.cx, this.cy, rr, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(185,165,255,${(1 - this.ring) * 0.45})`;
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
-    }
-
     const proj: { x: number; y: number; d: number; p: Pt }[] = [];
     for (const p of this.pts) {
-      const breathe = 1 + Math.sin(t * p.f + p.ph) * 0.035;
+      const breathe = 1 + Math.sin(t * p.f * 0.6 + p.ph) * 0.015;
       const x0 = p.x * breathe;
       const y0 = p.y * breathe;
       const z0 = p.z * breathe;
@@ -183,38 +165,45 @@ class Core {
       const s = F / (F - z2);
       proj.push({ x: this.cx + x1 * R * s, y: this.cy + y2 * R * s, d: (z2 + 1) / 2, p });
     }
+    proj.sort((m, n) => m.d - n.d);
 
-    // Speichen zur Nabe
-    ctx.lineWidth = 0.8;
+    // Speichen: haarfein
+    ctx.lineWidth = 0.6;
     for (const q of proj) {
       if (!q.p.spoke) continue;
-      const al = (0.05 + 0.12 * q.d) * (1 + pv * 1.6);
-      ctx.strokeStyle = `rgba(157,180,255,${al.toFixed(3)})`;
+      const al = (0.05 + 0.11 * q.d) * (1 + pv * 0.8);
+      ctx.strokeStyle = `rgba(160,176,255,${al.toFixed(3)})`;
       ctx.beginPath();
       ctx.moveTo(this.cx, this.cy);
       ctx.lineTo(q.x, q.y);
       ctx.stroke();
     }
 
-    // Punkte mit Leuchten
+    // Weicher Hof um die Nabe (dezent)
+    const hr = this.R * (0.42 + 0.08 * pv);
+    ctx.globalCompositeOperation = "lighter";
+    ctx.globalAlpha = 0.32 + 0.12 * pv;
+    ctx.drawImage(this.hub, this.cx - hr, this.cy - hr, hr * 2, hr * 2);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = "source-over";
+
+    // Punkte: gestochen scharf, Tiefe über Größe und Deckkraft
     const unit = this.R / 150;
     for (const q of proj) {
-      const r = q.p.s * unit * (0.7 + 0.6 * q.d) * 2.6;
+      const r = Math.max(0.9, (0.9 + q.p.s * 0.5) * unit * (0.75 + 0.5 * q.d));
       ctx.globalAlpha = 0.35 + 0.65 * q.d;
-      ctx.drawImage(this.sprites[q.p.c], q.x - r, q.y - r, r * 2, r * 2);
+      ctx.fillStyle = PALETTE[q.p.c];
+      ctx.beginPath();
+      ctx.arc(q.x, q.y, r, 0, Math.PI * 2);
+      ctx.fill();
     }
     ctx.globalAlpha = 1;
 
-    // Nabe
-    const hr = this.R * (0.5 + 0.35 * pv);
-    ctx.globalAlpha = 0.8;
-    ctx.drawImage(this.hub, this.cx - hr, this.cy - hr, hr * 2, hr * 2);
-    ctx.globalAlpha = 1;
+    // Nabe: klarer, heller Kern
     ctx.beginPath();
-    ctx.arc(this.cx, this.cy, 3.2 + pv * 2.4, 0, Math.PI * 2);
+    ctx.arc(this.cx, this.cy, 2.6 + pv * 0.8, 0, Math.PI * 2);
     ctx.fillStyle = "#ffffff";
     ctx.fill();
-    ctx.globalCompositeOperation = "source-over";
   }
 }
 
@@ -225,7 +214,7 @@ function geo(W: number, H: number) {
   const mobile = window.matchMedia("(max-width: 699px)").matches;
   if (mobile) {
     // Diagonaler Fluss: oben links hinein, unten rechts heraus
-    const cardW = Math.min(164, W * 0.47);
+    const cardW = Math.min(168, W * 0.5);
     const cardH = 40;
     const cx = W / 2;
     const cy = H * 0.5;
@@ -336,7 +325,7 @@ export default function HeroMachine() {
           step();
         },
       });
-      tl.to(flyer, { scale: 1.05, duration: 0.28, ease: "power2.out" })
+      tl.to(flyer, { scale: 1.02, duration: 0.4, ease: "power2.out" })
         .to(
           flyer,
           {
@@ -344,13 +333,13 @@ export default function HeroMachine() {
               path: [s0, g.mobile ? { x: g.cx * 0.55, y: s0.y + 30 } : { x: g.cx * 0.42, y: s0.y - 34 }, c],
               curviness: 1.25,
             },
-            scale: 0.16,
-            duration: 1.05,
-            ease: "power2.in",
+            scale: 0.18,
+            duration: 1.2,
+            ease: "power2.inOut",
           },
           0.22,
         )
-        .to(flyer, { autoAlpha: 0, duration: 0.32, ease: "power1.in" }, 0.95)
+        .to(flyer, { autoAlpha: 0, duration: 0.4, ease: "power1.in" }, 1.0)
         .add(() => core.pulse(), 1.2)
         .to(queue[1], { y: g.inSlot(0).y, duration: 0.85, ease: "expo.out" }, 0.5)
         .to(queue[2], { y: g.inSlot(1).y, autoAlpha: 1, duration: 0.85, ease: "expo.out" }, 0.58)
@@ -369,8 +358,8 @@ export default function HeroMachine() {
             },
             scale: 1,
             autoAlpha: 1,
-            duration: 1,
-            ease: "power3.out",
+            duration: 1.2,
+            ease: "expo.out",
             immediateRender: false,
           },
           1.3,
@@ -382,9 +371,9 @@ export default function HeroMachine() {
         const o = { v: from };
         gsap.to(o, { v: minutes, duration: 0.9, ease: "power2.out", onUpdate: () => (valueEl.textContent = fmt(Math.round(o.v))) });
         plusEl.textContent = `+${add} Min.`;
-        gsap.fromTo(plusEl, { y: 8, autoAlpha: 0 }, { y: -22, autoAlpha: 1, duration: 0.5, ease: "power2.out" });
-        gsap.to(plusEl, { autoAlpha: 0, duration: 0.5, delay: 0.9 });
-      }, 1.95).to({}, { duration: 0.95 });
+        gsap.fromTo(plusEl, { y: 6, autoAlpha: 0 }, { y: -10, autoAlpha: 1, duration: 0.7, ease: "expo.out" });
+        gsap.to(plusEl, { autoAlpha: 0, duration: 0.6, delay: 1.2, ease: "power1.inOut" });
+      }, 1.95).to({}, { duration: 1.4 });
     };
 
     // Erst nach kurzer Pause starten (der Blick liegt zuerst auf der Überschrift)

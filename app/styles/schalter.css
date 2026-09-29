@@ -1,8 +1,8 @@
 /* ========================================================= Der Schalter */
 
+/* mobil: Kopf löst sich auf, damit die Schalterleiste über alle Karten kleben kann */
 .sw-head {
-  display: grid;
-  gap: 24px;
+  display: contents;
 }
 .sw-title {
   margin-top: 16px;
@@ -16,6 +16,7 @@
   z-index: 6;
   display: flex;
   justify-content: center;
+  margin-top: 24px;
 }
 .sw-switchwrap {
   display: inline-flex;
@@ -103,11 +104,9 @@
   transition:
     border-color 0.6s var(--ease),
     background-color 0.6s var(--ease),
-    rotate 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
     box-shadow 0.6s var(--ease);
 }
 .sw[data-on="false"] .sw-card {
-  rotate: calc((var(--i) - 1.5) * 0.7deg);
   border-color: rgba(244, 244, 246, 0.08);
 }
 .sw[data-on="true"] .sw-card {
@@ -289,9 +288,6 @@
 }
 
 /* Bewegung nur, solange der Abschnitt sichtbar ist (sonst statischer Endzustand) */
-.sw[data-play="true"] .sc-jitter {
-  animation: sc-jitter 1.6s ease-in-out infinite alternate;
-}
 @keyframes sc-jitter {
   from {
     transform: rotate(-1.6deg) translateY(0);
@@ -301,7 +297,7 @@
   }
 }
 .sw[data-play="true"] .sc-hourglass {
-  animation: sc-turn 2.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  animation: sc-turn 4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 @keyframes sc-turn {
   0%,
@@ -312,16 +308,13 @@
     transform: rotate(180deg);
   }
 }
-.sw[data-play="true"] .sc-float {
-  animation: sc-float 2.4s ease-in-out infinite alternate;
-}
 @keyframes sc-float {
   to {
     transform: translateY(-5px);
   }
 }
 .sw[data-play="true"][data-on="true"] .sc-grow {
-  animation: sc-grow 4.2s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
+  animation: sc-grow 5s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
 }
 @keyframes sc-grow {
   0% {
@@ -337,11 +330,11 @@
   }
 }
 .sw[data-play="true"][data-on="true"] .sc-pop {
-  animation: sc-pop 4.2s cubic-bezier(0.34, 1.56, 0.64, 1) infinite both;
+  animation: sc-pop 5s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
 }
 @keyframes sc-pop {
   0% {
-    transform: scale(0);
+    transform: scale(0.9);
     opacity: 0;
   }
   12%,
@@ -355,7 +348,7 @@
   }
 }
 .sw[data-play="true"][data-on="true"] .sc-flow {
-  animation: sc-flow 1.2s linear infinite;
+  animation: sc-flow 2.4s linear infinite;
 }
 @keyframes sc-flow {
   to {
@@ -363,7 +356,7 @@
   }
 }
 .sw[data-play="true"][data-on="true"] .sc-slide {
-  animation: sc-slide 4.2s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
+  animation: sc-slide 5s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
 }
 @keyframes sc-slide {
   0% {
@@ -380,7 +373,7 @@
   }
 }
 .sw[data-play="true"][data-on="true"] .sc-slide2 {
-  animation: sc-slide2 4.2s cubic-bezier(0.65, 0, 0.35, 1) infinite both;
+  animation: sc-slide2 5s cubic-bezier(0.65, 0, 0.35, 1) infinite both;
 }
 @keyframes sc-slide2 {
   0% {
@@ -400,7 +393,7 @@
   }
 }
 .sw[data-play="true"][data-on="true"] .sc-row {
-  animation: sc-row 4.2s ease both infinite;
+  animation: sc-row 5s ease both infinite;
 }
 @keyframes sc-row {
   0%,
@@ -416,32 +409,8 @@
   }
 }
 .sw[data-play="true"][data-on="true"] .sc-bell {
-  animation: sc-bell 4.2s ease infinite both;
-}
-@keyframes sc-bell {
-  0%,
-  40% {
-    transform: rotate(0);
-    opacity: 0;
-  }
-  44% {
-    opacity: 1;
-    transform: rotate(14deg);
-  }
-  48% {
-    transform: rotate(-12deg);
-  }
-  52% {
-    transform: rotate(8deg);
-  }
-  56%,
-  88% {
-    transform: rotate(0);
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+  animation: sc-row 5s ease infinite both;
+  animation-delay: 0.5s;
 }
 @media (prefers-reduced-motion: reduce) {
   .sc * {
@@ -463,12 +432,14 @@
 }
 @media (min-width: 1100px) {
   .sw-head {
+    display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
     gap: 40px;
   }
   .sw-bar {
     position: static;
+    margin-top: 0;
   }
   .sw-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));

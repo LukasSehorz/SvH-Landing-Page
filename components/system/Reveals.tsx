@@ -110,7 +110,8 @@ export default function Reveals() {
             "--reveal": "100%",
             "--shine": "-50%",
             ease: "none",
-            scrollTrigger: { trigger: el, start: "top 98%", end: "bottom 70%", scrub: 1 },
+            // bis ganz unten: die Marke steht nah am Seitenende
+            scrollTrigger: { trigger: el, start: "top bottom", end: "max", scrub: 0.8 },
           },
         );
       });

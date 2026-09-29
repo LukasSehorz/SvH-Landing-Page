@@ -20,7 +20,7 @@ function PaperStack({ x, y, lines = 3 }: { x: number; y: number; lines?: number 
   return (
     <g>
       {[-7, 4, -2].map((r, i) => (
-        <g key={i} className="sc-jitter" style={{ transformOrigin: `${x + 34}px ${y + 44}px`, animationDelay: `${i * -0.4}s`, rotate: `${r}deg` }}>
+        <g key={i} className="sc-still" style={{ transformOrigin: `${x + 34}px ${y + 44}px`, animationDelay: `${i * -0.4}s`, rotate: `${r}deg` }}>
           <rect x={x + i * 5} y={y - i * 6} width="68" height="86" rx="5" className="sc-paper" />
           {Array.from({ length: lines }).map((_, k) => (
             <path key={k} d={`M${x + 10 + i * 5} ${y + 16 + k * 12 - i * 6} h${38 - k * 6}`} className="sc-line" />
@@ -45,7 +45,7 @@ function OffScene({ id }: { id: string }) {
       {id === "emails" ? (
         <>
           {[0, 1, 2, 3].map((i) => (
-            <g key={i} className="sc-jitter" style={{ transformOrigin: "150px 80px", animationDelay: `${i * -0.3}s` }}>
+            <g key={i} className="sc-still" style={{ transformOrigin: "150px 80px", animationDelay: `${i * -0.3}s` }}>
               <rect x={78 + i * 16} y={38 + i * 14} width="92" height="58" rx="6" className="sc-paper" style={{ rotate: `${(i % 2 ? 1 : -1) * (3 + i)}deg` }} />
               <path d={`M${78 + i * 16} ${40 + i * 14} l46 30 46 -30`} className="sc-line" style={{ rotate: `${(i % 2 ? 1 : -1) * (3 + i)}deg` }} />
             </g>
@@ -56,7 +56,7 @@ function OffScene({ id }: { id: string }) {
       {id === "wissen" ? (
         <>
           {[0, 1, 2].map((i) => (
-            <g key={i} className="sc-jitter" style={{ transformOrigin: "140px 90px", animationDelay: `${i * -0.5}s` }}>
+            <g key={i} className="sc-still" style={{ transformOrigin: "140px 90px", animationDelay: `${i * -0.5}s` }}>
               <path d={`M${70 + i * 44} ${62 + (i % 2) * 8} h18 l6 7 h30 v50 h-54z`} className="sc-paper" />
             </g>
           ))}
@@ -65,7 +65,7 @@ function OffScene({ id }: { id: string }) {
             [150, 30],
             [204, 44],
           ].map(([x, y], i) => (
-            <g key={i} className="sc-float" style={{ animationDelay: `${i * -0.7}s` }}>
+            <g key={i} className="sc-still" style={{ animationDelay: `${i * -0.7}s` }}>
               <circle cx={x} cy={y} r="11" className="sc-paper" />
               <text x={x} y={y + 4.5} textAnchor="middle" className="sc-count">
                 ?
@@ -83,7 +83,7 @@ function OffScene({ id }: { id: string }) {
             [96, 92, 10],
             [160, 88, -6],
           ].map(([x, y, r], i) => (
-            <g key={i} className="sc-jitter" style={{ transformOrigin: `${x + 20}px ${y + 18}px`, animationDelay: `${i * -0.35}s` }}>
+            <g key={i} className="sc-still" style={{ transformOrigin: `${x + 20}px ${y + 18}px`, animationDelay: `${i * -0.35}s` }}>
               <rect x={x} y={y} width="42" height="36" rx="3" className="sc-paper" style={{ rotate: `${r}deg`, transformOrigin: `${x + 21}px ${y + 18}px` }} />
               <path d={`M${x + 8} ${y + 13} h24 M${x + 8} ${y + 22} h16`} className="sc-line" style={{ rotate: `${r}deg`, transformOrigin: `${x + 21}px ${y + 18}px` }} />
             </g>

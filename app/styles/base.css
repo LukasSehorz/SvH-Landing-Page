@@ -214,7 +214,6 @@ section[id] {
   width: 22px;
   height: 1px;
   background: var(--grad);
-  box-shadow: 0 0 10px rgba(124, 106, 255, 0.8);
   flex: 0 0 auto;
 }
 
@@ -319,7 +318,7 @@ section[id] {
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 18px rgba(124, 106, 255, 0.35));
+  filter: drop-shadow(0 0 14px rgba(124, 106, 255, 0.2));
   -webkit-mask-image: linear-gradient(100deg, #000 calc(var(--w) - 14%), transparent var(--w));
   mask-image: linear-gradient(100deg, #000 calc(var(--w) - 14%), transparent var(--w));
 }
@@ -341,8 +340,7 @@ section[id] {
 }
 .script-swoosh .s1 {
   stroke: url(#swoosh-grad);
-  stroke-width: 3.2px;
-  filter: drop-shadow(0 0 6px rgba(124, 106, 255, 0.7));
+  stroke-width: 3px;
 }
 .script-swoosh .s2 {
   stroke: url(#swoosh-grad);
@@ -385,7 +383,7 @@ section[id] {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.45),
     inset 0 -1px 0 rgba(20, 10, 60, 0.25),
-    0 10px 36px -10px rgba(124, 106, 255, 0.75),
+    0 10px 30px -12px rgba(124, 106, 255, 0.6),
     0 0 0 1px rgba(185, 165, 255, 0.25);
 }
 .btn-primary::before {
@@ -394,8 +392,8 @@ section[id] {
   inset: -1px;
   border-radius: inherit;
   background: var(--grad);
-  filter: blur(18px);
-  opacity: 0.35;
+  filter: blur(16px);
+  opacity: 0.2;
   z-index: -1;
   transition: opacity 0.5s var(--ease);
 }
@@ -413,7 +411,7 @@ section[id] {
   pointer-events: none;
 }
 .btn-primary:hover::before {
-  opacity: 0.7;
+  opacity: 0.4;
 }
 .btn-primary:hover::after {
   background-position: -40% 0;
@@ -475,6 +473,18 @@ section[id] {
     font-size: 16px;
     padding-inline: 24px 22px;
   }
+  .btn-block-m {
+    width: 100%;
+  }
+}
+@media (max-width: 389px) {
+  .btn {
+    font-size: 15px;
+    padding-inline: 18px 16px;
+    gap: 10px;
+  }
+}
+@media (max-width: 699px) {
   .btn-sm {
     height: 44px;
     font-size: 14px;
@@ -609,7 +619,7 @@ section[id] {
   vector-effect: non-scaling-stroke;
 }
 .pitch .glow {
-  filter: drop-shadow(0 0 5px rgba(124, 106, 255, 0.85)) drop-shadow(0 0 16px rgba(91, 140, 255, 0.35));
+  filter: drop-shadow(0 0 3px rgba(124, 106, 255, 0.45));
 }
 .pitch .spot {
   fill: #9d8cff;

@@ -3,6 +3,8 @@ import ScriptWord from "./ScriptWord";
 
 /** Setzt *Wort* als Schreibschrift und _Wort_ als Verlaufswort. */
 export default function Rich({ text, manualScript = false }: Readonly<{ text: string; manualScript?: boolean }>) {
+  // Zahl und Einheit nie trennen (160 Std., 30 Min., 0 €)
+  text = text.replace(/(\d+\+?) (Std\.|Min\.|€|Stunden|Minuten)/g, "$1\u00a0$2");
   const parts = text.split(/(\*[^*]+\*|_[^_]+_)/g).filter(Boolean);
   return (
     <>
@@ -12,7 +14,7 @@ export default function Rich({ text, manualScript = false }: Readonly<{ text: st
         // Bindestrich-Wörter nicht am Bindestrich trennen (E-Mails, KI-Masterplan)
         return (
           <Fragment key={i}>
-            {p.split(/(\S*\w-\w\S*)/g).map((w, j) => (j % 2 ? <span key={j} className="nb">{w}</span> : w))}
+            {p.split(/(\b[A-ZÄÖÜ]{1,2}-[\wäöüßÄÖÜ]+)/g).map((w, j) => (j % 2 ? <span key={j} className="nb">{w}</span> : w))}
           </Fragment>
         );
       })}

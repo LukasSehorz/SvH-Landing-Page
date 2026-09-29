@@ -47,7 +47,7 @@ export const hero = {
   proof: [
     { big: "35+", small: "umgesetzte Projekte" },
     { big: "bis zu 160 Std.", small: "pro Woche gespart" },
-    { big: "Geld zurück", small: "+ Kasten Bier, falls wir keine Zeit sparen" },
+    { big: "Geld-zurück-Garantie", small: "falls wir Ihnen keine Zeit sparen" },
   ],
   tasks: [
     "Angebot schreiben",
@@ -259,10 +259,17 @@ export const spielzug = {
 };
 
 export const garantie = {
-  title: ["Keine Zeit gespart? _Geld zurück._", "Und der Kasten Bier geht auf uns."],
-  text: "Wir sind von unserer Arbeit überzeugt. Deshalb tragen wir das Risiko und nicht Sie. Spart Ihnen unsere Umsetzung nicht die vereinbarte Zeit, bekommen Sie Ihr Geld zurück. Und der Kasten Bier geht obendrein auf uns.",
-  small: "Was „vereinbarte Zeit“ genau heißt, legen wir vor dem Start gemeinsam und schriftlich fest.",
-  alt: "Ein Kasten Bier im blauvioletten Gegenlicht", // ZUSATZ (Alt-Text)
+  label: "Unsere Garantie",
+  title: ["Keine Zeit gespart? _Geld zurück._", "Das Risiko tragen wir, nicht Sie."],
+  text: "Wir sind von unserer Arbeit überzeugt. Spart Ihnen unsere Automatisierung nicht die vereinbarte Zeit oder das vereinbarte Geld, bekommen Sie Ihr Geld zurück.",
+  // Siegel: Ringschrift läuft um das SvH-Monogramm
+  seal: "Geld-zurück-Garantie · schriftlich vereinbart · ",
+  steps: [
+    { title: "Ziel festlegen", text: "Vor dem Start schreiben wir gemeinsam auf, wie viel Zeit oder Geld die Automatisierung sparen soll." },
+    { title: "Umsetzen und messen", text: "Wir bauen die Lösung und messen das Ergebnis gemeinsam mit Ihnen." },
+    { title: "Ziel verfehlt?", text: "Dann bekommen Sie Ihr Geld zurück. So steht es in Ihrem Angebot." },
+  ],
+  small: "Was „vereinbart“ genau heißt, legen wir vor dem Start gemeinsam und schriftlich fest.",
 };
 
 export const team = {
@@ -307,7 +314,7 @@ export const fragen = {
     },
     {
       q: "Wie funktioniert die Geld-zurück-Garantie?",
-      a: "Vor dem Start legen wir gemeinsam schriftlich fest, wie viel Zeit die Umsetzung sparen soll. Wird das Ziel verfehlt, bekommen Sie Ihr Geld zurück, und der Kasten Bier kommt obendrauf. Die genauen Bedingungen stehen in Ihrem Angebot.",
+      a: "Vor dem Start legen wir gemeinsam schriftlich fest, wie viel Zeit oder Geld die Umsetzung sparen soll. Wird das Ziel verfehlt, bekommen Sie Ihr Geld zurück. Die genauen Bedingungen stehen in Ihrem Angebot.",
     },
     {
       q: "Sind wir danach von Ihnen abhängig?",
@@ -397,6 +404,9 @@ export const abschluss = {
     subject: "KI-Workshop-Anfrage von",
     none: "keine Angabe",
     replyNote: "Antworten Sie einfach auf diese E-Mail, die Antwort geht an",
+    // ZUSATZ (nur in der Mail an uns): Hochrechnung und Nachweis der Einwilligung
+    yearValue: (year: string, weeks: string) => `${year} Stunden, so viel wie ${weeks} volle Arbeitswochen`,
+    consentLine: "Einwilligung zur Bearbeitung der Anfrage erteilt am",
     labels: {
       tasks: "Zeitfresser",
       hours: "Stunden pro Woche",
@@ -502,9 +512,11 @@ export const notFound = {
   title: "Diese Adresse führt ins _Leere._",
   lead: "Vielleicht ist die Adresse falsch geschrieben, oder die Seite ist umgezogen. Von hier aus finden Sie zurück.",
   home: "Zur Startseite",
+  metaTitle: "Seite nicht gefunden", // ZUSATZ (Seitentitel, alte Seite)
 };
 
 export const legal = {
   label: "Rechtliches",
   note: "Dieser Text ersetzt keine Rechtsberatung.",
+  toc: "Inhalt", // ZUSATZ (Inhaltsverzeichnis der Rechtsseiten)
 };
