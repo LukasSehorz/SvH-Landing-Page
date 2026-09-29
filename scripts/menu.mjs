@@ -11,7 +11,7 @@ await p.waitForTimeout(1500);
 await p.tap(".nav-burger");
 await p.waitForTimeout(800);
 await p.screenshot({ path: `${out}/mobil-menue.png` });
-await p.tap(".nav-sheet-list li:last-child .nav-sheet-link");
+await p.tap(".nav-sheet button.nav-sheet-link");
 await p.waitForTimeout(800);
 await p.screenshot({ path: `${out}/mobil-menue-aktuelles.png` });
 const d = await b.newContext({ viewport: { width: 1440, height: 800 } });
@@ -25,5 +25,5 @@ await q.screenshot({ path: `${out}/desktop-aktuelles.png` });
 // Tastatur: Escape schließt, Fokus zurück
 await q.keyboard.press("Escape");
 await q.waitForTimeout(400);
-console.log("Fokus nach Escape:", await q.evaluate(() => document.activeElement?.textContent?.trim()), "offen:", await q.evaluate(() => !!document.querySelector(".nav-panel")));
+console.log("Fokus nach Escape:", await q.evaluate(() => document.activeElement?.textContent?.trim()), "offen:", await q.evaluate(() => document.querySelector(".nav-panel").dataset.open));
 await b.close();

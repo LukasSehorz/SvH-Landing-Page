@@ -9,6 +9,7 @@ import Team from "@/components/sections/Team";
 import Fragen from "@/components/sections/Fragen";
 import Abschluss from "@/components/sections/Abschluss";
 import MobileCta from "@/components/system/MobileCta";
+import { Divider } from "@/components/system/PitchLines";
 
 // Reihenfolge laut KONZEPT.md. Jede Sektion liegt in einer eigenen Datei mit eigener CSS-Datei unter app/styles/.
 export default function Home() {
@@ -17,10 +18,12 @@ export default function Home() {
       <Hero />
       <ChaosRuhe />
       <Schalter />
+      <Divider variant="arc" />
       <Ergebnisse />
       <Geschenk />
       <Spielzug />
       <Garantie />
+      <Divider variant="half" />
       <Team />
       <Fragen />
       <Abschluss />

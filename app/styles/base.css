@@ -629,9 +629,11 @@ section[id] {
 /* Trennlinie zwischen Abschnitten: Spielfeldbogen */
 .divider {
   position: relative;
-  height: clamp(80px, 9vw, 150px);
+  height: clamp(56px, 8vw, 130px);
+  margin-block: calc(var(--section-y) * -0.5);
   overflow: hidden;
   pointer-events: none;
+  opacity: 0.7;
 }
 .divider svg {
   position: absolute;

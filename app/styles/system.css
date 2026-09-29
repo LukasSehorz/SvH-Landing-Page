@@ -615,6 +615,13 @@ html[data-menu-open] .mcta {
 .cons-body a:hover {
   text-decoration-color: var(--lav);
 }
+/* groß: unten rechts, damit Hauptzeile und Knopf links frei bleiben */
+@media (min-width: 1100px) {
+  .cons {
+    left: auto;
+    right: max(16px, var(--gutter));
+  }
+}
 @media (max-width: 560px) {
   .cons {
     left: 10px;

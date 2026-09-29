@@ -31,7 +31,7 @@ export default function PageHead({
         </h1>
         {lead ? (
           <p className="lead pg-lead pg-in" style={{ "--i": 2 } as React.CSSProperties}>
-            {lead}
+            <Rich text={lead} />
           </p>
         ) : null}
         {children}

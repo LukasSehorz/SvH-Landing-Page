@@ -58,20 +58,29 @@ export default function SmoothScroll() {
     };
     document.addEventListener("click", onClick);
 
-    // Beim Laden mit Hash (von Unterseite kommend) sauber anspringen
-    if (window.location.hash) {
-      const id = window.location.hash.slice(1);
-      const t = document.getElementById(id);
-      if (t) {
-        requestAnimationFrame(() => {
-          ScrollTrigger.refresh();
-          if (lenis) lenis.scrollTo(t, { offset: offsetFor(t), immediate: true });
-          else t.scrollIntoView({ block: "start" });
-        });
-      }
+    // Beim Laden mit Hash (von Unterseite kommend) sauber anspringen. Gepinnte
+    // Szenen entstehen erst nach dem Laden und verschieben alles darunter,
+    // deshalb nach jedem Neuberechnen der ScrollTrigger in den ersten Sekunden nachführen.
+    let onRefresh: (() => void) | undefined;
+    const hashId = window.location.hash.slice(1);
+    if (hashId && document.getElementById(hashId)) {
+      const jump = () => {
+        const t = document.getElementById(hashId);
+        if (!t) return;
+        if (lenis) lenis.scrollTo(t, { offset: offsetFor(t), immediate: true, force: true });
+        else window.scrollTo(0, t.getBoundingClientRect().top + window.scrollY + offsetFor(t));
+      };
+      const until = performance.now() + 2500;
+      onRefresh = () => {
+        if (performance.now() < until) jump();
+      };
+      ScrollTrigger.addEventListener("refresh", onRefresh);
+      requestAnimationFrame(jump);
+      window.setTimeout(jump, 600);
     }
 
     return () => {
+      if (onRefresh) ScrollTrigger.removeEventListener("refresh", onRefresh);
       document.removeEventListener("click", onClick);
       if (tick) gsap.ticker.remove(tick);
       gsap.ticker.lagSmoothing(500, 33);
