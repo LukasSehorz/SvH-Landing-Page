@@ -147,7 +147,17 @@
   color: var(--ink);
   text-wrap: balance;
 }
-.hero-proof span {
+.proof-check {
+  display: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--grad);
+  color: #07060f;
+  flex: 0 0 auto;
+}
+.hero-proof .proof-small {
   display: block;
   margin-top: 6px;
   font-size: 14px;
@@ -455,6 +465,7 @@
 @media (max-width: 699px) {
   .hero {
     padding-top: calc(var(--nav-offset) + 10px);
+    padding-bottom: 16px;
   }
   .hero-eyebrow {
     margin-bottom: 16px;
@@ -490,77 +501,145 @@
   }
   .hero-proof {
     margin-top: 24px;
-    padding-top: 18px;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding-top: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .hero-proof li {
-    padding-right: 12px;
-    margin-right: 12px;
+    padding-right: 14px;
+    margin-right: 14px;
+  }
+  .hero-proof li:nth-child(2) {
+    border-right: 0;
+    margin-right: 0;
+    padding-right: 0;
+  }
+  .hero-proof li:nth-child(3) {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px 10px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line-2);
+  }
+  .hero-proof li:nth-child(3) strong {
+    font-size: 17px;
+    letter-spacing: -0.015em;
+  }
+  .hero-proof li:nth-child(3) .proof-small {
+    margin-top: 0;
+    max-width: none;
   }
   .hero-proof strong {
-    font-size: 19px;
-    white-space: normal;
+    font-size: 22px;
   }
-  .hero-proof span {
-    font-size: 12.5px;
+  .hero-proof .proof-small {
+    font-size: 13.5px;
     margin-top: 4px;
+  }
+  .proof-check {
+    display: inline-grid;
   }
   .hero-visual {
-    height: 420px;
-    margin-top: 4px;
+    height: 400px;
+    margin-top: 0;
+  }
+  .hero-grid {
+    gap: 20px;
   }
   .machine {
-    --card-w: min(168px, 50%);
-    --card-h: 40px;
+    --card-w: min(240px, 80%);
+    --card-h: 44px;
   }
   .machine-glow,
   .machine-pitch {
-    top: 50%;
+    top: 45%;
+  }
+  .machine-glow {
+    width: 70%;
+  }
+  .machine-pitch {
+    width: 92%;
   }
   .task {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    background: rgba(14, 14, 22, 0.92);
-    font-size: 12.5px;
-    gap: 7px;
-    padding: 0 10px 0 9px;
-    border-radius: 11px;
+    background: rgba(14, 14, 22, 0.94);
+    font-size: 13.5px;
+    gap: 9px;
+    padding: 0 12px 0 11px;
+    border-radius: 12px;
   }
   .task-dot {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     border-radius: 5px;
   }
   .task-check {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
   .task-check svg {
     width: 12px;
     height: 12px;
   }
+  .task-text {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex: 1;
+  }
   .task-badge {
-    font-size: 9.5px;
-    margin-top: 1px;
+    font-size: 10px;
+    margin-top: 0;
+  }
+  /* statischer Stapel (Server, ohne Bewegung): oben Arbeit, unten erledigt */
+  .task-in,
+  .task-out {
+    left: calc(50% - var(--card-w) / 2);
+    right: auto;
   }
   .task-in[data-slot="0"] {
-    top: 108px;
+    top: 32px;
+    z-index: 3;
   }
   .task-in[data-slot="1"] {
-    top: 62px;
+    top: 23px;
+    transform: scale(0.95);
+    opacity: 0.55;
+    z-index: 2;
   }
   .task-in[data-slot="2"] {
-    top: 16px;
+    top: 14px;
+    transform: scale(0.9);
+    opacity: 0.28;
+    z-index: 1;
   }
   .task-out[data-slot="0"] {
-    top: calc(100% - 164px);
+    top: calc(100% - 132px);
+    z-index: 3;
   }
   .task-out[data-slot="1"] {
-    top: calc(100% - 118px);
+    top: calc(100% - 123px);
+    transform: scale(0.95);
+    opacity: 0.55;
+    z-index: 2;
   }
-  .task-out[data-slot="2"],
+  .task-out[data-slot="2"] {
+    top: calc(100% - 114px);
+    transform: scale(0.9);
+    opacity: 0.28;
+    z-index: 1;
+    visibility: visible;
+  }
   .task-out[data-slot="3"] {
     visibility: hidden;
+  }
+  .machine[data-js] .task {
+    transform: none;
+    opacity: 1;
   }
   .machine-counter {
     height: 48px;
@@ -577,8 +656,25 @@
 }
 @media (max-width: 389px) {
   .task {
-    font-size: 12px;
-    gap: 6px;
-    padding: 0 8px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 699px) and (max-height: 720px) {
+  .hero {
+    padding-top: calc(var(--nav-offset) + 2px);
+  }
+  .hero-eyebrow {
+    margin-bottom: 12px;
+  }
+  .hero-title {
+    font-size: clamp(38px, 11.6vw, 46px);
+  }
+  .hero-text {
+    margin-top: 14px;
+    font-size: 16px;
+  }
+  .hero-actions {
+    margin-top: 18px;
   }
 }

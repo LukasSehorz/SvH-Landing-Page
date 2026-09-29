@@ -209,26 +209,28 @@ class Core {
 
 /* -------------------------------------------------------- Geometrie */
 
+type Slot = { x: number; y: number; s: number; a: number; z: number };
+
 function geo(W: number, H: number) {
   // Mobil nach Bildschirmbreite (wie im CSS), nicht nach Bühnenbreite
   const mobile = window.matchMedia("(max-width: 699px)").matches;
   if (mobile) {
-    // Diagonaler Fluss: oben links hinein, unten rechts heraus
-    const cardW = Math.min(168, W * 0.5);
-    const cardH = 40;
-    const cx = W / 2;
-    const cy = H * 0.5;
+    // Senkrechter Fluss: oben ein Stapel Arbeit, mitten der Kern, unten der Stapel „erledigt“
+    const cardW = Math.min(240, W * 0.8);
+    const cardH = 44;
+    const x = (W - cardW) / 2;
+    const top = 14;
+    const outY = H - 56 - 14 - cardH - 18;
+    const cy = (top + cardH + outY) / 2;
     return {
       mobile,
       cardW,
       cardH,
-      cx,
+      cx: W / 2,
       cy,
-      R: Math.min(W * 0.25, H * 0.22),
-      visIn: 3,
-      visOut: 2,
-      inSlot: (k: number) => ({ x: 0, y: 108 - k * 46 }),
-      outSlot: (k: number) => ({ x: W - cardW, y: H - 164 + k * 46 }),
+      R: Math.min(W * 0.2, (outY - top - cardH) * 0.36),
+      inSlot: (k: number): Slot => ({ x, y: top + 18 - k * 9, s: 1 - k * 0.05, a: [1, 0.55, 0.28, 0][k] ?? 0, z: 10 - k }),
+      outSlot: (k: number): Slot => ({ x, y: outY + k * 9, s: 1 - k * 0.05, a: [1, 0.55, 0.28, 0][k] ?? 0, z: 10 - k }),
     };
   }
   const cardW = 212;
@@ -244,12 +246,13 @@ function geo(W: number, H: number) {
     cx,
     cy,
     R: Math.min(W * 0.27, H * 0.29),
-    visIn: 3,
-    visOut: 3,
-    inSlot: (k: number) => ({ x: 0, y: slotY(k) }),
-    outSlot: (k: number) => ({ x: W - cardW, y: slotY(k) }),
+    inSlot: (k: number): Slot => ({ x: 0, y: slotY(k), s: 1, a: k < 3 ? 1 : 0, z: 1 }),
+    outSlot: (k: number): Slot => ({ x: W - cardW, y: slotY(k), s: 1, a: k < 3 ? 1 : 0, z: 1 }),
   };
 }
+
+/** Karte auf einen Platz setzen oder dorthin bewegen */
+const slotVars = (sl: Slot) => ({ x: sl.x, y: sl.y, scale: sl.s, autoAlpha: sl.a, zIndex: sl.z });
 
 /* ------------------------------------------------------ Komponente */
 
@@ -296,8 +299,8 @@ export default function HeroMachine() {
     };
 
     const place = () => {
-      queue.forEach((c, k) => gsap.set(c, { x: g.inSlot(k).x, y: g.inSlot(k).y, scale: 1, autoAlpha: k < g.visIn ? 1 : 0 }));
-      done.forEach((c, k) => gsap.set(c, { x: g.outSlot(k).x, y: g.outSlot(k).y, scale: 1, autoAlpha: k < g.visOut ? 1 : 0 }));
+      queue.forEach((c, k) => gsap.set(c, slotVars(g.inSlot(k))));
+      done.forEach((c, k) => gsap.set(c, slotVars(g.outSlot(k))));
     };
     place();
 
@@ -317,7 +320,7 @@ export default function HeroMachine() {
         onComplete: () => {
           // Karten weiterreichen
           label(flyer, TASKS[next % TASKS.length]);
-          gsap.set(flyer, { x: g.inSlot(3).x, y: g.inSlot(3).y, scale: 1, autoAlpha: 0 });
+          gsap.set(flyer, slotVars(g.inSlot(3)));
           queue = [queue[1], queue[2], queue[3], flyer];
           done = [out, done[0], done[1], done[2]];
           current = (current + 1) % TASKS.length;
@@ -330,7 +333,7 @@ export default function HeroMachine() {
           flyer,
           {
             motionPath: {
-              path: [s0, g.mobile ? { x: g.cx * 0.55, y: s0.y + 30 } : { x: g.cx * 0.42, y: s0.y - 34 }, c],
+              path: g.mobile ? [s0, c] : [s0, { x: g.cx * 0.42, y: s0.y - 34 }, c],
               curviness: 1.25,
             },
             scale: 0.18,
@@ -341,19 +344,19 @@ export default function HeroMachine() {
         )
         .to(flyer, { autoAlpha: 0, duration: 0.4, ease: "power1.in" }, 1.0)
         .add(() => core.pulse(), 1.2)
-        .to(queue[1], { y: g.inSlot(0).y, duration: 0.85, ease: "expo.out" }, 0.5)
-        .to(queue[2], { y: g.inSlot(1).y, autoAlpha: 1, duration: 0.85, ease: "expo.out" }, 0.58)
-        .fromTo(queue[3], { y: g.inSlot(3).y, autoAlpha: 0 }, { y: g.inSlot(2).y, autoAlpha: g.visIn > 2 ? 1 : 0, duration: 0.85, ease: "expo.out" }, 0.66);
+        .to(queue[1], { ...slotVars(g.inSlot(0)), duration: 0.9, ease: "expo.out" }, 0.5)
+        .to(queue[2], { ...slotVars(g.inSlot(1)), duration: 0.9, ease: "expo.out" }, 0.58)
+        .fromTo(queue[3], slotVars(g.inSlot(3)), { ...slotVars(g.inSlot(2)), duration: 0.9, ease: "expo.out" }, 0.66);
       done.slice(0, 3).forEach((d, k) => {
-        tl!.to(d, { y: g.outSlot(k + 1).y, autoAlpha: k + 1 < g.visOut ? 1 : 0, duration: k + 1 < g.visOut ? 0.75 : 0.6, ease: "expo.out" }, 1.2 + k * 0.06);
+        tl!.to(d, { ...slotVars(g.outSlot(k + 1)), duration: 0.8, ease: "expo.out" }, 1.2 + k * 0.06);
       });
       tl
         .fromTo(
           out,
-          { x: c.x, y: c.y, scale: 0.16, autoAlpha: 0 },
+          { x: c.x, y: c.y, scale: 0.16, autoAlpha: 0, zIndex: o0.z + 1 },
           {
             motionPath: {
-              path: [c, g.mobile ? { x: g.cx + 20, y: o0.y - 10 } : { x: g.cx + (o0.x - g.cx) * 0.55, y: o0.y - 30 }, o0],
+              path: g.mobile ? [c, o0] : [c, { x: g.cx + (o0.x - g.cx) * 0.55, y: o0.y - 30 }, o0],
               curviness: 1.2,
             },
             scale: 1,

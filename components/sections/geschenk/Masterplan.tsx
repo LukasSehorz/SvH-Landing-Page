@@ -53,6 +53,17 @@ function Line({ w }: { w: number }) {
   return <span className="md-line" style={{ "--w": `${w}%` } as V} />;
 }
 
+// Kurzes Fazit als Blindzeilen, nur im Hochformat sichtbar (füllt die Seite wie im echten Bericht)
+function Note({ w }: { w: [number, number, number] }) {
+  return (
+    <div className="md-note">
+      <Line w={w[0]} />
+      <Line w={w[1]} />
+      <Line w={w[2]} />
+    </div>
+  );
+}
+
 export function Stamp() {
   // Siegel mit feinem Strichkranz, gesetzt in Violett auf das Deckblatt
   const ticks = Array.from({ length: 60 }, (_, i) => i * 6);
@@ -128,6 +139,7 @@ export default function Masterplan({ label }: Readonly<{ label: string }>) {
                 ))}
               </ul>
             </div>
+            <Note w={[94, 86, 52]} />
             <Foot n={2} />
           </div>
           <span className="md-shade" />
@@ -153,6 +165,7 @@ export default function Masterplan({ label }: Readonly<{ label: string }>) {
                 </li>
               ))}
             </ol>
+            <Note w={[90, 78, 60]} />
             <Foot n={3} />
           </div>
           <span className="md-shade" />

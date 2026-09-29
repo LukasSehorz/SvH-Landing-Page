@@ -130,8 +130,10 @@
   fill: #b9a5ff;
   stroke: none;
 }
+/* Strichmuster 3 statt 1: mit non-scaling-stroke rechnet Chrome die Strichlänge
+   im Bildschirmmaß, bei vergrößertem SVG bliebe sonst ein Rest ungezeichnet. */
 .pm-draw {
-  stroke-dasharray: 1;
+  stroke-dasharray: 3;
   stroke-dashoffset: 0;
   animation: pm-draw 2.4s var(--ease-in-out) both;
   animation-delay: 0.2s;
@@ -144,7 +146,7 @@
 }
 @keyframes pm-draw {
   from {
-    stroke-dashoffset: 1;
+    stroke-dashoffset: 3;
   }
   to {
     stroke-dashoffset: 0;
@@ -786,7 +788,7 @@
   top: 50%;
   right: 50%;
   transform: translate(50%, -50%);
-  opacity: 0.22;
+  opacity: 0.16;
 }
 @media (min-width: 900px) {
   .pg-head--nf .pg-pitch {

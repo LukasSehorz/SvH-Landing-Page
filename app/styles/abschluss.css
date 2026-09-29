@@ -4,10 +4,12 @@
   --err: #ffa3b8;
   position: relative;
   overflow: clip;
+  /* Karte ändert beim Schrittwechsel die Höhe: keine Scroll-Verankerung, sonst springt die Ansicht */
+  overflow-anchor: none;
   padding-top: clamp(72px, 9vw, 140px);
 }
 
-/* Hintergrund: sehr dezentes Flutlicht + Strafraum */
+/* Hintergrund: ruhiger Lichtschein */
 .abs-bg {
   position: absolute;
   inset: 0;
@@ -23,21 +25,6 @@
   translate: -50% 0;
   background: radial-gradient(50% 45% at 50% 30%, rgba(124, 106, 255, 0.1), rgba(91, 140, 255, 0.04) 55%, transparent 100%);
 }
-/* Strafraum oben am Abschnitt; blendet nach unten aus, bevor Text beginnt */
-.abs-pitch {
-  left: 50%;
-  top: 0;
-  width: 680px;
-  height: auto;
-  translate: -50% 0;
-  opacity: 0.55;
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 12%, transparent 40%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 12%, transparent 40%);
-}
-.abs-pitch .spot {
-  fill: #9d8cff;
-}
-
 .abs-grid {
   position: relative;
   z-index: 1;
@@ -171,13 +158,14 @@
   float: left;
   width: 100%;
   padding: 0;
-  margin: 0 0 6px;
+  margin: 0 0 16px;
 }
 .frm-legend + * {
   clear: both;
 }
 .frm-legend--solo {
   float: none;
+  margin-bottom: 0;
 }
 .frm-title {
   font-family: var(--font-display);
@@ -196,8 +184,10 @@
   outline-offset: 4px;
 }
 .frm-hint {
-  margin-bottom: 16px;
+  display: block;
+  margin-top: 4px;
   font-size: 15px;
+  font-weight: 400;
   color: var(--ink-3);
 }
 
@@ -225,7 +215,7 @@
   align-items: center;
   gap: 12px;
   min-height: 60px;
-  padding: 10px 12px 10px 14px;
+  padding: 10px 8px 10px 14px;
   border-radius: 14px;
   border: 1px solid rgba(244, 244, 246, 0.13);
   background: rgba(255, 255, 255, 0.022);
@@ -253,11 +243,15 @@
 .frm-tile-txt {
   flex: 1 1 auto;
 }
-/* Häkchen fließt rechts neben der ersten Zeile: nie ein Wortbruch, auch bei 360 px */
+/* Mobil: Häkchen fließt rechts neben der ersten Zeile (16 px). Lange Wörter wie
+   „Bewerbungen“ passen daneben, der Rest der Zeilen nutzt die volle Breite.
+   Gemessen: bei 360 px bleiben 2 px Luft, nie ein Wortbruch. */
 .frm-tile .frm-tick {
   position: static;
   float: right;
-  margin: 0.06em 0 2px 8px;
+  width: 16px;
+  height: 16px;
+  margin: 0.12em 0 0 3px;
 }
 @media (hover: hover) {
   .frm-tile:hover,
@@ -492,7 +486,7 @@
   margin-top: 22px;
 }
 .frm-q + .frm-sizes {
-  margin-top: 14px;
+  margin-top: 12px;
 }
 .frm-label {
   font-size: 15px;
@@ -500,7 +494,6 @@
   color: var(--ink-2);
 }
 .frm-opt {
-  margin-left: 4px;
   font-weight: 400;
   color: var(--ink-3);
 }
@@ -573,8 +566,7 @@
 }
 
 /* Einwilligung */
-.frm-fields + .frm-block,
-.frm-block + .frm-block {
+.frm-fields + .frm-block {
   margin-top: 22px;
 }
 .frm-consent {
@@ -646,6 +638,19 @@
 }
 .frm-submit[disabled] {
   cursor: progress;
+}
+/* Langer Absende-Text: bis 399 px enger gesetzt, damit er ohne Überlauf in eine Zeile passt */
+@media (max-width: 399px) {
+  .frm-submit {
+    gap: 8px;
+    padding-inline: 16px;
+    font-size: 15.5px;
+  }
+}
+@media (max-width: 369px) {
+  .frm-submit .btn-arrow {
+    display: none;
+  }
 }
 .frm-spin {
   width: 18px;
@@ -838,7 +843,16 @@ a.abs-direct-row:hover .abs-direct-ic {
   }
   .frm-tile {
     font-size: 16px;
-    padding-right: 14px;
+    padding-right: 44px;
+  }
+  .frm-tile .frm-tick {
+    position: absolute;
+    float: none;
+    top: 50%;
+    right: 14px;
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0;
   }
   .frm-fields {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -858,7 +872,10 @@ a.abs-direct-row:hover .abs-direct-ic {
 
 @media (max-width: 374px) {
   .frm-card {
-    padding-inline: 14px;
+    padding-inline: 12px;
+  }
+  .frm-tiles {
+    gap: 6px;
   }
   .frm-tile {
     font-size: 15px;
@@ -889,11 +906,6 @@ a.abs-direct-row:hover .abs-direct-ic {
   }
   .abs-head {
     padding-top: 12px;
-  }
-  .abs-pitch {
-    width: 1320px;
-    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 14%, transparent 34%);
-    mask-image: linear-gradient(180deg, #000 0%, #000 14%, transparent 34%);
   }
   .frm-card {
     padding: 26px 36px 36px;

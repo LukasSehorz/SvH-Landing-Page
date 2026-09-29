@@ -19,6 +19,7 @@ import { abschluss, ergebnisse } from "@/app/copy";
 import { company } from "@/app/content";
 import { EMAIL, GROESSEN, STUNDEN, ZEITFRESSER, mailtoAdresse, type Anfrage } from "@/app/api/anfrage/format";
 import { Arrow, Mail, Phone } from "@/components/system/Icons";
+import Rich from "@/components/system/Rich";
 import { useMotionMode } from "@/lib/hooks";
 import AutoHeight from "./AutoHeight";
 import Zahl from "./Zahl";
@@ -157,6 +158,8 @@ export default function Formular() {
       insBild(el.closest(".frm-card"), reduced);
       el.focus({ preventScroll: true });
     });
+    // nach dem Höhenwechsel der Karte noch einmal nachsehen
+    window.setTimeout(() => insBild(el.closest(".frm-card"), reduced), reduced ? 120 : 950);
   };
 
   const werte = { tasks, employees, consent, ...t };
@@ -378,7 +381,9 @@ export default function Formular() {
                     <h3 className="frm-result-title" tabIndex={-1} ref={fokusErgebnis}>
                       {abschluss.success(vorname(t.name))}
                     </h3>
-                    <p className="frm-result-text">{abschluss.successText}</p>
+                    <p className="frm-result-text">
+                      <Rich text={abschluss.successText} />
+                    </p>
                   </>
                 ) : status === "fallback" ? (
                   <>
@@ -386,7 +391,7 @@ export default function Formular() {
                       <Mail size={24} />
                     </span>
                     <h3 className="frm-result-title frm-result-title--sm" tabIndex={-1} ref={fokusErgebnis}>
-                      {abschluss.fallback}
+                      <Rich text={abschluss.fallback} />
                     </h3>
                     <p className="frm-result-text">
                       <a className="frm-link" href={mailto ?? `mailto:${company.email}`}>
@@ -483,15 +488,13 @@ export default function Formular() {
                   >
                     {step === 0 ? (
                       <>
-                        <fieldset className="frm-fs frm-block" aria-describedby={errors.tasks ? "frm-task-0-err" : "frm-tasks-hint"}>
+                        <fieldset className="frm-fs frm-block" aria-describedby={errors.tasks ? "frm-task-0-err" : undefined}>
                           <legend className="frm-legend">
                             <h3 className="frm-title" tabIndex={-1} ref={fokusTitel(0)}>
                               {step1.title}
                             </h3>
+                            <span className="frm-hint">{step1.hint}</span>
                           </legend>
-                          <p className="frm-hint" id="frm-tasks-hint">
-                            {step1.hint}
-                          </p>
                           <div className="frm-tiles">
                             {ZEITFRESSER.map((tile, i) => {
                               const on = tasks.includes(tile);
@@ -512,7 +515,7 @@ export default function Formular() {
                                   </span>
                                   <span className="frm-tile-txt">
                                     <span className="frm-tick" aria-hidden="true">
-                                      <Haken size={12} />
+                                      <Haken size={11} />
                                     </span>
                                     {tile}
                                   </span>

@@ -21,7 +21,7 @@ function WindowState({ state }: { state: 0 | 1 | 2 }) {
   return (
     <div className="cs-box">
       <div className="cw">
-        <WindowHead count={state === 2 ? 0 : S.total} time={state === 0 ? "16:48" : "17:05"} />
+        <WindowHead count={state === 2 ? 0 : S.total} time="16:48" />
         <div className="cw-list">
           {state === 0 ? (
             <div className="cs-flow">
@@ -62,7 +62,7 @@ function WindowState({ state }: { state: 0 | 1 | 2 }) {
 function StackState({ state }: { state: 0 | 1 | 2 }) {
   return (
     <div className="cm">
-      <StackHead count={state === 2 ? 0 : S.total} time={state === 0 ? "16:48" : "17:05"} />
+      <StackHead count={state === 2 ? 0 : S.total} time="16:48" />
       {state === 0 ? (
         <div className="cm-list cs-flow">
           {NEWEST_FIRST.slice(0, 5).map((i) => (

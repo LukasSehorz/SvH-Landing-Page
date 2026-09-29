@@ -132,8 +132,11 @@ export default function Consent() {
             <p className="cons-title" id="cons-titel">
               {einwilligung.titel}
             </p>
-            <p className="cons-body" id="cons-text">
+            <p className="cons-body cons-long" id="cons-text">
               {einwilligung.body} <Link href={einwilligung.mehrHref}>{einwilligung.mehr}</Link>
+            </p>
+            <p className="cons-body cons-short">
+              {einwilligung.kurz} <Link href={einwilligung.mehrHref}>{einwilligung.kurzLink}</Link>
             </p>
             <div className="cons-buttons">
               <button type="button" className="cons-btn" onClick={() => entscheide("alle")}>

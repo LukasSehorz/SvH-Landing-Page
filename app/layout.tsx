@@ -23,7 +23,6 @@ export const metadata: Metadata = {
   metadataBase: new URL(company.url),
   title: { default: meta.title, template: "%s | SvH Consulting" },
   description: meta.description,
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "de_DE",

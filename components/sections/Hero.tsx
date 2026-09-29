@@ -2,6 +2,7 @@ import { cta, hero } from "@/app/copy";
 import Cta from "@/components/system/Cta";
 import Rich from "@/components/system/Rich";
 import HeroMachine from "./HeroMachine";
+import { Check } from "@/components/system/Icons";
 
 export default function Hero() {
   return (
@@ -39,12 +40,17 @@ export default function Hero() {
             {hero.sub}
           </p>
           <ul className="hero-proof" data-hero-in="" style={{ "--i": 4 } as React.CSSProperties}>
-            {hero.proof.map((p) => (
+            {hero.proof.map((p, i) => (
               <li key={p.big}>
+                {i === 2 ? (
+                  <span className="proof-check" aria-hidden="true">
+                    <Check size={13} />
+                  </span>
+                ) : null}
                 <strong>
                   <Rich text={p.big} />
                 </strong>
-                <span>{p.small}</span>
+                <span className="proof-small">{p.small}</span>
               </li>
             ))}
           </ul>

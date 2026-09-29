@@ -299,7 +299,7 @@
     padding-bottom: 0.4em;
   }
   .team-grid {
-    grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
     gap: 16px;
     margin-top: clamp(48px, 5vw, 72px);
   }
@@ -387,7 +387,7 @@
   color: var(--lav);
 }
 .faq-q-text {
-  text-wrap: pretty;
+  text-wrap: balance;
 }
 .faq-icon {
   position: relative;

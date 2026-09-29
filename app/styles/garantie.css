@@ -5,20 +5,21 @@
 }
 .gar-grid {
   display: grid;
-  gap: 36px;
+  gap: 28px;
 }
+
 .gar-seal-wrap {
   display: flex;
   justify-content: center;
 }
 .seal {
   position: relative;
-  width: min(236px, 64vw);
+  width: min(200px, 56vw);
   aspect-ratio: 1;
 }
 .seal-glow {
   position: absolute;
-  inset: -22%;
+  inset: -14%;
   border-radius: 50%;
   background: radial-gradient(closest-side, rgba(124, 106, 255, 0.16), rgba(91, 140, 255, 0.05) 55%, transparent 100%);
   pointer-events: none;

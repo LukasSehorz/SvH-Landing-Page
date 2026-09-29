@@ -171,7 +171,7 @@ export const ergebnisse = {
   label: "Ergebnisse",
   big: "35+",
   bigLabel: "umgesetzte Projekte",
-  title: "Stunden, die unsere Kunden _zurückbekommen_ haben.",
+  title: "Stunden, die unsere\u00a0Kunden _zurückbekommen_\u00a0haben.",
   builtLabel: "Was wir gebaut haben", // Beschriftung laut TEXTE.md
   cases: [
     {
@@ -538,6 +538,9 @@ export const einwilligung = {
   // gekürzt gegenüber der alten Seite, damit das Feld Knopf und Überschrift nicht verdeckt
   body: "Mit Ihrer Zustimmung zählen wir über Google, welche Seiten gelesen werden. Dabei wird etwas auf Ihrem Gerät gespeichert. Ohne Zustimmung passiert davon nichts.",
   mehr: "Einzelheiten stehen in der Datenschutzerklärung.",
+  // Kurzfassung für niedrige Bildschirme (kompakte Leiste)
+  kurz: "Dürfen wir mit Google messen, welche Seiten gelesen werden?",
+  kurzLink: "Datenschutz",
   mehrHref: "/datenschutz",
   alle: "Einverstanden",
   notwendig: "Nur das Nötige",

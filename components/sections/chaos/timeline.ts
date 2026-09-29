@@ -15,7 +15,7 @@ export const BOX_W = 600;
 export const BOX_H = 568;
 const LIST_H = 424; // 540 Fensterhöhe − 40 Leiste − 76 Kopf
 const LIST_TOP_M = 36; // Abstand Kopfzeile → Stapel (mobil, wie im CSS)
-const SL = 6; // Versatz der Karten, die im Stapel hervorlugen
+const SL = 7; // Versatz der Karten, die im Stapel hervorlugen
 
 const smooth = (x: number) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x));
 
@@ -26,7 +26,7 @@ export function fitScene(root: HTMLElement, variant: Variant) {
   if (!box || !fit) return;
   let k: number;
   if (variant === "win") {
-    k = Math.min(box.clientWidth / BOX_W, box.clientHeight / BOX_H, 1.2);
+    k = Math.min(box.clientWidth / BOX_W, box.clientHeight / BOX_H, 1.3);
   } else {
     const cardH = fit.querySelector<HTMLElement>(".ce")?.offsetHeight || 60;
     const need = LIST_TOP_M + 4 * (cardH + 2 * SL) + 3 * 8 + 4;
@@ -82,7 +82,7 @@ export function buildTimeline(root: HTMLElement, variant: Variant, E: number, SS
 
   /* ------------------------------------------------ Startzustand */
   gsap.set(entries, { transformOrigin: "50% 100%", x: 0, scale: 1 });
-  entries.forEach((el, i) => gsap.set(el, { y: i < 3 ? slot(2 - i) : slot(0) - pitch * 0.55, opacity: i < 3 ? 1 : 0 }));
+  entries.forEach((el, i) => gsap.set(el, { y: i < 3 ? slot(2 - i) : slot(0) - 16, opacity: i < 3 ? 1 : 0 }));
   gsap.set(lits, { opacity: 0 });
   gsap.set(inners, { opacity: 1 });
   heads.forEach((h, g) => gsap.set(h, { y: gTop(g) + 6, opacity: 0 }));
@@ -90,7 +90,11 @@ export function buildTimeline(root: HTMLElement, variant: Variant, E: number, SS
   gsap.set(line, { y: lineA, opacity: 0 });
   gsap.set(sum, { y: sumY + 16, opacity: 0 });
   gsap.set(chips, { opacity: 0, y: 6 });
-  if (toasts.length) gsap.set(toasts, { opacity: 0, y: -10, scale: 0.96, transformOrigin: "100% 0%" });
+  const toastInner = toasts.map((t) => Array.from(t.children) as HTMLElement[]);
+  if (toasts.length) {
+    gsap.set(toasts, { opacity: 0, y: -10, scale: 0.96, transformOrigin: "100% 0%" });
+    gsap.set(toastInner.flat(), { opacity: 1 });
+  }
   if (fade) gsap.set(fade, { opacity: 1 });
   gsap.set(countBg, { opacity: 1 });
   if (glow) gsap.set(glow, { opacity: 0 });
@@ -138,11 +142,13 @@ export function buildTimeline(root: HTMLElement, variant: Variant, E: number, SS
   const renderArrivals = () => {
     const n = arr.n;
     for (let i = 0; i < N; i++) {
+      // der Neue gleitet erst ein, wenn die anderen Platz gemacht haben
       const appear = i < 3 ? 1 : smooth(n - i);
+      const shown = i < 3 ? 1 : smooth((n - i - 0.35) / 0.65);
       let pushes = 0;
       for (let j = i + 1; j < N; j++) pushes += j < 3 ? 1 : smooth(n - j);
-      setY[i](slot(pushes) - (1 - appear) * pitch * 0.55);
-      setO[i](appear);
+      setY[i](slot(pushes) - (1 - appear) * 16);
+      setO[i](shown);
     }
   };
   // beschleunigt: anfangs gemächlich, am Ende Schlag auf Schlag
@@ -156,7 +162,9 @@ export function buildTimeline(root: HTMLElement, variant: Variant, E: number, SS
     tl.to(t, { opacity: 1, y: 0, scale: 1, duration: D(0.03), ease: "power2.out" }, a);
     for (let o = 0; o < k; o++) {
       const depth = k - o;
-      tl.to(toasts[o], { y: -11 * depth, scale: 1 - 0.05 * depth, opacity: depth === 1 ? 0.7 : 0.42, duration: D(0.03), ease: "power2.out" }, a);
+      tl.to(toasts[o], { y: -11 * depth, scale: 1 - 0.05 * depth, opacity: depth === 1 ? 0.75 : 0.45, duration: D(0.03), ease: "power2.out" }, a);
+      // hintere Mitteilungen: nur die Kante bleibt sichtbar
+      if (depth === 1) tl.to(toastInner[o], { opacity: 0, duration: D(0.02) }, a);
     }
   });
 
@@ -184,10 +192,12 @@ export function buildTimeline(root: HTMLElement, variant: Variant, E: number, SS
     const g = ITEMS[i].g;
     tl.to(
       el,
-      { y: gFront(g) + r * SL, scale: 1 - r * 0.045, opacity: r === 0 ? 1 : r === 1 ? 0.72 : 0.46, duration: D(0.11), ease: "power3.inOut" },
+      { y: gFront(g) + r * SL, scale: 1 - r * 0.045, opacity: r === 0 ? 1 : r === 1 ? 0.8 : 0.55, duration: D(0.11), ease: "power3.inOut" },
       G0 + g * D(0.007),
     );
     if (r === 0) tl.to(lits[i], { opacity: 0.5, duration: D(0.03) }, T(0.58));
+    // hintere Karten im Stapel: nur die Kante bleibt sichtbar
+    else tl.to(inners[i], { opacity: 0, duration: D(0.05) }, G0 + g * D(0.007) + D(0.03));
   });
   heads.forEach((h, g) => tl.to(h, { opacity: 1, y: gTop(g), duration: D(0.04), ease: "power2.out" }, T(0.565) + g * D(0.006)));
 
@@ -207,11 +217,14 @@ export function buildTimeline(root: HTMLElement, variant: Variant, E: number, SS
   GROUPS.forEach((grp, g) => {
     const center = gFront(g) + cardH / 2;
     const at = L0 + LD * ((center - lineA) / (lineB - lineA)) - D(0.006);
+    // erst verschwindet der Inhalt, dann kommt die erledigte Zeile (kein Text über Text)
     ofGroup(g).forEach((i) => {
-      if (rank[i] === 0) tl.to(entries[i], { opacity: 0, duration: D(0.018) }, at);
-      else tl.to(entries[i], { y: gFront(g), scale: 0.97, opacity: 0, duration: D(0.022), ease: "power2.inOut" }, at);
+      if (rank[i] === 0) {
+        tl.to(inners[i], { opacity: 0, duration: D(0.01) }, at);
+        tl.to(entries[i], { opacity: 0, duration: D(0.01) }, at + D(0.022));
+      } else tl.to(entries[i], { y: gFront(g), scale: 0.97, opacity: 0, duration: D(0.022), ease: "power2.inOut" }, at);
     });
-    tl.to(dones[g], { opacity: 1, duration: D(0.02) }, at);
+    tl.to(dones[g], { opacity: 1, duration: D(0.016) }, at + D(0.009));
     if (heads[g]) tl.to(heads[g], { opacity: 0, duration: D(0.018) }, at);
     left -= grp.count;
     tl.to(cnt, { v: left, duration: D(0.02), onUpdate: putCount }, at);

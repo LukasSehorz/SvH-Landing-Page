@@ -16,6 +16,7 @@ export default function Cta({
   className = "",
   onClick,
   arrow = true,
+  inline = true,
 }: Readonly<{
   href: string;
   children: ReactNode;
@@ -24,6 +25,8 @@ export default function Cta({
   className?: string;
   onClick?: () => void;
   arrow?: boolean;
+  /** Knopf im Seiteninhalt (nicht Leiste/feste CTA): die feste CTA-Leiste weicht ihm aus */
+  inline?: boolean;
 }>) {
   const ref = useRef<HTMLAnchorElement>(null);
 
@@ -43,7 +46,15 @@ export default function Cta({
 
   const cls = `btn ${variant === "primary" ? "btn-primary" : "btn-ghost"} ${size === "sm" ? "btn-sm" : ""} ${className}`;
   return (
-    <Link ref={ref} href={href} className={cls} onPointerMove={onMove} onPointerLeave={onLeave} onClick={onClick}>
+    <Link
+      ref={ref}
+      href={href}
+      className={cls}
+      onPointerMove={onMove}
+      onPointerLeave={onLeave}
+      onClick={onClick}
+      data-cta-inline={inline && variant === "primary" ? "" : undefined}
+    >
       <span>{children}</span>
       {arrow ? (
         <span className="btn-arrow" aria-hidden="true">

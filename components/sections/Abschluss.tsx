@@ -3,12 +3,11 @@ import { company } from "@/app/content";
 import Rich from "@/components/system/Rich";
 import { Clock, Mail, Phone } from "@/components/system/Icons";
 import Formular from "./abschluss/Formular";
-import Strafraum from "./abschluss/Strafraum";
 import { Haken } from "./abschluss/Symbole";
 
 /* Abschluss (#termin): Überschrift, Formular in drei Schritten, Direktkontakt.
-   Hintergrund: ruhiger Lichtschein und der Strafraum als Spielfeldlinie
-   (das Flutlicht-Foto wirkte hinter Text unscharf und ist bewusst weggelassen).
+   Hintergrund: nur ein ruhiger Lichtschein. Flutlicht-Foto (unscharf hinter Text)
+   und Strafraum-Linien (lagen unter der Menüleiste) sind bewusst weggelassen.
    data-hide-mobile-cta: solange dieser Bereich im Bild ist, blendet die feste
    CTA-Leiste (MobileCta) aus, damit sie keine Felder verdeckt. */
 
@@ -19,7 +18,6 @@ export default function Abschluss() {
     <section className="section abs" id="termin" aria-labelledby="abs-title" data-hide-mobile-cta="">
       <div className="abs-bg" aria-hidden="true">
         <div className="abs-glow" />
-        <Strafraum />
       </div>
 
       <div className="shell abs-grid">
@@ -76,7 +74,7 @@ export default function Abschluss() {
                 <span className="abs-direct-ic">
                   <Clock />
                 </span>
-                <span className="abs-direct-val abs-direct-val--sm">{abschluss.direct.hours}</span>
+                <span className="abs-direct-val abs-direct-val--sm">{abschluss.direct.hours.replace(/(\d+) Uhr/, "$1\u00a0Uhr")}</span>
               </p>
             </li>
           </ul>

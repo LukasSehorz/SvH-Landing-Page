@@ -11,10 +11,10 @@ export default function Rich({ text, manualScript = false }: Readonly<{ text: st
       {parts.map((p, i) => {
         if (p.startsWith("*") && p.endsWith("*")) return <ScriptWord key={i} manual={manualScript}>{p.slice(1, -1)}</ScriptWord>;
         if (p.startsWith("_") && p.endsWith("_")) return <span key={i} className="grad">{p.slice(1, -1)}</span>;
-        // Bindestrich-Wörter nicht am Bindestrich trennen (E-Mails, KI-Masterplan)
+        // Wörter mit Bindestrich nie am Bindestrich umbrechen (E-Mails, KI-Masterplan, Geld-zurück-Garantie)
         return (
           <Fragment key={i}>
-            {p.split(/(\b[A-ZÄÖÜ]{1,2}-[\wäöüßÄÖÜ]+)/g).map((w, j) => (j % 2 ? <span key={j} className="nb">{w}</span> : w))}
+            {p.split(/([\wäöüßÄÖÜ]+(?:-[\wäöüßÄÖÜ]+)+[.,!?:;»«“„]*)/g).map((w, j) => (j % 2 ? <span key={j} className="nb">{w}</span> : w))}
           </Fragment>
         );
       })}

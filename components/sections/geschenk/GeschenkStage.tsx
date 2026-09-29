@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { geschenk } from "@/app/copy";
 import Rich from "@/components/system/Rich";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { useMediaQuery, useMotionMode } from "@/lib/hooks";
 import Masterplan from "./Masterplan";
 
@@ -23,7 +23,7 @@ const LABEL = `${D.coverTitle} ${D.coverSub}, ${D.coverBy}. ${D.sample}.`;
 const N = 4;
 
 // Stapel: jede Seite dahinter etwas kleiner und tiefer (in % der Seitengröße)
-const stackAt = (d: number) => ({ xPercent: 0, yPercent: d * 4.4, scale: 1 - d * 0.05, rotation: 0 });
+const stackAt = (d: number) => ({ xPercent: 0, yPercent: d * 4.8, scale: 1 - d * 0.05, rotation: 0 });
 // Übersicht: alle vier Seiten als ruhiges 2 × 2-Raster
 const gridAt = (i: number) => ({
   xPercent: (i % 2 ? 1 : -1) * 25.9,
@@ -31,7 +31,15 @@ const gridAt = (i: number) => ({
   scale: 0.47,
   rotation: 0,
 });
+// Handy, Zustand 4: Deckblatt wieder vorn, die übrigen Seiten leicht aufgefächert dahinter
+const FAN = [
+  { xPercent: 0, yPercent: 0, scale: 1, rotation: 0 },
+  { xPercent: -1.2, yPercent: 3.2, scale: 0.97, rotation: -2.4 },
+  { xPercent: 1.4, yPercent: 4.6, scale: 0.955, rotation: 2 },
+  { xPercent: 0.4, yPercent: 7.2, scale: 0.935, rotation: 4.2 },
+];
 const depthOf = (i: number, front: number) => (i - front + N) % N;
+const frontOf = (state: number) => (state === 4 ? 0 : state);
 
 export default function GeschenkStage() {
   const motionMode = useMotionMode();
@@ -57,36 +65,51 @@ export default function GeschenkStage() {
       let tl: gsap.core.Timeline | null = null;
 
       const applyZ = (state: number) => {
-        const front = state === 4 ? 0 : state;
-        pages.forEach((p, i) => gsap.set(p, { zIndex: 10 - depthOf(i, front) }));
+        pages.forEach((p, i) => gsap.set(p, { zIndex: 10 - depthOf(i, frontOf(state)) }));
       };
-      const shadeFor = (i: number, state: number) => (state === 4 ? 0 : depthOf(i, state) * 0.035);
-      const posFor = (i: number, state: number) => (state === 4 ? gridAt(i) : stackAt(depthOf(i, state)));
+      const shadeFor = (i: number, state: number) => (state === 4 && desktop() ? 0 : depthOf(i, frontOf(state)) * 0.025);
+      const posFor = (i: number, state: number) => {
+        if (state === 4) return desktop() ? gridAt(i) : FAN[i];
+        return stackAt(depthOf(i, state));
+      };
 
-      // Inhalt der Seite baut sich auf, sobald sie vorn liegt
-      const build = (i: number) => {
+      // Inhalt einer Seite: prep() setzt den Anfang (sofort beim Wechsel, damit sich
+      // beim Überblenden keine zwei Inhalte überlagern), build() baut ihn auf
+      const parts = (i: number) => {
         const pg = pages[i];
-        if (i === 1) {
-          const bars = pg.querySelectorAll(".md-bar");
-          gsap.killTweensOf(bars);
-          gsap.fromTo(bars, { scaleX: 0 }, { scaleX: 1, duration: 1.1, ease: "expo.out", stagger: 0.07 });
-        } else if (i === 2) {
-          const items = pg.querySelectorAll(".md-top li");
-          const lines = pg.querySelectorAll(".md-top .md-line");
-          const gauges = pg.querySelectorAll(".md-gauge i");
-          gsap.killTweensOf([items, lines, gauges]);
-          gsap.fromTo(items, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.1 });
-          gsap.fromTo(lines, { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "expo.out", stagger: 0.04, delay: 0.12 });
-          gsap.fromTo(gauges, { scaleX: 0 }, { scaleX: 1, duration: 1, ease: "expo.out", stagger: 0.1, delay: 0.25 });
-        } else if (i === 3) {
-          const checks = pg.querySelectorAll(".md-check path");
-          const boxes = pg.querySelectorAll(".md-check");
-          const lines = pg.querySelectorAll(".md-weg .md-line");
-          gsap.killTweensOf([checks, boxes, lines]);
-          gsap.fromTo(lines, { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "expo.out", stagger: 0.05 });
-          gsap.fromTo(boxes, { "--f": 0 }, { "--f": 1, duration: 0.3, ease: "power2.out", stagger: 0.07, delay: 0.15 });
-          gsap.fromTo(checks, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.4, ease: "power2.out", stagger: 0.07, delay: 0.22 });
-        }
+        return {
+          bars: pg.querySelectorAll(".md-bar"),
+          items: pg.querySelectorAll(".md-top li"),
+          lines: pg.querySelectorAll(".md-top .md-line, .md-weg .md-line, .md-note .md-line"),
+          gauges: pg.querySelectorAll(".md-gauge i"),
+          checks: pg.querySelectorAll(".md-check path"),
+          boxes: pg.querySelectorAll(".md-check"),
+          heads: pg.querySelectorAll(".md-weg-t"),
+        };
+      };
+      const prep = (i: number) => {
+        if (i === 0) return;
+        const c = parts(i);
+        const all = [c.bars, c.items, c.lines, c.gauges, c.checks, c.boxes, c.heads];
+        gsap.killTweensOf(all);
+        if (c.bars.length) gsap.set(c.bars, { scaleX: 0 });
+        if (c.items.length) gsap.set(c.items, { autoAlpha: 0, y: 8 });
+        if (c.lines.length) gsap.set(c.lines, { scaleX: 0 });
+        if (c.gauges.length) gsap.set(c.gauges, { scaleX: 0 });
+        if (c.heads.length) gsap.set(c.heads, { autoAlpha: 0, y: 6 });
+        if (c.boxes.length) gsap.set(c.boxes, { "--f": 0 });
+        if (c.checks.length) gsap.set(c.checks, { strokeDashoffset: 1 });
+      };
+      const build = (i: number) => {
+        if (i === 0) return;
+        const c = parts(i);
+        if (c.bars.length) gsap.to(c.bars, { scaleX: 1, duration: 1.1, ease: "expo.out", stagger: 0.07 });
+        if (c.items.length) gsap.to(c.items, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.1 });
+        if (c.heads.length) gsap.to(c.heads, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out", stagger: 0.1 });
+        if (c.lines.length) gsap.to(c.lines, { scaleX: 1, duration: 0.9, ease: "expo.out", stagger: 0.035, delay: 0.12 });
+        if (c.gauges.length) gsap.to(c.gauges, { scaleX: 1, duration: 1, ease: "expo.out", stagger: 0.1, delay: 0.25 });
+        if (c.boxes.length) gsap.to(c.boxes, { "--f": 1, duration: 0.3, ease: "power2.out", stagger: 0.06, delay: 0.2 });
+        if (c.checks.length) gsap.to(c.checks, { strokeDashoffset: 0, duration: 0.4, ease: "power2.out", stagger: 0.06, delay: 0.27 });
       };
 
       // Startzustand im Browser: Stapel mit Deckblatt vorn
@@ -96,72 +119,83 @@ export default function GeschenkStage() {
       gsap.set(el.querySelectorAll(".md-check path"), { strokeDasharray: 1, strokeDashoffset: 0 });
       applyZ(0);
 
+      // Übergänge laufen immer vollständig und ruhig durch; wer schneller scrollt,
+      // bekommt danach direkt den zuletzt gewünschten Zustand (keine Sprünge)
+      let want = 0;
+      const request = (s: number) => {
+        want = s;
+        if (!tl || !tl.isActive()) go(want);
+      };
+      const settle = () => {
+        if (want !== cur) go(want);
+      };
+
       const go = (next: number) => {
         if (next === cur) return;
         const prev = cur;
         cur = next;
-        if (tl) {
-          tl.kill();
-          gsap.set(pages, { autoAlpha: 1 });
-        }
-        tl = gsap.timeline();
+        tl = gsap.timeline({ onComplete: settle });
         const T = 0.8;
 
-        if (next === 4 || prev === 4) {
+        if (desktop() && (next === 4 || prev === 4)) {
           // Stapel ↔ Übersicht: alle Seiten gleiten gleichzeitig an ihren Platz
           applyZ(next === 4 ? 0 : next);
           pages.forEach((p, i) => {
             tl!.to(p, { ...posFor(i, next), duration: 0.95, ease: "power3.inOut" }, i * 0.035);
             tl!.to(shades[i], { opacity: shadeFor(i, next), duration: 0.6, ease: "power2.out" }, 0);
           });
-          if (next !== 4) tl.add(() => build(next), 0.45);
+          // Inhalt bleibt dabei stehen (er war in der Übersicht schon sichtbar)
           return;
         }
 
-        const forward = depthOf(next, prev) === 1;
+        const fNext = frontOf(next);
+        const fPrev = frontOf(prev);
+        const forward = depthOf(fNext, fPrev) === 1;
         if (forward) {
           // Die vordere Seite hebt sich ab und legt sich nach hinten, die nächste rückt vor
-          const out = pages[prev];
-          tl.to(out, { yPercent: -6, scale: 1.015, autoAlpha: 0, duration: 0.42, ease: "power2.in" }, 0)
-            .add(() => applyZ(next), 0.42)
-            .set(out, { ...stackAt(N - 1) }, 0.42)
-            .to(out, { autoAlpha: 1, duration: 0.45, ease: "power1.out" }, 0.46);
+          const out = pages[fPrev];
+          prep(fNext);
+          tl.to(out, { xPercent: -10, yPercent: -2, rotation: -2, autoAlpha: 0, duration: 0.36, ease: "power1.in" }, 0)
+            .add(() => applyZ(next), 0.36)
+            .set(out, { ...posFor(fPrev, next) }, 0.36)
+            .to(out, { autoAlpha: 1, duration: 0.45, ease: "power1.out" }, 0.4);
           pages.forEach((p, i) => {
-            if (i !== prev) tl!.to(p, { ...posFor(i, next), duration: T, ease: "power3.inOut" }, 0.08);
+            if (i !== fPrev) tl!.to(p, { ...posFor(i, next), duration: T, ease: "power3.inOut" }, 0.08);
           });
         } else {
           // Zurück (oder Sprung): die gewünschte Seite kommt von oben nach vorn
-          const inn = pages[next];
-          tl.to(inn, { autoAlpha: 0, duration: 0.22, ease: "power1.in" }, 0)
-            .add(() => applyZ(next), 0.22)
-            .set(inn, { ...stackAt(0), yPercent: -6, scale: 1.015 }, 0.22)
-            .to(inn, { autoAlpha: 1, yPercent: 0, scale: 1, duration: 0.65, ease: "power3.out" }, 0.24);
+          const inn = pages[fNext];
+          tl.to(inn, { autoAlpha: 0, duration: 0.2, ease: "power1.in" }, 0)
+            .add(() => {
+              applyZ(next);
+              prep(fNext);
+            }, 0.2)
+            .set(inn, { ...stackAt(0), xPercent: -12, yPercent: -2, rotation: -2.5 }, 0.2)
+            .to(inn, { autoAlpha: 1, xPercent: 0, yPercent: 0, rotation: 0, duration: 0.7, ease: "power3.out" }, 0.22);
           pages.forEach((p, i) => {
-            if (i !== next) tl!.to(p, { ...posFor(i, next), duration: T, ease: "power3.inOut" }, 0);
+            if (i !== fNext) tl!.to(p, { ...posFor(i, next), duration: T, ease: "power3.inOut" }, 0);
           });
         }
         shades.forEach((s, i) => tl!.to(s, { opacity: shadeFor(i, next), duration: 0.6, ease: "power2.out" }, 0.2));
-        tl.add(() => build(next), 0.34);
+        tl.add(() => build(fNext), 0.34);
       };
 
-      // Aktiver Punkt = der Punkt, dessen Text der Mitte des freien Bereichs am nächsten ist.
-      // Frei ist mobil der Streifen zwischen Dokument und CTA-Leiste (Menüleiste dabei
-      // ausgeblendet), am Desktop das Fenster unter der Leiste. Umgeschaltet wird erst,
-      // wenn der neue Text ganz lesbar im Bild steht.
+      // Aktiver Punkt: der Punkt, dessen Kasten gerade eine gedachte Linie kreuzt.
+      // Die Kästen schließen lückenlos aneinander (Innenabstand oben = unten), so ist
+      // immer der Punkt aktiv, dessen Text der Linie am nächsten ist. Mobil liegt die
+      // Linie im freien Streifen zwischen Dokument und CTA-Leiste, aber nur so tief,
+      // dass der neue Text beim Umschalten schon ganz lesbar ist.
+      // IntersectionObserver statt Scroll-Positionen: bleibt richtig, auch wenn sich
+      // darüber die Seite nachträglich in der Höhe ändert.
       const texts = points.map((p) => p.querySelector<HTMLElement>(".gs-pt")!);
-      const centerOf = (t: HTMLElement) => (t.parentElement as HTMLElement).offsetTop + t.offsetTop + t.offsetHeight / 2;
-      const band = () => {
+      const lineY = () => {
         const vh = window.innerHeight;
-        if (desktop()) return { top: 100, bottom: vh };
-        const shift = parseFloat(getComputedStyle(el).getPropertyValue("--gs-shift")) || 0;
-        return { top: sticky.offsetHeight - shift, bottom: vh - 88 };
-      };
-      const lineFor = (i: number) => {
-        const b = band();
-        const t = texts[i];
-        const pitch = i > 0 ? centerOf(t) - centerOf(texts[i - 1]) : centerOf(texts[1]) - centerOf(t);
-        const line = Math.min((b.top + b.bottom) / 2 + pitch / 2, b.bottom - t.offsetHeight / 2 - 10);
-        return Math.round(Math.max(line, b.top + t.offsetHeight / 2));
+        const py = parseFloat(getComputedStyle(points[0]).paddingTop) || 0;
+        const tallest = Math.max(...texts.map((t) => t.offsetHeight));
+        const top = desktop() ? 100 : sticky.offsetHeight - (parseFloat(getComputedStyle(el).getPropertyValue("--gs-shift")) || 0);
+        const bottom = desktop() ? vh : vh - 88;
+        const line = Math.min((top + bottom) / 2, bottom - py - tallest - 8);
+        return Math.round(Math.max(line, top + 8));
       };
 
       const mark = (state: number) => {
@@ -171,21 +205,56 @@ export default function GeschenkStage() {
           p.toggleAttribute("data-done", i < state - 1);
         });
       };
+      const jump = (state: number) => {
+        cur = state;
+        want = state;
+        applyZ(state);
+        pages.forEach((p, i) => gsap.set(p, { ...posFor(i, state), autoAlpha: 1 }));
+        shades.forEach((s, i) => gsap.set(s, { opacity: shadeFor(i, state) }));
+      };
 
-      const triggers = points.map((_, i) =>
-        ScrollTrigger.create({
-          trigger: texts[i],
-          start: () => `center ${lineFor(i)}px`,
-          onEnter: () => {
-            mark(i + 1);
-            go(i + 1);
+      let io: IntersectionObserver | null = null;
+      let first = true;
+      const watch = () => {
+        io?.disconnect();
+        const vh = window.innerHeight;
+        const L = lineY();
+        io = new IntersectionObserver(
+          (entries) => {
+            let next: number | null = null;
+            entries.forEach((e) => {
+              const i = points.indexOf(e.target as HTMLElement);
+              if (e.isIntersecting) next = i + 1;
+              else if (i === 0 && e.boundingClientRect.top > L && next === null) next = 0;
+            });
+            if (first) {
+              first = false;
+              // Beim Laden mitten in oder unter der Sektion: Zustand ohne Animation setzen
+              const lastBox = points[N - 1].getBoundingClientRect();
+              const state = next ?? (lastBox.bottom < L ? N : 0);
+              mark(state);
+              if (state) jump(state);
+              return;
+            }
+            if (next === null) return;
+            mark(next);
+            request(next);
           },
-          onLeaveBack: () => {
-            mark(i);
-            go(i);
-          },
-        }),
-      );
+          { rootMargin: `${-L}px 0px ${-(vh - L - 1)}px 0px`, threshold: 0 },
+        );
+        points.forEach((p) => io!.observe(p));
+      };
+      watch();
+      let rz = 0;
+      const onResize = () => {
+        window.clearTimeout(rz);
+        rz = window.setTimeout(() => {
+          syncNav();
+          watch();
+          if (!tl || !tl.isActive()) jump(cur);
+        }, 180);
+      };
+      window.addEventListener("resize", onResize);
 
       // Mobil: blendet die Menüleiste beim Runterscrollen aus, rückt das Dokument
       // nach oben (sticky-Versatz), weich nachgezogen per transform (FLIP)
@@ -204,46 +273,50 @@ export default function GeschenkStage() {
       if (nav) mo!.observe(nav, { attributes: true, attributeFilter: ["data-hidden"] });
       syncNav();
 
-      // Stempel setzt sich ruhig aufs Deckblatt, sobald das Dokument ins Bild kommt
-      const vh = window.innerHeight;
-      const boxTop = box.getBoundingClientRect().top;
-      if (boxTop > vh * 0.85) {
+      // Auftritt: Dokument gleitet herein, danach setzt sich der Stempel ruhig aufs Deckblatt
+      let enter: IntersectionObserver | null = null;
+      if (box.getBoundingClientRect().top > window.innerHeight * 0.85) {
         gsap.set(box, { autoAlpha: 0, y: 36 });
         gsap.set(stamp, { autoAlpha: 0, scale: 1.16 });
-        ScrollTrigger.create({
-          trigger: box,
-          start: "top 84%",
-          once: true,
-          onEnter: () => {
-            gsap.to(box, { autoAlpha: 1, y: 0, duration: 1.1, ease: "expo.out" });
+        enter = new IntersectionObserver(
+          ([e]) => {
+            if (!e.isIntersecting) return;
+            enter?.disconnect();
+            gsap.to(box, { autoAlpha: 1, duration: 0.55, ease: "power1.out" });
+            gsap.to(box, { y: 0, duration: 1.1, ease: "expo.out" });
             gsap.to(stamp, { autoAlpha: 1, scale: 1, duration: 1.0, ease: "expo.out", delay: 0.75 });
           },
-        });
-      }
-
-      // Einstieg mitten in der Sektion (Neuladen, Anker): Zustand ohne Animation setzen
-      ScrollTrigger.refresh();
-      const y = window.scrollY;
-      const init = triggers.filter((t) => y >= t.start).length;
-      if (init) {
-        cur = init;
-        mark(init);
-        applyZ(init);
-        pages.forEach((p, i) => gsap.set(p, posFor(i, init)));
-        shades.forEach((s, i) => gsap.set(s, { opacity: shadeFor(i, init) }));
-      } else {
-        mark(0);
+          { rootMargin: "0px 0px -16% 0px" },
+        );
+        enter.observe(box);
       }
 
       return () => {
         tl?.kill();
+        io?.disconnect();
+        enter?.disconnect();
         mo?.disconnect();
+        window.removeEventListener("resize", onResize);
+        window.clearTimeout(rz);
         delete el.dataset.state;
         el.removeAttribute("data-navhidden");
         points.forEach((p) => {
           p.removeAttribute("data-active");
           p.removeAttribute("data-done");
         });
+        // Alles, was später in Beobachtern animiert wurde, zurücksetzen (z. B. Wechsel
+        // auf reduzierte Bewegung oder Handy quer): die offenen Seiten stehen dann sauber
+        const content = pages.flatMap((_, i) => {
+          const c = parts(i);
+          return [...c.bars, ...c.items, ...c.lines, ...c.gauges, ...c.heads];
+        });
+        const boxes = el.querySelectorAll(".md-check");
+        const checks = el.querySelectorAll(".md-check path");
+        gsap.killTweensOf([pages, shades, box, stamp, sticky, content, boxes, checks]);
+        gsap.set([...pages, box, stamp, sticky, ...content], { clearProps: "transform,opacity,visibility,zIndex" });
+        gsap.set(shades, { clearProps: "opacity" });
+        gsap.set(boxes, { clearProps: "--f" });
+        gsap.set(checks, { clearProps: "strokeDashoffset,strokeDasharray" });
       };
     },
     { scope: root, dependencies: [mode], revertOnUpdate: true },

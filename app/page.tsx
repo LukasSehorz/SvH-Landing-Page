@@ -10,6 +10,10 @@ import Fragen from "@/components/sections/Fragen";
 import Abschluss from "@/components/sections/Abschluss";
 import MobileCta from "@/components/system/MobileCta";
 import { Divider } from "@/components/system/PitchLines";
+import type { Metadata } from "next";
+
+// Kanonische Adresse nur für die Startseite (Unterseiten setzen ihre eigene)
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 // Reihenfolge laut KONZEPT.md. Jede Sektion liegt in einer eigenen Datei mit eigener CSS-Datei unter app/styles/.
 export default function Home() {

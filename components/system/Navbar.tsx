@@ -165,6 +165,13 @@ export default function Navbar() {
 
   const showBar = !hidden || sheetOpen || dropOpen;
 
+  // Zustand der Leiste für mitlaufende Elemente (z. B. Schalter-Band) bereitstellen
+  useEffect(() => {
+    const html = document.documentElement;
+    if (showBar) html.removeAttribute("data-nav-hidden");
+    else html.setAttribute("data-nav-hidden", "");
+  }, [showBar]);
+
   return (
     <>
       <header className="nav" data-hidden={showBar ? "false" : "true"} data-scrolled={scrolled ? "true" : "false"}>
@@ -233,7 +240,7 @@ export default function Navbar() {
           </ul>
 
           <div className="nav-end">
-            <Cta href={`${pre}#termin`} size="sm" onClick={() => closeSheet(false)}>
+            <Cta href={`${pre}#termin`} size="sm" inline={false} onClick={() => closeSheet(false)}>
               {cta.nav}
             </Cta>
             <button
@@ -294,7 +301,7 @@ export default function Navbar() {
           </ul>
         </nav>
         <div className="nav-sheet-cta">
-          <Cta href={`${pre}#termin`} onClick={() => closeSheet(false)}>
+          <Cta href={`${pre}#termin`} inline={false} onClick={() => closeSheet(false)}>
             {cta.main}
           </Cta>
         </div>

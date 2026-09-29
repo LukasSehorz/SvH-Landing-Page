@@ -128,7 +128,7 @@ export function DoneRow({ g, className = "" }: { g: number; className?: string }
   return (
     <div className={`cd ${className}`} data-g={g}>
       <span className="cd-ico">
-        <GradCheck size={18} />
+        <GradCheck size={21} />
       </span>
       <span className="cd-name">{GROUPS[g].name}</span>
       <span className="cd-n">

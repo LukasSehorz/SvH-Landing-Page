@@ -29,12 +29,24 @@
   --nav-offset: 104px;
   --measure: 36em;
   --radius: 22px;
+  /* Platz, den die schwebende Leiste oben belegt (für gepinnte Szenen und mitlaufende Bänder) */
+  --nav-clear: 92px;
+  /* Höhe der festen CTA-Leiste mobil samt Abstand zum Rand (0 auf großen Schirmen) */
+  --mobile-cta-h: 0px;
 }
 
 @media (max-width: 699px) {
   :root {
     --nav-offset: 84px;
     --radius: 18px;
+    --nav-clear: 72px;
+    /* einheitlicher Sektionsabstand auf dem Telefon (≈ 140 px zwischen zwei Inhalten) */
+    --section-y: 64px;
+  }
+}
+@media (max-width: 899px) {
+  :root {
+    --mobile-cta-h: calc(70px + max(12px, env(safe-area-inset-bottom)));
   }
 }
 
@@ -333,7 +345,6 @@ section[id] {
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 14px rgba(124, 106, 255, 0.2));
   -webkit-mask-image: linear-gradient(100deg, #000 calc(var(--w) - 14%), transparent var(--w));
   mask-image: linear-gradient(100deg, #000 calc(var(--w) - 14%), transparent var(--w));
 }
@@ -348,18 +359,19 @@ section[id] {
   overflow: visible;
   pointer-events: none;
 }
+/* Ohne non-scaling-stroke: sonst zeichnet pathLength=1 bei Vergrößerung nicht zu Ende.
+   Die Strichstärke skaliert dafür mit dem Wort mit. */
 .script-swoosh path {
   fill: none;
   stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
 }
 .script-swoosh .s1 {
   stroke: url(#swoosh-grad);
-  stroke-width: 3px;
+  stroke-width: 4.2;
 }
 .script-swoosh .s2 {
   stroke: url(#swoosh-grad);
-  stroke-width: 1.4px;
+  stroke-width: 1.9;
   opacity: 0.7;
 }
 
@@ -404,7 +416,7 @@ section[id] {
 .btn-primary::before {
   content: "";
   position: absolute;
-  inset: -1px;
+  inset: 0;
   border-radius: inherit;
   background: var(--grad);
   filter: blur(16px);
@@ -563,11 +575,11 @@ section[id] {
   pointer-events: none;
 }
 
+/* Inline-Block statt Flex: gemischter Inhalt (Text + Span) behält normale Wortabstände */
 .chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  display: inline-block;
   height: 30px;
+  line-height: 28px;
   padding-inline: 12px;
   border-radius: 999px;
   border: 1px solid rgba(185, 165, 255, 0.28);
@@ -577,6 +589,12 @@ section[id] {
   font-weight: 600;
   letter-spacing: 0.01em;
   white-space: nowrap;
+  vertical-align: middle;
+}
+.chip > svg {
+  display: inline-block;
+  vertical-align: -0.2em;
+  margin-right: 6px;
 }
 
 /* --------------------------------------------------------- Atmosphäre */
@@ -624,14 +642,22 @@ section[id] {
   pointer-events: none;
   overflow: visible;
 }
+/* Strichstärke in Nutzereinheiten (kein non-scaling-stroke, siehe Schwung) */
 .pitch path,
 .pitch circle,
 .pitch line,
 .pitch rect {
   fill: none;
   stroke: #6f78ff;
-  stroke-width: 1.2px;
-  vector-effect: non-scaling-stroke;
+  stroke-width: 1.4;
+}
+.divider .pitch path {
+  stroke-width: 2.8;
+}
+@media (min-width: 700px) {
+  .divider .pitch path {
+    stroke-width: 1.5;
+  }
 }
 .pitch .glow {
   filter: drop-shadow(0 0 3px rgba(124, 106, 255, 0.45));

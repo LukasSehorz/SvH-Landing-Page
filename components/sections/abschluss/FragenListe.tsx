@@ -16,6 +16,18 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 type Item = { q: string; a: string };
 
+/** Letzte zwei Wörter als untrennbare Einheit (auch nicht am Bindestrich),
+    damit nie ein Wort allein in der letzten Zeile steht. */
+function Frage({ text }: Readonly<{ text: string }>) {
+  const w = text.split(" ");
+  if (w.length < 3) return <>{text}</>;
+  return (
+    <>
+      {w.slice(0, -2).join(" ")} <span className="nb">{w.slice(-2).join("\u00A0")}</span>
+    </>
+  );
+}
+
 export default function FragenListe({ items }: Readonly<{ items: readonly Item[] }>) {
   const uid = useId().replace(/:/g, "");
   const [ready, setReady] = useState(false);
@@ -63,7 +75,9 @@ export default function FragenListe({ items }: Readonly<{ items: readonly Item[]
                 <span className="faq-num" aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="faq-q-text">{it.q}</span>
+                <span className="faq-q-text">
+                  <Frage text={it.q} />
+                </span>
                 <span className="faq-icon" aria-hidden="true" />
               </button>
             </h3>

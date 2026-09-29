@@ -7,6 +7,8 @@ import { ArrowOut, Play } from "@/components/system/Icons";
    und das neueste Video von Jannik. Vorschaubild liegt lokal, erst der Klick
    öffnet YouTube in einem neuen Fenster (nichts wird eingebettet). */
 
+// Namen nie über zwei Zeilen trennen
+const teamText = team.people.reduce((t, p) => t.replace(p.name, p.name.replace(/ /g, "\u00a0")), team.text);
 const neuestes = [...aktuelles.videos].sort((a, b) => b.datumIso.localeCompare(a.datumIso))[0];
 
 function Monogramm({ initials }: Readonly<{ initials: string }>) {
@@ -36,7 +38,7 @@ export default function Team() {
             </h2>
           </div>
           <p className="lead team-text" data-reveal="">
-            <Rich text={team.text} />
+            <Rich text={teamText} />
           </p>
         </div>
 
@@ -62,7 +64,8 @@ export default function Team() {
                   width={1280}
                   height={720}
                   quality={85}
-                  sizes="(max-width: 699px) calc(100vw - 40px), (max-width: 1099px) calc(100vw - 80px), 640px"
+                  // doppelte Anzeigegröße, damit das Vorschaubild auch ohne Retina gestochen scharf ist
+                  sizes="(max-width: 699px) calc(200vw - 80px), 1280px"
                 />
                 <span className="team-play" aria-hidden="true">
                   <Play size={22} />
@@ -70,7 +73,9 @@ export default function Team() {
               </span>
               <span className="team-video-body">
                 <span className="team-video-meta">
-                  {aktuelles.latest} · <time dateTime={neuestes.datumIso}>{neuestes.datum}</time>
+                  {aktuelles.latest} · <time className="nb" dateTime={neuestes.datumIso}>
+                    {neuestes.datum}
+                  </time>
                 </span>
                 <span className="team-video-text">{team.video}</span>
                 <span className="team-video-title">{neuestes.titel}</span>

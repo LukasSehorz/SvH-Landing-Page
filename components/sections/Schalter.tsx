@@ -20,6 +20,49 @@ export default function Schalter() {
   const [play, setPlay] = useState(false);
   const touched = useRef(false);
   const section = useRef<HTMLElement>(null);
+  const bar = useRef<HTMLDivElement>(null);
+
+  // Mitlaufendes Band (mobil/Tablet): deckend, sobald es oben klebt
+  useEffect(() => {
+    const b = bar.current;
+    const sec = section.current;
+    if (!b || !sec) return;
+    let raf = 0;
+    let stuck = false;
+    const check = () => {
+      raf = 0;
+      if (getComputedStyle(b).position !== "sticky") {
+        if (stuck) b.removeAttribute("data-stuck");
+        stuck = false;
+        return;
+      }
+      const top = parseFloat(getComputedStyle(b).top) || 0;
+      const r = b.getBoundingClientRect();
+      const now = r.top <= top + 1 && sec.getBoundingClientRect().bottom > r.bottom + 8;
+      if (now !== stuck) {
+        stuck = now;
+        b.toggleAttribute("data-stuck", now);
+      }
+    };
+    let late = 0;
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(check);
+      // das Band gleitet der Leiste nach (top-Übergang): danach noch einmal prüfen
+      window.clearTimeout(late);
+      late = window.setTimeout(check, 700);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    b.addEventListener("transitionend", onScroll);
+    check();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      b.removeEventListener("transitionend", onScroll);
+      cancelAnimationFrame(raf);
+      window.clearTimeout(late);
+    };
+  }, []);
 
   useEffect(() => {
     const el = section.current;
@@ -66,7 +109,7 @@ export default function Schalter() {
               <Rich text={schalter.title} />
             </h2>
           </div>
-          <div className="sw-bar">
+          <div className="sw-bar" ref={bar}>
             <div className="sw-switchwrap">
               <button type="button" className="sw-side" data-active={!on} onClick={() => set(false)} tabIndex={-1} aria-hidden="true">
                 {schalter.off}
