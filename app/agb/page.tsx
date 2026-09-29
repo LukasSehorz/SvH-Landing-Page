@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { company } from "@/app/content";
 import LegalPage, { type LegalSection } from "@/components/pages/LegalPage";
+import { pageMeta } from "@/components/pages/meta";
 
 /*
  * Allgemeine Geschäftsbedingungen. Inhalt unverändert von der alten Seite
@@ -11,11 +12,11 @@ import LegalPage, { type LegalSection } from "@/components/pages/LegalPage";
  * umgeschrieben (Entscheidung beim Auftraggeber).
  */
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Allgemeine Geschäftsbedingungen",
   description: `Allgemeine Geschäftsbedingungen von ${company.name} für Beratungs-, Automatisierungs-, Marketing- und Webleistungen.`,
-  alternates: { canonical: "/agb" },
-};
+  path: "/agb",
+});
 
 const sections: LegalSection[] = [
   {

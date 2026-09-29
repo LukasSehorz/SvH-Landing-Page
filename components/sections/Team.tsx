@@ -44,7 +44,6 @@ export default function Team() {
           <ul className="team-people">
             {team.people.map((p) => (
               <li key={p.name} className="team-card" data-reveal="">
-                <span className="team-line" aria-hidden="true" />
                 <Monogramm initials={p.initials} />
                 <span className="team-meta">
                   <h3 className="team-name">{p.name}</h3>

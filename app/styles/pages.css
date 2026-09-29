@@ -473,24 +473,22 @@
 /* ------------------------------------------------------ Rechtsseiten */
 
 .lg-note {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  align-items: baseline;
   gap: 10px;
-  margin-top: 26px;
-  padding: 8px 16px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  font-size: 14px;
-  line-height: 1.4;
-  color: var(--ink-2);
+  margin-top: 22px;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--ink-3);
 }
 .lg-note::before {
   content: "";
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 99px;
   background: var(--lav);
   flex: 0 0 auto;
+  transform: translateY(-2px);
 }
 
 .lg-grid {
@@ -624,7 +622,7 @@
   max-width: 43rem;
 }
 .lg-sec {
-  scroll-margin-top: 104px;
+  scroll-margin-top: 136px;
 }
 .lg-sec + .lg-sec {
   margin-top: 40px;
@@ -634,7 +632,7 @@
 .lg-h2 {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  gap: 10px;
   font-family: var(--font-display);
   font-size: clamp(21px, 1.8vw, 26px);
   font-weight: 500;
@@ -645,7 +643,7 @@
 }
 .lg-num {
   flex: 0 0 auto;
-  min-width: 2.1em;
+  min-width: 1.9em;
   font-family: var(--font-sans);
   font-size: 0.66em;
   font-weight: 600;

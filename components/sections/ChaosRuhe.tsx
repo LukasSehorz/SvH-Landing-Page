@@ -1,237 +1,120 @@
 "use client";
 
-import Image from "next/image";
 import { useRef } from "react";
 import { chaos } from "@/app/copy";
-import { media } from "@/app/generated/media";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { useMotionMode } from "@/lib/hooks";
+import { ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { useMediaQuery, useMotionMode } from "@/lib/hooks";
+import LiveScene, { type Variant } from "./chaos/LiveScene";
+import StaticScene from "./chaos/StaticScene";
+import { ChaosDefs, Words } from "./chaos/parts";
+import { buildTimeline, fitScene } from "./chaos/timeline";
 
 /* ====================================================================
-   „Vom Chaos zur Ruhe“: gepinnte Szene, Canvas zeichnet die Bildfolge
-   passend zum Scrollfortschritt. Drei Text-Takte wechseln weich.
-   Server-HTML und reduzierte Bewegung: Start- und Endbild untereinander
-   mit allen drei Takten, ohne Pin.
+   „Vom Chaos zur Ruhe“ · Der Posteingang, der sich selbst leert.
+   Gepinnte Szene (CSS sticky, GSAP ScrollTrigger scrubbt den Zeitstrahl):
+   Takt 1 Einträge stapeln sich, Takt 2 sie ordnen sich in vier Gruppen,
+   Takt 3 eine Linie fährt durch, alles wird abgehakt, „Alles erledigt“.
+   Server-HTML, ohne JavaScript, reduzierte Bewegung und sehr niedrige
+   Fenster: drei Takte untereinander mit je einem statischen Zustand.
    ==================================================================== */
 
 const B = chaos.beats;
+// Scrollweg im gepinnten Zustand in Bildschirmhöhen (muss zum CSS passen: .chaos--live)
+const RUN = { win: 2.8, stack: 2.1 } as const;
+// Einlauf: Zeitstrahl beginnt, wenn die Sektionsoberkante bei 70 % der Höhe steht
+const ENTRY = 0.7;
 
-function Beat({ i, className = "" }: { i: number; className?: string }) {
+function Beat({ i }: { i: number }) {
   const b = B[i];
+  const Title = i === 1 ? "p" : "h2";
   return (
-    <div className={`chaos-beat ${className}`} data-i={i}>
-      {b.label ? <p className="label">{b.label}</p> : null}
-      <h2 className="h2 chaos-title">{b.title}</h2>
-      <p className="lead chaos-text">{b.text}</p>
+    <div className="chaos-beat" data-i={i}>
+      {b.label ? <p className="label chaos-label">{b.label}</p> : <p className="label chaos-label chaos-label--empty" aria-hidden="true" />}
+      <Title className="chaos-title" id={i === 0 ? "chaos-title" : undefined}>
+        <Words text={b.title} />
+      </Title>
+      <p className="chaos-text">
+        <Words text={b.text} />
+      </p>
     </div>
   );
 }
 
 function StaticStory() {
-  const s = media.stills;
   return (
     <div className="shell chaos-static">
-      {s.start ? (
-        <figure className="chaos-fig">
-          <Image src={s.start.d} alt={chaos.altStart} width={1600} height={900} sizes="(max-width: 1520px) 100vw, 1440px" />
-        </figure>
-      ) : null}
-      <Beat i={0} />
-      <Beat i={1} className="chaos-beat--mid" />
-      {s.end ? (
-        <figure className="chaos-fig">
-          <Image src={s.end.d} alt={chaos.altEnd} width={1600} height={900} sizes="(max-width: 1520px) 100vw, 1440px" />
-        </figure>
-      ) : null}
-      <Beat i={2} />
+      {B.map((_, i) => (
+        <div className="chaos-row" key={i}>
+          <Beat i={i} />
+          <div className="chaos-still" role={i === 0 ? "img" : undefined} aria-label={i === 0 ? chaos.scene.alt : undefined}>
+            <StaticScene state={i as 0 | 1 | 2} />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
-function PinnedStory() {
-  const pin = useRef<HTMLDivElement>(null);
-  const canvas = useRef<HTMLCanvasElement>(null);
+function LiveStory({ variant }: { variant: Variant }) {
+  const stage = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      const el = pin.current;
-      const cv = canvas.current;
-      if (!el || !cv) return;
-      const ctx = cv.getContext("2d")!;
-      const portrait = () => window.innerWidth / window.innerHeight < 0.72;
-      let usePortrait = portrait();
-      const count = media.seq.count;
-
-      // Bildquellen: Bildfolge oder (Fallback) Start- und Endbild
-      const src = (i: number) => {
-        if (count) return `${usePortrait ? media.seq.mobile : media.seq.desktop}${String(i + 1).padStart(4, "0")}.webp`;
-        const st = i === 0 ? media.stills.start : media.stills.end;
-        return st ? (usePortrait ? st.m : st.d) : "";
-      };
-      const total = count || 2;
-      let frames: (HTMLImageElement | null)[] = new Array(total).fill(null);
-      let loadedAll = false;
-      const load = (i: number) =>
-        new Promise<void>((res) => {
-          if (frames[i]) return res();
-          const img = new window.Image();
-          img.decoding = "async";
-          img.onload = () => {
-            frames[i] = img;
-            res();
-          };
-          img.onerror = () => res();
-          img.src = src(i);
-        });
-
-      const state = { f: 0, mix: 0 };
-      let cw = 0;
-      let ch = 0;
-      const size = () => {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        cw = el.clientWidth;
-        ch = el.clientHeight;
-        cv.width = Math.round(cw * dpr);
-        cv.height = Math.round(ch * dpr);
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      };
-
-      const cover = (img: HTMLImageElement, alpha = 1) => {
-        const iw = img.naturalWidth;
-        const ih = img.naturalHeight;
-        const s = Math.max(cw / iw, ch / ih);
-        const w = iw * s;
-        const h = ih * s;
-        // Laptop sitzt rechts: Bild rechtsbündig ausrichten, Hochkant mittig
-        const fx = usePortrait ? 0.5 : 0.78;
-        ctx.globalAlpha = alpha;
-        ctx.drawImage(img, (cw - w) * fx, (ch - h) * 0.5, w, h);
-        ctx.globalAlpha = 1;
-      };
-
-      const nearest = (i: number) => {
-        if (frames[i]) return frames[i];
-        for (let d = 1; d < total; d++) {
-          if (frames[i - d]) return frames[i - d];
-          if (frames[i + d]) return frames[i + d];
-        }
-        return null;
-      };
-
-      const draw = () => {
-        ctx.clearRect(0, 0, cw, ch);
-        if (count) {
-          const img = nearest(Math.round(state.f));
-          if (img) cover(img);
-        } else {
-          if (frames[0]) cover(frames[0]);
-          if (frames[1] && state.mix > 0) cover(frames[1], state.mix);
-        }
-      };
-
-      size();
-      load(0).then(draw);
-
-      const loadAll = () => {
-        if (loadedAll) return;
-        loadedAll = true;
-        // Reihenfolge: jedes achte Bild zuerst, dann auffüllen (weiches Scrubben auch bei langsamer Leitung)
-        const order: number[] = [];
-        for (let step = 8; step >= 1; step = Math.floor(step / 2)) {
-          for (let i = 0; i < total; i += step) if (!order.includes(i)) order.push(i);
-        }
-        let k = 0;
-        const next = () => {
-          if (k >= order.length) return;
-          const i = order[k++];
-          load(i).then(() => {
-            if (Math.abs(Math.round(state.f) - i) < 6) draw();
-            next();
-          });
-        };
-        for (let n = 0; n < 6; n++) next();
-      };
-
-      // Bildfolge erst laden, wenn die Szene naht
-      const io = new IntersectionObserver(
-        ([e]) => {
-          if (e.isIntersecting) {
-            loadAll();
-            io.disconnect();
-          }
-        },
-        { rootMargin: "150% 0px" },
-      );
-      io.observe(el);
-
-      const beats = gsap.utils.toArray<HTMLElement>(el.querySelectorAll(".chaos-beat"));
-      const ticks = el.querySelectorAll<HTMLElement>(".chaos-tick");
-      gsap.set(beats.slice(1), { autoAlpha: 0, y: 40 });
-
-      const tl = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-          trigger: el,
-          start: "top top",
-          end: "+=260%",
-          pin: true,
-          scrub: 0.5,
-          refreshPriority: 2,
-          onUpdate: (self) => {
-            ticks.forEach((t, i) => t.toggleAttribute("data-on", self.progress >= [0, 0.4, 0.78][i]));
-          },
-        },
+      const root = stage.current;
+      const section = root?.parentElement;
+      if (!root || !section) return;
+      fitScene(root, variant);
+      const tl = buildTimeline(root, variant, ENTRY, RUN[variant]);
+      const st = ScrollTrigger.create({
+        trigger: section,
+        start: `top ${Math.round(ENTRY * 100)}%`,
+        end: "bottom bottom",
+        scrub: variant === "win" ? 0.5 : 0.35,
+        animation: tl,
       });
-      tl.to(state, { f: total - 1, duration: 1, onUpdate: draw }, 0)
-        .to(state, { mix: 1, duration: 0.4, onUpdate: draw }, 0.36)
-        .to(beats[0], { autoAlpha: 0, y: -40, duration: 0.07, ease: "power1.in" }, 0.26)
-        .to(beats[1], { autoAlpha: 1, y: 0, duration: 0.08, ease: "power2.out" }, 0.36)
-        .to(beats[1], { autoAlpha: 0, y: -40, duration: 0.07, ease: "power1.in" }, 0.63)
-        .to(beats[2], { autoAlpha: 1, y: 0, duration: 0.08, ease: "power2.out" }, 0.76)
-        .fromTo(el.querySelector(".chaos-progress-fill"), { scaleX: 0 }, { scaleX: 1, duration: 1 }, 0);
-
-      const onResize = () => {
-        const p = portrait();
-        if (p !== usePortrait) {
-          usePortrait = p;
-          frames = new Array(total).fill(null);
-          loadedAll = false;
-          load(0).then(draw);
-          loadAll();
-        }
-        size();
-        draw();
-      };
-      window.addEventListener("resize", onResize);
       ScrollTrigger.refresh();
 
+      // Nur die Skalierung nachführen, der Zeitstrahl rechnet in Entwurfsmaßen
+      let raf = 0;
+      const ro = new ResizeObserver(() => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => fitScene(root, variant));
+      });
+      const box = root.querySelector(".cs--live");
+      if (box) ro.observe(box);
       return () => {
-        window.removeEventListener("resize", onResize);
-        io.disconnect();
+        cancelAnimationFrame(raf);
+        ro.disconnect();
+        st.kill();
       };
     },
-    { scope: pin },
+    { scope: stage, dependencies: [variant], revertOnUpdate: true },
   );
 
   return (
-    <div className="chaos-pin" ref={pin}>
-      <canvas ref={canvas} className="chaos-canvas" role="img" aria-label={`${chaos.altStart}. ${chaos.altEnd}.`} />
-      <div className="chaos-shade" aria-hidden="true" />
-      <div className="shell chaos-inner">
-        <div className="chaos-beats">
-          {B.map((_, i) => (
-            <Beat key={i} i={i} />
-          ))}
+    <div className="chaos-stage" ref={stage}>
+      <div className="chaos-glow" aria-hidden="true" />
+      <div className="shell chaos-frame">
+        <div className="chaos-copy">
+          <div className="chaos-beats">
+            {B.map((_, i) => (
+              <Beat key={i} i={i} />
+            ))}
+          </div>
+          <div className="chaos-steps" aria-hidden="true">
+            <i>
+              <b />
+            </i>
+            <i>
+              <b />
+            </i>
+            <i>
+              <b />
+            </i>
+          </div>
         </div>
-        <div className="chaos-progress" aria-hidden="true">
-          <span className="chaos-progress-track">
-            <span className="chaos-progress-fill" />
-          </span>
-          <span className="chaos-ticks">
-            <i className="chaos-tick" data-on="">1</i>
-            <i className="chaos-tick">2</i>
-            <i className="chaos-tick">3</i>
-          </span>
+        <div className="chaos-visual" role="img" aria-label={chaos.scene.alt}>
+          <LiveScene variant={variant} />
         </div>
       </div>
     </div>
@@ -240,9 +123,14 @@ function PinnedStory() {
 
 export default function ChaosRuhe() {
   const mode = useMotionMode();
+  const wide = useMediaQuery("(min-width: 960px)");
+  // Pin nur, wenn genug Höhe da ist (sonst sauberer statischer Ablauf)
+  const tall = useMediaQuery(wide ? "(min-height: 640px)" : "(min-height: 600px)");
+  const live = mode === "motion" && tall;
   return (
-    <section className="chaos" id="problem" aria-label={B[0].label}>
-      {mode === "motion" ? <PinnedStory /> : <StaticStory />}
+    <section className={live ? "chaos chaos--live" : "chaos"} id="problem" aria-labelledby="chaos-title">
+      <ChaosDefs />
+      {live ? <LiveStory variant={wide ? "win" : "stack"} /> : <StaticStory />}
     </section>
   );
 }

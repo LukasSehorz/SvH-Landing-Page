@@ -1,30 +1,24 @@
-import Image from "next/image";
 import { abschluss } from "@/app/copy";
 import { company } from "@/app/content";
-import { media } from "@/app/generated/media";
 import Rich from "@/components/system/Rich";
 import { Clock, Mail, Phone } from "@/components/system/Icons";
 import Formular from "./abschluss/Formular";
 import Strafraum from "./abschluss/Strafraum";
-import { Schloss } from "./abschluss/Symbole";
+import { Haken } from "./abschluss/Symbole";
 
 /* Abschluss (#termin): Überschrift, Formular in drei Schritten, Direktkontakt.
-   Hintergrund: sehr dezentes Flutlicht und der Strafraum als Spielfeldlinie.
+   Hintergrund: ruhiger Lichtschein und der Strafraum als Spielfeldlinie
+   (das Flutlicht-Foto wirkte hinter Text unscharf und ist bewusst weggelassen).
    data-hide-mobile-cta: solange dieser Bereich im Bild ist, blendet die feste
    CTA-Leiste (MobileCta) aus, damit sie keine Felder verdeckt. */
 
-const flutlicht = media.flutlicht?.[0] ?? null;
 const [mailUser, mailDomain] = company.email.split("@");
 
 export default function Abschluss() {
   return (
     <section className="section abs" id="termin" aria-labelledby="abs-title" data-hide-mobile-cta="">
       <div className="abs-bg" aria-hidden="true">
-        {flutlicht ? (
-          <div className="abs-flood">
-            <Image src={flutlicht.src} alt="" fill sizes="100vw" quality={70} />
-          </div>
-        ) : null}
+        <div className="abs-glow" />
         <Strafraum />
       </div>
 
@@ -43,10 +37,14 @@ export default function Abschluss() {
 
         <div className="abs-form">
           <Formular />
-          <p className="abs-below">
-            <Schloss />
-            <span>{abschluss.below}</span>
-          </p>
+          <ul className="abs-below">
+            {abschluss.below.split(" · ").map((b) => (
+              <li key={b}>
+                <Haken size={13} />
+                {b}
+              </li>
+            ))}
+          </ul>
         </div>
 
         <aside className="abs-direct" aria-labelledby="abs-direct-title">

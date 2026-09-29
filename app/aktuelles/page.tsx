@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { aktuelles, meta } from "@/app/copy";
+import { aktuelles } from "@/app/copy";
 import { company } from "@/app/content";
 import PageHead from "@/components/pages/PageHead";
 import Videos from "@/components/pages/Videos";
 import PageCta from "@/components/pages/PageCta";
 import JsonLd from "@/components/system/JsonLd";
+import { pageMeta } from "@/components/pages/meta";
 
 /*
  * /aktuelles: Kopf, neuestes Video groß, übrige als Raster, Hinweis und
@@ -14,21 +15,7 @@ import JsonLd from "@/components/system/JsonLd";
 
 const title = `${aktuelles.meta.title} | ${company.name}`;
 
-export const metadata: Metadata = {
-  title: aktuelles.meta.title,
-  description: aktuelles.meta.description,
-  alternates: { canonical: "/aktuelles" },
-  openGraph: {
-    type: "website",
-    locale: "de_DE",
-    siteName: company.name,
-    title,
-    description: aktuelles.meta.description,
-    url: `${company.url}/aktuelles`,
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: meta.ogAlt }],
-  },
-  twitter: { card: "summary_large_image", title, description: aktuelles.meta.description, images: ["/og.png"] },
-};
+export const metadata: Metadata = pageMeta({ title: aktuelles.meta.title, description: aktuelles.meta.description, path: "/aktuelles" });
 
 // Strukturierte Daten: Liste der Videos (nur Angaben, die auch sichtbar sind)
 const jsonLd = {

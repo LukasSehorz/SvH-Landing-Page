@@ -83,8 +83,45 @@ export const chaos = {
       text: "Die KI arbeitet im Hintergrund, rund um die Uhr. Ihr Team gibt die Richtung vor, die Helfer erledigen den Rest.",
     },
   ],
-  altStart: "Ein überfüllter Schreibtisch am Abend mit Papierstapeln, Zetteln und einem leuchtenden Laptop", // ZUSATZ (Alt-Text)
-  altEnd: "Derselbe Schreibtisch, aufgeräumt, nur noch Laptop und Tasse", // ZUSATZ (Alt-Text)
+  // ZUSATZ (Beschriftung der gezeichneten Szene „Der Posteingang, der sich selbst leert“, rein illustrativ)
+  scene: {
+    alt: "Illustration: Ein Posteingang füllt sich mit Anfragen, Rechnungen, Rückrufen und Terminen. Die Einträge ordnen sich in vier immer gleiche Gruppen und werden nacheinander abgehakt, bis nichts mehr offen ist.",
+    inbox: "Posteingang",
+    today: "Heute",
+    unread: "ungelesen",
+    done: "Alles erledigt",
+    doneLine: "Heute erledigt von Ihren Helfern",
+    doneShort: "erledigt",
+    total: 148,
+    start: 12,
+    // Gruppen: Anzahlen ergeben zusammen die 148 aus dem Zähler
+    groups: [
+      { name: "Angebote", count: 21 },
+      { name: "E-Mails", count: 64 },
+      { name: "Daten abtippen", count: 38 },
+      { name: "Termine", count: 25 },
+    ],
+    // in Eingangsreihenfolge; g = Gruppe
+    items: [
+      { g: 1, title: "Rückruf erbeten", from: "Telefonnotiz", time: "07:41" },
+      { g: 2, title: "Rechnung 2026-114 prüfen", from: "Buchhaltung", time: "08:12" },
+      { g: 0, title: "Anfrage: Angebot für Terrassenüberdachung", from: "Kontaktformular", time: "08:46" },
+      { g: 3, title: "Termin verschieben?", from: "Kunde", time: "09:31" },
+      { g: 2, title: "Lieferschein abtippen", from: "Lager", time: "10:14" },
+      { g: 1, title: "Bewerbung eingegangen", from: "Karriere", time: "11:02" },
+      { g: 0, title: "Preisanfrage: Wartungsvertrag", from: "E-Mail", time: "11:47" },
+      { g: 3, title: "Besichtigung bestätigen", from: "Außendienst", time: "12:36" },
+      { g: 2, title: "Preisliste aktualisieren", from: "Einkauf", time: "13:28" },
+      { g: 1, title: "Mahnung vorbereiten", from: "Buchhaltung", time: "14:15" },
+      { g: 0, title: "Angebot nachfassen", from: "Erinnerung", time: "15:09" },
+      { g: 3, title: "Aufmaß vor Ort planen", from: "Kalender", time: "16:02" },
+    ],
+    toasts: [
+      { g: 0, title: "Neue Anfrage", sub: "Kontaktformular · jetzt" },
+      { g: 1, title: "4 neue E-Mails", sub: "Posteingang · jetzt" },
+      { g: 3, title: "Erinnerung: Rückruf", sub: "Kalender · jetzt" },
+    ],
+  },
 };
 
 export const schalter = {

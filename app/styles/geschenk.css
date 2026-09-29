@@ -63,10 +63,16 @@
 .gs-stage[data-mode="motion"] {
   margin-top: 8px;
 }
+.gs-stage {
+  --gs-shift: 62px; /* so weit rückt das Dokument hoch, wenn die Menüleiste weg ist */
+}
 .gs-stage[data-mode="motion"] .gs-docwrap {
   position: sticky;
   top: 0;
   z-index: 3;
+}
+.gs-stage[data-mode="motion"][data-navhidden] .gs-docwrap {
+  top: calc(var(--gs-shift) * -1);
 }
 .gs-stage[data-mode="motion"] .gs-sticky {
   position: relative;
@@ -89,45 +95,43 @@
   margin-top: 36px;
 }
 .gs-stage[data-mode="motion"] .gs-points {
-  margin-top: 0;
-  padding-bottom: 12svh;
+  margin-top: -2svh;
 }
 .gs-list {
   position: relative;
   display: grid;
 }
-.gs-track {
-  position: absolute;
-  left: 19.5px;
-  top: 44px;
-  bottom: 44px;
-  width: 1px;
-  background: var(--line);
-  overflow: hidden;
-}
-.gs-stage[data-mode="motion"] .gs-track {
-  bottom: calc(12svh + 44px);
-}
-.gs-track-fill {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, #5b8cff, #7c6aff 60%, #b9a5ff);
-  transform-origin: 50% 0;
-}
-.gs-stage[data-mode="static"] .gs-track-fill {
-  opacity: 0.5;
-}
 
 .gs-point {
+  --py: 18px;
   position: relative;
   display: grid;
   grid-template-columns: 40px minmax(0, 1fr);
   gap: 18px;
-  padding-block: 20px;
+  padding-block: var(--py);
 }
 .gs-stage[data-mode="motion"] .gs-point {
-  min-height: 34svh;
-  padding-block: 26px;
+  --py: 7svh;
+}
+/* Verbindungslinie von Punkt zu Punkt, füllt sich, sobald der Punkt erledigt ist */
+.gs-point:not(:last-child)::before,
+.gs-point:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 19.5px;
+  top: calc(var(--py) + 48px);
+  height: calc(100% - 56px);
+  width: 1px;
+  background: var(--line);
+}
+.gs-point:not(:last-child)::after {
+  background: linear-gradient(180deg, #5b8cff, #7c6aff 70%, #b9a5ff);
+  transform-origin: 50% 0;
+  transform: scaleY(0);
+  transition: transform 0.9s var(--ease-in-out);
+}
+.gs-point[data-done]::after {
+  transform: scaleY(1);
 }
 .gs-num {
   position: relative;
@@ -239,6 +243,7 @@
 
 .md {
   position: relative;
+  width: 100%;
 }
 .md-box {
   position: relative;
@@ -502,9 +507,9 @@
 /* Stempel „0 €“ */
 .md-stamp {
   position: absolute;
-  right: 7cqw;
-  bottom: 9cqh;
-  width: 25cqw;
+  right: 6.4cqw;
+  bottom: 15.5cqh;
+  width: 23cqw;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
@@ -537,7 +542,7 @@
 .md-stamp-v {
   position: relative;
   font-family: var(--font-display);
-  font-size: 7.6cqw;
+  font-size: 7cqw;
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1;
@@ -577,9 +582,10 @@
   display: grid;
   grid-template-columns: 24% minmax(0, 1fr);
   align-items: center;
+  line-height: 1.2;
 }
 .md-bar-l {
-  font-size: max(11.5px, 2.6cqw);
+  font-size: max(12px, 2.7cqw);
   font-weight: 500;
   color: var(--paper-ink);
   white-space: nowrap;
@@ -611,9 +617,9 @@
 }
 .md-top li {
   display: grid;
-  grid-template-columns: 9cqw minmax(0, 1fr) auto;
+  grid-template-columns: 6.6cqw minmax(0, 1fr) auto;
   align-items: center;
-  gap: 3cqw;
+  gap: 3.4cqw;
   padding-block: 1.6cqw;
 }
 .md-top li + li {
@@ -643,33 +649,25 @@
   line-height: 1.15;
   margin-bottom: 0.3cqw;
 }
-.md-lever {
-  display: flex;
-  align-items: flex-end;
-  gap: max(2px, 0.6cqw);
-  height: 4.4cqw;
+/* Hebel als feine Skala (ohne Zahl) */
+.md-gauge {
+  position: relative;
+  align-self: center;
+  width: 13cqw;
+  height: max(4px, 1.1cqw);
+  border-radius: 99px;
+  background: rgba(23, 21, 31, 0.09);
+  overflow: hidden;
 }
-.md-lever i {
-  width: max(3px, 0.9cqw);
-  height: 100%;
-  border-radius: 9px;
-  background: rgba(23, 21, 31, 0.1);
-  transform-origin: 50% 100%;
-}
-.md-lever i:nth-child(1) {
-  height: 40%;
-}
-.md-lever i:nth-child(2) {
-  height: 55%;
-}
-.md-lever i:nth-child(3) {
-  height: 70%;
-}
-.md-lever i:nth-child(4) {
-  height: 85%;
-}
-.md-lever i[data-on] {
+.md-gauge i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: calc(var(--g) * 100%);
+  border-radius: inherit;
   background: var(--paper-violet);
+  transform-origin: 0 50%;
 }
 
 /* --------------------------------------------------------- Lösungsweg */
@@ -749,6 +747,23 @@
   stroke-linejoin: round;
 }
 
+/* Querformat (mobil): Top 3 kompakter, eine Blindzeile je Eintrag */
+@container page (orientation: landscape) {
+  .md-title {
+    margin-top: 3.8cqw;
+    padding-bottom: 2.2cqw;
+  }
+  .md-chart {
+    margin-top: 2cqw;
+  }
+  .md-top li {
+    padding-block: 1.1cqw;
+  }
+  .md-top-b .md-line:last-child {
+    display: none;
+  }
+}
+
 /* ------------------------------------- Seiten ohne Bewegung (offen) */
 
 .gs-stage[data-mode="static"] .md-box {
@@ -765,7 +780,19 @@
 
 /* =========================================================== ab 700 px */
 
+@media (min-width: 700px) and (max-width: 1023px) {
+  /* Tablet und Handy quer ohne Bewegung: Seiten zu zweit nebeneinander */
+  .gs-stage[data-mode="static"] .md-box {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    max-width: 920px;
+  }
+}
+
 @media (min-width: 700px) {
+  .gs-stage {
+    --gs-shift: 82px;
+  }
   .gs-why {
     grid-template-columns: 48px minmax(0, 1fr);
     padding: 30px 32px 32px;
@@ -852,11 +879,7 @@
     gap: 22px;
   }
   .gs-stage[data-mode="motion"] .gs-point {
-    min-height: 30svh;
-    padding-block: 30px;
-  }
-  .gs-stage[data-mode="motion"] .gs-track {
-    bottom: 44px;
+    --py: 7.5svh;
   }
   .gs-cta {
     margin-top: 28px;
@@ -899,7 +922,7 @@
   }
   .md-top li {
     padding-block: 4.4cqw;
-    grid-template-columns: 11cqw minmax(0, 1fr) auto;
+    grid-template-columns: 8.4cqw minmax(0, 1fr) auto;
   }
   .md-top-n {
     font-size: 10cqw;
@@ -911,8 +934,8 @@
   .md-top-b {
     gap: 1.6cqw;
   }
-  .md-lever {
-    height: 6cqw;
+  .md-gauge {
+    width: 15cqw;
   }
   .md-weg {
     grid-template-columns: minmax(0, 1fr);
@@ -963,18 +986,18 @@
     padding: 0 8cqw 8cqw;
   }
   .md-cover-by {
-    font-size: 2.3cqw;
+    font-size: max(10.5px, 2.3cqw);
   }
   .md-stamp {
-    width: 34cqw;
+    width: 33cqw;
     right: 8cqw;
-    bottom: 17cqh;
+    bottom: 12.5cqh;
   }
   .md-stamp-v {
-    font-size: 10.4cqw;
+    font-size: 10cqw;
   }
   .md-foot {
-    font-size: 2cqw;
+    font-size: max(9.5px, 2cqw);
   }
 }
 

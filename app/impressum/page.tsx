@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import { company } from "@/app/content";
 import LegalPage, { type LegalSection } from "@/components/pages/LegalPage";
+import { pageMeta } from "@/components/pages/meta";
 
 /*
  * Impressum. Inhalt unverändert von der alten Seite übernommen
  * (SvH-Webseite/app/impressum/page.tsx), nur das Layout ist neu.
  */
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Impressum",
   description: `Angaben gemäß § 5 DDG für ${company.name} (${company.legalName}), ${company.zipCity}.`,
-  alternates: { canonical: "/impressum" },
-};
+  path: "/impressum",
+});
 
 const sections: LegalSection[] = [
   {

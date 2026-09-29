@@ -36,6 +36,7 @@ function Card({ v, lead = false }: Readonly<{ v: Video; lead?: boolean }>) {
             height={720}
             sizes={lead ? "(max-width: 899px) calc(100vw - 40px), 640px" : "(max-width: 699px) calc(100vw - 40px), (max-width: 1099px) 46vw, 420px"}
             unoptimized
+            loading={lead ? "eager" : "lazy"}
           />
           <span className="vid-shade" aria-hidden="true" />
           <PlayMark />

@@ -8,6 +8,7 @@ import PageHead from "@/components/pages/PageHead";
 export const metadata: Metadata = {
   title: notFound.metaTitle,
   robots: { index: false, follow: false },
+  alternates: { canonical: null }, // nicht die Startseite als kanonisch erben
 };
 
 export default function NotFound() {

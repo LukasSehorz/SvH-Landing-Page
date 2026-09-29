@@ -39,6 +39,19 @@
   text-align: center;
   transition: border-color 0.5s var(--ease);
 }
+.team-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: radial-gradient(circle at center, rgba(185, 165, 255, 0.3) 0.8px, transparent 1.2px);
+  background-size: 18px 18px;
+  background-position: center;
+  -webkit-mask-image: radial-gradient(ellipse 60% 42% at 50% 42%, #000 0%, transparent 100%);
+  mask-image: radial-gradient(ellipse 60% 42% at 50% 42%, #000 0%, transparent 100%);
+  opacity: 0.5;
+  pointer-events: none;
+}
 .team-card:hover {
   border-color: rgba(244, 244, 246, 0.2);
 }
@@ -342,7 +355,8 @@
 .faq-q {
   display: grid;
   grid-template-columns: 30px minmax(0, 1fr) 36px;
-  align-items: center;
+  align-items: baseline;
+  align-content: center;
   gap: 12px;
   width: 100%;
   min-height: 76px;
@@ -361,8 +375,6 @@
   border-radius: 10px;
 }
 .faq-num {
-  align-self: start;
-  padding-top: 0.28em;
   font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 600;
@@ -379,6 +391,8 @@
 }
 .faq-icon {
   position: relative;
+  align-self: center;
+  margin-block: -8px; /* Zeilenhöhe bestimmt der Text, nicht der Kreis */
   width: 36px;
   height: 36px;
   border-radius: 50%;

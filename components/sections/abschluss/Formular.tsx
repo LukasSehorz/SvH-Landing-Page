@@ -124,10 +124,8 @@ export default function Formular() {
   const [mailto, setMailto] = useState<string | null>(null);
   const [liveCalc, setLiveCalc] = useState("");
 
-  const card = useRef<HTMLDivElement>(null);
   const focusNext = useRef<"step" | "result" | null>(null);
-  const titleRefs = useRef<(HTMLHeadingElement | null)[]>([]);
-  const resultRef = useRef<HTMLHeadingElement>(null);
+  const stepRef = useRef(0);
 
   const { year, weeks } = step1.calc(hours);
 
@@ -140,26 +138,26 @@ export default function Formular() {
     return () => window.clearTimeout(id);
   }, [year, weeks]);
 
-  // Nach Schrittwechsel oder Ergebnis: Karte ins Bild holen, Fokus an die Überschrift (bzw. erstes Feld)
-  useEffect(() => {
-    const was = focusNext.current;
-    if (!was) return;
+  /* Fokus nach Schrittwechsel bzw. Ergebnis: erst setzen, wenn das Ziel wirklich
+     im DOM ist (AnimatePresence hängt es verzögert ein). Callback-Refs statt Timer. */
+  const fokusTitel = (s: number) => (el: HTMLHeadingElement | null) => {
+    if (!el || focusNext.current !== "step" || stepRef.current !== s) return;
     focusNext.current = null;
-    const id = window.setTimeout(
-      () => {
-        insBild(card.current, reduced);
-        if (was === "result") {
-          resultRef.current?.focus({ preventScroll: true });
-          return;
-        }
-        const fein = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-        if (step === 2 && fein) document.getElementById("frm-name")?.focus({ preventScroll: true });
-        else titleRefs.current[step]?.focus({ preventScroll: true });
-      },
-      reduced ? 0 : 80,
-    );
-    return () => window.clearTimeout(id);
-  }, [step, status, reduced]);
+    requestAnimationFrame(() => {
+      insBild(el.closest(".frm-card"), reduced);
+      const fein = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+      const ziel = s === 2 && fein ? document.getElementById("frm-name") : el;
+      ziel?.focus({ preventScroll: true });
+    });
+  };
+  const fokusErgebnis = (el: HTMLHeadingElement | null) => {
+    if (!el || focusNext.current !== "result") return;
+    focusNext.current = null;
+    requestAnimationFrame(() => {
+      insBild(el.closest(".frm-card"), reduced);
+      el.focus({ preventScroll: true });
+    });
+  };
 
   const werte = { tasks, employees, consent, ...t };
 
@@ -219,6 +217,7 @@ export default function Formular() {
   function gehe(to: number) {
     setDir(to > step ? 1 : -1);
     setStep(to);
+    stepRef.current = to;
     focusNext.current = "step";
   }
 
@@ -318,6 +317,7 @@ export default function Formular() {
     setStatus("idle");
     setDir(-1);
     setStep(2);
+    stepRef.current = 2;
     focusNext.current = "step";
   };
 
@@ -338,7 +338,7 @@ export default function Formular() {
   });
 
   return (
-    <div className="frm-card" ref={card}>
+    <div className="frm-card">
       <AutoHeight instant={reduced}>
         <AnimatePresence mode="wait" initial={false}>
           {fertig ? (
@@ -375,7 +375,7 @@ export default function Formular() {
                         />
                       </svg>
                     </span>
-                    <h3 className="frm-result-title" tabIndex={-1} ref={resultRef}>
+                    <h3 className="frm-result-title" tabIndex={-1} ref={fokusErgebnis}>
                       {abschluss.success(vorname(t.name))}
                     </h3>
                     <p className="frm-result-text">{abschluss.successText}</p>
@@ -385,7 +385,7 @@ export default function Formular() {
                     <span className="frm-mark frm-mark--icon" aria-hidden="true">
                       <Mail size={24} />
                     </span>
-                    <h3 className="frm-result-title frm-result-title--sm" tabIndex={-1} ref={resultRef}>
+                    <h3 className="frm-result-title frm-result-title--sm" tabIndex={-1} ref={fokusErgebnis}>
                       {abschluss.fallback}
                     </h3>
                     <p className="frm-result-text">
@@ -399,7 +399,7 @@ export default function Formular() {
                     <span className="frm-mark frm-mark--icon" aria-hidden="true">
                       <Phone size={24} />
                     </span>
-                    <h3 className="frm-result-title frm-result-title--sm" tabIndex={-1} ref={resultRef}>
+                    <h3 className="frm-result-title frm-result-title--sm" tabIndex={-1} ref={fokusErgebnis}>
                       {abschluss.errorBefore}
                       <a className="frm-link nb" href={`tel:${company.phoneHref}`}>
                         {company.phone}
@@ -485,7 +485,7 @@ export default function Formular() {
                       <>
                         <fieldset className="frm-fs frm-block" aria-describedby={errors.tasks ? "frm-task-0-err" : "frm-tasks-hint"}>
                           <legend className="frm-legend">
-                            <h3 className="frm-title" tabIndex={-1} ref={(el) => void (titleRefs.current[0] = el)}>
+                            <h3 className="frm-title" tabIndex={-1} ref={fokusTitel(0)}>
                               {step1.title}
                             </h3>
                           </legend>
@@ -510,9 +510,11 @@ export default function Formular() {
                                   <span className="frm-tile-ic">
                                     <Zeitfresser i={i} />
                                   </span>
-                                  <span className="frm-tile-txt">{tile}</span>
-                                  <span className="frm-tick" aria-hidden="true">
-                                    <Haken size={12} />
+                                  <span className="frm-tile-txt">
+                                    <span className="frm-tick" aria-hidden="true">
+                                      <Haken size={12} />
+                                    </span>
+                                    {tile}
                                   </span>
                                 </label>
                               );
@@ -565,7 +567,7 @@ export default function Formular() {
                       <>
                         <fieldset className="frm-fs frm-block" aria-describedby={errors.employees ? "frm-size-0-err" : undefined}>
                           <legend className="frm-legend">
-                            <h3 className="frm-title" tabIndex={-1} ref={(el) => void (titleRefs.current[1] = el)}>
+                            <h3 className="frm-title" tabIndex={-1} ref={fokusTitel(1)}>
                               {step2.title}
                             </h3>
                           </legend>
@@ -619,7 +621,7 @@ export default function Formular() {
                     ) : (
                       <>
                         <div className="frm-legend frm-legend--solo">
-                          <h3 className="frm-title" tabIndex={-1} ref={(el) => void (titleRefs.current[2] = el)}>
+                          <h3 className="frm-title" tabIndex={-1} ref={fokusTitel(2)}>
                             {step3.title}
                           </h3>
                         </div>

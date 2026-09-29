@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { footer } from "@/app/copy";
 import { company } from "@/app/content";
 import LegalPage, { type LegalSection } from "@/components/pages/LegalPage";
+import { pageMeta } from "@/components/pages/meta";
 
 /*
  * Datenschutzerklärung. Inhalt unverändert von der alten Seite übernommen
@@ -11,11 +12,11 @@ import LegalPage, { type LegalSection } from "@/components/pages/LegalPage";
  * „Messung ändern“), damit der Verweis nicht ins Leere zeigt.
  */
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Datenschutzerklärung",
   description: "Informationen zur Verarbeitung personenbezogener Daten auf dieser Website nach der Datenschutz-Grundverordnung (DSGVO).",
-  alternates: { canonical: "/datenschutz" },
-};
+  path: "/datenschutz",
+});
 
 const sections: LegalSection[] = [
   {

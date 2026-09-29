@@ -147,10 +147,8 @@ export default function Masterplan({ label }: Readonly<{ label: string }>) {
                     <Line w={[88, 80, 84][i]} />
                     <Line w={[62, 70, 54][i]} />
                   </span>
-                  <span className="md-lever" aria-hidden="true">
-                    {[0, 1, 2, 3, 4].map((k) => (
-                      <i key={k} data-on={k < 5 - Math.min(i, 2) ? "" : undefined} />
-                    ))}
+                  <span className="md-gauge" aria-hidden="true">
+                    <i style={{ "--g": [0.92, 0.76, 0.62][i] } as V} />
                   </span>
                 </li>
               ))}

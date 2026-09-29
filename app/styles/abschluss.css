@@ -14,28 +14,25 @@
   z-index: 0;
   pointer-events: none;
 }
-.abs-flood {
+.abs-glow {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: min(120vw, 780px);
-  opacity: 0.22;
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.6) 45%, transparent 100%);
-  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.6) 45%, transparent 100%);
+  left: 50%;
+  top: -10%;
+  width: min(1400px, 180vw);
+  height: 900px;
+  translate: -50% 0;
+  background: radial-gradient(50% 45% at 50% 30%, rgba(124, 106, 255, 0.1), rgba(91, 140, 255, 0.04) 55%, transparent 100%);
 }
-.abs-flood img {
-  object-fit: cover;
-  object-position: 80% 0%;
-}
+/* Strafraum oben am Abschnitt; blendet nach unten aus, bevor Text beginnt */
 .abs-pitch {
   left: 50%;
   top: 0;
-  width: max(780px, 120vw);
-  max-width: 1560px;
+  width: 680px;
   height: auto;
   translate: -50% 0;
-  opacity: 0.36;
+  opacity: 0.55;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 12%, transparent 40%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 12%, transparent 40%);
 }
 .abs-pitch .spot {
   fill: #9d8cff;
@@ -87,14 +84,18 @@
 /* Höhen-Behälter: Luft für Fokusringe, ohne dass etwas abgeschnitten wird */
 .autoh {
   overflow: hidden;
-  margin: -6px;
+  margin: -24px;
 }
 .autoh-in {
   position: relative;
-  padding: 6px;
+  padding: 24px;
 }
 .autoh.frm-viewport {
-  margin: 18px -6px -6px;
+  margin: -6px;
+  margin-top: 12px;
+}
+.autoh.frm-viewport > .autoh-in {
+  padding: 6px;
 }
 
 .frm-top {
@@ -224,7 +225,7 @@
   align-items: center;
   gap: 12px;
   min-height: 60px;
-  padding: 10px 30px 10px 14px;
+  padding: 10px 12px 10px 14px;
   border-radius: 14px;
   border: 1px solid rgba(244, 244, 246, 0.13);
   background: rgba(255, 255, 255, 0.022);
@@ -247,8 +248,16 @@
 .frm-tile-txt,
 .frm-size-txt {
   min-width: 0;
-  overflow-wrap: break-word;
   hyphens: manual;
+}
+.frm-tile-txt {
+  flex: 1 1 auto;
+}
+/* Häkchen fließt rechts neben der ersten Zeile: nie ein Wortbruch, auch bei 360 px */
+.frm-tile .frm-tick {
+  position: static;
+  float: right;
+  margin: 0.06em 0 2px 8px;
 }
 @media (hover: hover) {
   .frm-tile:hover,
@@ -285,8 +294,9 @@
 }
 .frm-tick {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 50%;
+  right: 10px;
+  margin-top: -9px;
   display: grid;
   place-items: center;
   width: 18px;
@@ -306,6 +316,11 @@
   color: #0a0914;
 }
 
+.frm-size .frm-tick {
+  top: 12px;
+  right: 12px;
+  margin-top: 0;
+}
 .frm-size {
   flex-direction: column;
   align-items: flex-start;
@@ -740,17 +755,22 @@
 
 .abs-below {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
-  margin-top: 14px;
-  font-size: 14px;
+  gap: 6px 18px;
+  margin-top: 16px;
+  font-size: 14.5px;
   line-height: 1.4;
   color: var(--ink-3);
-  text-align: center;
+}
+.abs-below li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .abs-below svg {
-  flex: 0 0 14px;
+  flex: 0 0 13px;
+  color: var(--lav);
 }
 
 /* ----------------------------------------------------------- Direktkontakt */
@@ -818,7 +838,7 @@ a.abs-direct-row:hover .abs-direct-ic {
   }
   .frm-tile {
     font-size: 16px;
-    padding-right: 36px;
+    padding-right: 14px;
   }
   .frm-fields {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -870,9 +890,10 @@ a.abs-direct-row:hover .abs-direct-ic {
   .abs-head {
     padding-top: 12px;
   }
-  .abs-flood {
-    height: 900px;
-    opacity: 0.2;
+  .abs-pitch {
+    width: 1320px;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 14%, transparent 34%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 14%, transparent 34%);
   }
   .frm-card {
     padding: 26px 36px 36px;

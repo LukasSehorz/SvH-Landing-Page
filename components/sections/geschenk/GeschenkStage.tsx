@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { geschenk } from "@/app/copy";
 import Rich from "@/components/system/Rich";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { useMotionMode } from "@/lib/hooks";
+import { useMediaQuery, useMotionMode } from "@/lib/hooks";
 import Masterplan from "./Masterplan";
 
 /* ====================================================================
@@ -34,7 +34,10 @@ const gridAt = (i: number) => ({
 const depthOf = (i: number, front: number) => (i - front + N) % N;
 
 export default function GeschenkStage() {
-  const mode = useMotionMode();
+  const motionMode = useMotionMode();
+  // Handy quer (sehr niedriges Fenster): kein Platz für ein klebendes Dokument, Seiten offen zeigen
+  const short = useMediaQuery("(max-height: 540px) and (max-width: 1023px)");
+  const mode = motionMode === "motion" && short ? "reduced" : motionMode;
   const root = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -48,7 +51,6 @@ export default function GeschenkStage() {
       const stamp = el.querySelector<HTMLElement>(".md-stamp")!;
       const points = gsap.utils.toArray<HTMLElement>(el.querySelectorAll(".gs-point"));
       const sticky = el.querySelector<HTMLElement>(".gs-docwrap")!;
-      const fill = el.querySelector<HTMLElement>(".gs-track-fill");
       const desktop = () => window.matchMedia("(min-width: 1024px)").matches;
 
       let cur = 0;
@@ -58,7 +60,7 @@ export default function GeschenkStage() {
         const front = state === 4 ? 0 : state;
         pages.forEach((p, i) => gsap.set(p, { zIndex: 10 - depthOf(i, front) }));
       };
-      const shadeFor = (i: number, state: number) => (state === 4 ? 0 : depthOf(i, state) * 0.06);
+      const shadeFor = (i: number, state: number) => (state === 4 ? 0 : depthOf(i, state) * 0.035);
       const posFor = (i: number, state: number) => (state === 4 ? gridAt(i) : stackAt(depthOf(i, state)));
 
       // Inhalt der Seite baut sich auf, sobald sie vorn liegt
@@ -71,19 +73,19 @@ export default function GeschenkStage() {
         } else if (i === 2) {
           const items = pg.querySelectorAll(".md-top li");
           const lines = pg.querySelectorAll(".md-top .md-line");
-          const lever = pg.querySelectorAll(".md-lever i[data-on]");
-          gsap.killTweensOf([items, lines, lever]);
-          gsap.fromTo(items, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.12 });
-          gsap.fromTo(lines, { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "expo.out", stagger: 0.05, delay: 0.15 });
-          gsap.fromTo(lever, { scaleY: 0 }, { scaleY: 1, duration: 0.6, ease: "power3.out", stagger: 0.03, delay: 0.3 });
+          const gauges = pg.querySelectorAll(".md-gauge i");
+          gsap.killTweensOf([items, lines, gauges]);
+          gsap.fromTo(items, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.1 });
+          gsap.fromTo(lines, { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "expo.out", stagger: 0.04, delay: 0.12 });
+          gsap.fromTo(gauges, { scaleX: 0 }, { scaleX: 1, duration: 1, ease: "expo.out", stagger: 0.1, delay: 0.25 });
         } else if (i === 3) {
           const checks = pg.querySelectorAll(".md-check path");
           const boxes = pg.querySelectorAll(".md-check");
           const lines = pg.querySelectorAll(".md-weg .md-line");
           gsap.killTweensOf([checks, boxes, lines]);
           gsap.fromTo(lines, { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "expo.out", stagger: 0.05 });
-          gsap.fromTo(boxes, { "--f": 0 }, { "--f": 1, duration: 0.35, ease: "power2.out", stagger: 0.11, delay: 0.2 });
-          gsap.fromTo(checks, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.45, ease: "power2.out", stagger: 0.11, delay: 0.3 });
+          gsap.fromTo(boxes, { "--f": 0 }, { "--f": 1, duration: 0.3, ease: "power2.out", stagger: 0.07, delay: 0.15 });
+          gsap.fromTo(checks, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.4, ease: "power2.out", stagger: 0.07, delay: 0.22 });
         }
       };
 
@@ -142,24 +144,38 @@ export default function GeschenkStage() {
         tl.add(() => build(next), 0.34);
       };
 
-      // Aktiver Punkt: Linie, an der ein Punkt „dran“ ist
-      const lineY = () => {
+      // Aktiver Punkt = der Punkt, dessen Text der Mitte des freien Bereichs am nächsten ist.
+      // Frei ist mobil der Streifen zwischen Dokument und CTA-Leiste (Menüleiste dabei
+      // ausgeblendet), am Desktop das Fenster unter der Leiste. Umgeschaltet wird erst,
+      // wenn der neue Text ganz lesbar im Bild steht.
+      const texts = points.map((p) => p.querySelector<HTMLElement>(".gs-pt")!);
+      const centerOf = (t: HTMLElement) => (t.parentElement as HTMLElement).offsetTop + t.offsetTop + t.offsetHeight / 2;
+      const band = () => {
         const vh = window.innerHeight;
-        if (desktop()) return Math.round(vh * 0.56);
-        const docBottom = sticky.offsetHeight;
-        const free = Math.max(0, vh - docBottom - 88);
-        return Math.round(docBottom + Math.max(24, free * 0.3));
+        if (desktop()) return { top: 100, bottom: vh };
+        const shift = parseFloat(getComputedStyle(el).getPropertyValue("--gs-shift")) || 0;
+        return { top: sticky.offsetHeight - shift, bottom: vh - 88 };
+      };
+      const lineFor = (i: number) => {
+        const b = band();
+        const t = texts[i];
+        const pitch = i > 0 ? centerOf(t) - centerOf(texts[i - 1]) : centerOf(texts[1]) - centerOf(t);
+        const line = Math.min((b.top + b.bottom) / 2 + pitch / 2, b.bottom - t.offsetHeight / 2 - 10);
+        return Math.round(Math.max(line, b.top + t.offsetHeight / 2));
       };
 
       const mark = (state: number) => {
         el.dataset.state = String(state);
-        points.forEach((p, i) => p.toggleAttribute("data-active", i === state - 1));
+        points.forEach((p, i) => {
+          p.toggleAttribute("data-active", i === state - 1);
+          p.toggleAttribute("data-done", i < state - 1);
+        });
       };
 
-      const triggers = points.map((pt, i) =>
+      const triggers = points.map((_, i) =>
         ScrollTrigger.create({
-          trigger: pt,
-          start: () => `top ${lineY()}px`,
+          trigger: texts[i],
+          start: () => `center ${lineFor(i)}px`,
           onEnter: () => {
             mark(i + 1);
             go(i + 1);
@@ -171,24 +187,22 @@ export default function GeschenkStage() {
         }),
       );
 
-      // Fortschrittslinie an den Punkten entlang
-      if (fill) {
-        gsap.fromTo(
-          fill,
-          { scaleY: 0 },
-          {
-            scaleY: 1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: points[0],
-              start: () => `top ${lineY()}px`,
-              endTrigger: points[N - 1],
-              end: () => `top ${lineY()}px`,
-              scrub: 0.4,
-            },
-          },
-        );
-      }
+      // Mobil: blendet die Menüleiste beim Runterscrollen aus, rückt das Dokument
+      // nach oben (sticky-Versatz), weich nachgezogen per transform (FLIP)
+      const nav = document.querySelector<HTMLElement>(".nav");
+      let navHidden = false;
+      const syncNav = () => {
+        const hidden = nav?.dataset.hidden === "true" && !desktop();
+        if (hidden === navHidden) return;
+        navHidden = hidden;
+        const before = sticky.getBoundingClientRect().top;
+        el.toggleAttribute("data-navhidden", hidden);
+        const dy = before - sticky.getBoundingClientRect().top;
+        if (Math.abs(dy) > 1) gsap.fromTo(sticky, { y: dy }, { y: 0, duration: 0.6, ease: "power3.out", overwrite: true });
+      };
+      const mo = nav ? new MutationObserver(syncNav) : null;
+      if (nav) mo!.observe(nav, { attributes: true, attributeFilter: ["data-hidden"] });
+      syncNav();
 
       // Stempel setzt sich ruhig aufs Deckblatt, sobald das Dokument ins Bild kommt
       const vh = window.innerHeight;
@@ -223,8 +237,13 @@ export default function GeschenkStage() {
 
       return () => {
         tl?.kill();
+        mo?.disconnect();
         delete el.dataset.state;
-        points.forEach((p) => p.removeAttribute("data-active"));
+        el.removeAttribute("data-navhidden");
+        points.forEach((p) => {
+          p.removeAttribute("data-active");
+          p.removeAttribute("data-done");
+        });
       };
     },
     { scope: root, dependencies: [mode], revertOnUpdate: true },
@@ -239,9 +258,6 @@ export default function GeschenkStage() {
       </div>
 
       <div className="gs-points">
-        <span className="gs-track" aria-hidden="true">
-          <span className="gs-track-fill" />
-        </span>
         <ol className="gs-list">
         {P.map((p, i) => (
           <li className="gs-point" key={p.title}>

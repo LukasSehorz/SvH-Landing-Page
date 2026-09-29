@@ -22,7 +22,9 @@
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
   --gutter: clamp(20px, 4vw, 88px);
-  --shell: 1440px;
+  /* bis 1920 maximal 1440 breit, auf sehr großen Schirmen moderat mehr (die alte
+     Seite wurde für zu viel leeren Rand bei 2560 beanstandet) */
+  --shell: clamp(1440px, 70vw, 1760px);
   --section-y: clamp(88px, 10vw, 156px);
   --nav-offset: 104px;
   --measure: 36em;
