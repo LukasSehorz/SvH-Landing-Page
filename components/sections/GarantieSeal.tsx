@@ -16,30 +16,48 @@ export default function GarantieSeal() {
   const root = useRef<HTMLDivElement>(null);
 
   useGSAP(
-    () => {
+    (_ctx, contextSafe) => {
       const el = root.current;
       if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       // langsame Drehung nur, solange das Siegel im Bild ist
       const io = new IntersectionObserver(([e]) => el.toggleAttribute("data-spin", e.isIntersecting), { rootMargin: "80px" });
       io.observe(el);
-      if (el.getBoundingClientRect().top < window.innerHeight * 0.85) return () => io.disconnect();
-      const rings = el.querySelectorAll<SVGCircleElement>("[data-ring]");
-      const seal = el.querySelector(".seal-body");
-      const mono = el.querySelector(".seal-mono");
-      const text = el.querySelector(".seal-text");
-      const disc = el.querySelector(".seal-disc");
-      const glow = el.querySelector(".seal-glow");
-      // nur opacity/transform (nie visibility), Maß aus lib/motion.ts
-      gsap.set(rings, { strokeDasharray: 1, strokeDashoffset: 1 });
-      gsap.set(seal, { scale: 1.05, rotate: -4, transformOrigin: "50% 50%" });
-      gsap.set([mono, text, disc, glow], { opacity: 0 });
-      const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: enterStart, once: true } });
-      tl.to([disc, glow], { opacity: 1, duration: 1.6, ease: M.fade }, 0)
-        .to(rings, { strokeDashoffset: 0, duration: 1.4, ease: M.draw, stagger: 0.12 }, 0)
-        .to(text, { opacity: 1, duration: 1.0, ease: M.fade }, 0.7)
-        .to(mono, { opacity: 1, duration: 0.9, ease: M.fade }, 0.9)
-        .to(seal, { scale: 1, rotate: 0, duration: 1.6, ease: M.ease }, 0.8);
-      return () => io.disconnect();
+      // Auftritt: Ringe zeichnen sich, das Siegel setzt sich
+      const build = () => {
+        const rings = el.querySelectorAll<SVGCircleElement>("[data-ring]");
+        const seal = el.querySelector(".seal-body");
+        const mono = el.querySelector(".seal-mono");
+        const text = el.querySelector(".seal-text");
+        const disc = el.querySelector(".seal-disc");
+        const glow = el.querySelector(".seal-glow");
+        // nur opacity/transform (nie visibility), Maß aus lib/motion.ts
+        gsap.set(rings, { strokeDasharray: 1, strokeDashoffset: 1 });
+        gsap.set(seal, { scale: 1.05, rotate: -4, transformOrigin: "50% 50%" });
+        gsap.set([mono, text, disc, glow], { opacity: 0 });
+        const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: enterStart, once: true } });
+        tl.to([disc, glow], { opacity: 1, duration: 1.6, ease: M.fade }, 0)
+          .to(rings, { strokeDashoffset: 0, duration: 1.4, ease: M.draw, stagger: 0.12 }, 0)
+          .to(text, { opacity: 1, duration: 1.0, ease: M.fade }, 0.7)
+          .to(mono, { opacity: 1, duration: 0.9, ease: M.fade }, 0.9)
+          .to(seal, { scale: 1, rotate: 0, duration: 1.6, ease: M.ease }, 0.8);
+      };
+      // Erst anlegen, wenn das Siegel einen Bildschirm entfernt ist (beim Laden wird nichts
+      // gemessen). Liegt es dann schon im Bild oder darüber (Laden mitten auf der Seite,
+      // Anker-Sprung), bleibt es fertig stehen. Nach oben unbegrenzt: auch ein Sprung
+      // darüber hinweg meldet sich.
+      const near = new IntersectionObserver(
+        contextSafe!(([e]: IntersectionObserverEntry[]) => {
+          if (!e.isIntersecting) return;
+          near.disconnect();
+          if (e.boundingClientRect.top >= window.innerHeight * 0.85) build();
+        }),
+        { rootMargin: "100000px 0px 100% 0px" },
+      );
+      near.observe(el);
+      return () => {
+        io.disconnect();
+        near.disconnect();
+      };
     },
     { scope: root },
   );

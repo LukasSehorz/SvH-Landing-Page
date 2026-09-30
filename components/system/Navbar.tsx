@@ -49,13 +49,15 @@ export default function Navbar() {
 
   // Ausblenden beim Runterscrollen, Einblenden beim Hochscrollen
   useEffect(() => {
-    let lastY = window.scrollY;
+    // erst im ersten Bild lesen: scrollY beim Einhängen erzwingt mitten in der Hydration ein Layout
+    let lastY = -1;
     let raf = 0;
     const onScroll = () => {
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
         const y = window.scrollY;
+        if (lastY < 0) lastY = y;
         setScrolled(y > 24);
         if (Math.abs(y - lastY) > 6) {
           setDown(y > lastY && y > 160);

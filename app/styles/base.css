@@ -337,6 +337,24 @@ section[id] {
   margin-bottom: -0.12em;
 }
 
+/* Startzustand der Einblendungen (components/system/Reveals.tsx). Das Attribut setzt erst
+   das Skript im Browser und nur für Elemente unterhalb des Bildes: ohne JavaScript bleibt
+   alles sichtbar. Nur Deckkraft und Verschiebung, nie visibility (bleibt fokussierbar).
+   24 px = MOTION.block.y. !important, weil manche Blöcke eine eigene Deckkraft haben;
+   beim Auslösen nimmt das Skript das Attribut weg, bevor GSAP übernimmt. */
+[data-rv] {
+  opacity: 0 !important;
+}
+[data-rv="move"] {
+  translate: 0 24px;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-rv] {
+    opacity: 1 !important;
+    translate: none;
+  }
+}
+
 /* ------------------------------------------------------ Schreibschrift */
 
 .script {

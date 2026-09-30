@@ -97,7 +97,8 @@ export default function Schalter() {
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     b.addEventListener("transitionend", onScroll);
-    check();
+    // erst im nächsten Bild messen (nicht mitten in der Hydration)
+    raf = requestAnimationFrame(check);
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
@@ -113,7 +114,15 @@ export default function Schalter() {
     if (!el || !sw) return;
     const reduced = prefersReducedMotion();
     let timer = 0;
-    if (!reduced && el.getBoundingClientRect().top > window.innerHeight * 0.6) setOn(false);
+    // Liegt der Abschnitt beim Laden unterhalb, startet der Schalter aus und schaltet sich im Bild ein.
+    // Die Lage liefert der erste Rückruf (nach dem ersten Bild, ohne erzwungenes Layout); dieser
+    // Beobachter entsteht vor „auto“, sein Rückruf kommt also zuerst.
+    const first = new IntersectionObserver(([e]) => {
+      first.disconnect();
+      const vh = e.rootBounds?.height ?? window.innerHeight;
+      if (!reduced && !touched.current && e.boundingClientRect.top > vh * 0.6) setOn(false);
+    });
+    first.observe(el);
     // Auslöser: der Schalter selbst im mittleren Bildbereich (greift auch quer und in Safari)
     const auto = new IntersectionObserver(
       ([e]) => {
@@ -131,6 +140,7 @@ export default function Schalter() {
     const vis = new IntersectionObserver(([e]) => setPlay(e.isIntersecting && !reduced), { rootMargin: "100px" });
     vis.observe(el);
     return () => {
+      first.disconnect();
       auto.disconnect();
       vis.disconnect();
       window.clearTimeout(timer);

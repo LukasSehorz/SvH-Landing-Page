@@ -67,8 +67,12 @@ function LiveStory({ variant }: { variant: Variant }) {
     const el = stage.current?.parentElement;
     if (!el) return;
     let idle = 0;
+    // Ausgangsbreite erst im ersten Beobachter-Rückruf lesen (Layout ist dann frisch). innerWidth
+    // beim Einhängen erzwingt auf dem Handy mitten in der Hydration ein Layout der ganzen Seite.
+    let w = 0;
     const io = new IntersectionObserver(
       ([e]) => {
+        if (!w) w = window.innerWidth;
         if (!e.isIntersecting) return;
         io.disconnect();
         // im Leerlauf aufbauen (bremst das Laden nicht), spätestens nach 400 ms
@@ -79,11 +83,11 @@ function LiveStory({ variant }: { variant: Variant }) {
       { rootMargin: "100% 0px" },
     );
     io.observe(el);
-    let w = window.innerWidth;
     let t = 0;
     const onResize = () => {
       window.clearTimeout(t);
       t = window.setTimeout(() => {
+        if (!w) w = window.innerWidth;
         if (Math.abs(window.innerWidth - w) < 2) return;
         w = window.innerWidth;
         setLayout((n) => n + 1);
