@@ -1,7 +1,7 @@
 /* ================================================ Vom Chaos zur Ruhe
    „Der Posteingang, der sich selbst leert“: im Code gezeichnete Szene.
    Mobil zuerst: Text oben, darunter ein Mitteilungs-Stapel wie auf dem
-   Sperrbildschirm. Ab 960 px: Text links, Posteingangs-Fenster rechts.
+   Sperrbildschirm (nie skaliert). Ab 960 px: Text links, Posteingang rechts.
    ==================================================================== */
 
 .chaos {
@@ -18,24 +18,23 @@
   min-width: 0;
 }
 .chaos-label {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   min-height: 17px;
 }
 .chaos-label--empty {
   visibility: hidden;
 }
+/* Überschrift im Schnitt der Seite (.h2); mobil so groß, dass der längste
+   feste Zweizeiler („Aber sie ist immer gleich.“, 10 em) in eine Zeile passt */
 .chaos-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(29px, 7.9vw, 38px);
-  line-height: 1.04;
-  letter-spacing: -0.037em;
-  color: var(--ink);
-  text-wrap: balance;
+  font-size: min(34px, calc((100vw - 2 * var(--gutter)) / 10.3));
+}
+.chaos-title .line {
+  display: block;
 }
 .chaos-text {
-  margin-top: 14px;
-  font-size: 16.5px;
+  margin-top: 10px;
+  font-size: 16px;
   line-height: 1.5;
   color: var(--ink-2);
   text-wrap: pretty;
@@ -70,10 +69,10 @@
 /* ======================================================= Gepinnte Fassung */
 
 .chaos--live {
-  height: 310vh;
-  height: calc(100svh + 210svh);
+  height: 250vh;
+  height: calc(100svh + 150svh);
   /* der untere Rand der Bühne liegt unter der festen CTA-Leiste: dem Schalter Platz lassen, statt Leere zu zeigen */
-  margin-bottom: -72px;
+  margin-bottom: -56px;
 }
 .chaos-stage {
   position: sticky;
@@ -82,12 +81,21 @@
   height: 100svh;
   overflow: hidden;
 }
+.chaos-cta-probe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: var(--mobile-cta-h);
+  visibility: hidden;
+  pointer-events: none;
+}
 .chaos-glow {
   position: absolute;
   left: 50%;
-  bottom: 4%;
+  bottom: 8%;
   width: min(760px, 150vw);
-  height: 62%;
+  height: 56%;
   transform: translateX(-50%);
   border-radius: 999px;
   pointer-events: none;
@@ -99,8 +107,7 @@
   flex-direction: column;
   height: 100%;
   max-width: 640px;
-  padding-top: 80px;
-  padding-bottom: calc(94px + env(safe-area-inset-bottom));
+  padding-top: calc(var(--nav-clear) + 8px);
 }
 .chaos-copy {
   position: relative;
@@ -111,6 +118,7 @@
 }
 .chaos-beats .chaos-beat {
   grid-area: 1 / 1;
+  align-self: start;
 }
 .chaos-copy .chaos-steps {
   position: absolute;
@@ -121,7 +129,7 @@
   position: relative;
   flex: 1 1 auto;
   min-height: 0;
-  margin-top: 22px;
+  margin-top: 12px;
 }
 
 /* ============================================================ Szene */
@@ -149,8 +157,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 62px;
-  padding: 11px 14px 11px 12px;
+  min-height: 54px;
+  padding: 8px 14px 8px 12px;
 }
 .ce-ico {
   position: relative;
@@ -192,15 +200,15 @@
   align-items: baseline;
   gap: 10px;
   font-size: 12px;
-  line-height: 16px;
+  line-height: 15px;
   color: var(--ink-3);
 }
 .ce-app {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: rgba(244, 244, 246, 0.56);
+  color: rgba(244, 244, 246, 0.58);
 }
 .ce-time {
   font-variant-numeric: tabular-nums;
@@ -214,7 +222,6 @@
   letter-spacing: -0.006em;
   color: rgba(244, 244, 246, 0.95);
   white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ce-from,
 .ce-side {
@@ -253,11 +260,11 @@
 .cd-name {
   font-size: 15px;
   font-weight: 500;
-  color: rgba(244, 244, 246, 0.8);
+  color: rgba(244, 244, 246, 0.82);
 }
 .cd-n {
   margin-left: auto;
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--ink-3);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -270,7 +277,7 @@
   align-items: center;
   height: 18px;
   padding-inline: 4px;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -317,15 +324,15 @@
 .csum-check {
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
+  width: 60px;
+  height: 60px;
   border-radius: 99px;
   background: radial-gradient(closest-side, rgba(124, 106, 255, 0.16), rgba(124, 106, 255, 0));
 }
 .csum-title {
-  margin-top: 14px;
+  margin-top: 10px;
   font-family: var(--font-display);
-  font-size: 27px;
+  font-size: 26px;
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.03em;
@@ -361,11 +368,39 @@
   height: 28px;
   padding-inline: 9px 11px;
   border-radius: 99px;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--ink-2);
   background: rgba(255, 255, 255, 0.03);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+/* mobil: eine einzige Mitteilung „Ihre Helfer · 148 erledigt“ */
+.csum-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px 16px 12px 12px;
+  border-radius: 18px;
+  text-align: left;
+  background: var(--c-card);
+  box-shadow:
+    inset 0 0 0 1px rgba(185, 165, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 16px 34px -18px rgba(0, 0, 0, 0.95);
+}
+.csum-card-t {
+  font-size: 16px;
+  line-height: 21px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.csum-card-s {
+  font-size: 13.5px;
+  line-height: 19px;
+  color: var(--ink-3);
+  text-wrap: balance;
 }
 
 /* Zähler „ungelesen“ */
@@ -377,7 +412,7 @@
   height: 26px;
   padding-inline: 11px;
   border-radius: 99px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--ink-2);
   white-space: nowrap;
@@ -406,7 +441,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 26px;
+  height: 24px;
 }
 .cm-clock {
   font-size: 13px;
@@ -420,16 +455,11 @@
 
 .cs--stack .cs-fit {
   position: absolute;
-  left: 0;
-  top: 0;
-  width: calc(100% / var(--k));
-  height: calc(100% / var(--k));
-  transform: scale(var(--k));
-  transform-origin: 0 0;
+  inset: 0;
 }
 .cs--stack .cm-list {
   position: absolute;
-  top: 36px;
+  top: 32px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -459,6 +489,11 @@
   height: 76px;
   pointer-events: none;
   background: linear-gradient(180deg, rgba(5, 5, 7, 0), var(--bg) 88%);
+}
+/* gepinnt: Verlauf endet an der Oberkante der CTA-Leiste, darunter deckend */
+.cs--live .cm-fade {
+  height: calc(var(--mobile-cta-h) + 84px);
+  background: linear-gradient(180deg, rgba(5, 5, 7, 0) 0, var(--bg) 74px, var(--bg) 100%);
 }
 
 /* ----------------------------------------------------- Posteingangs-Fenster (Desktop) */
@@ -497,7 +532,7 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--ink-3);
 }
@@ -506,7 +541,7 @@
   justify-content: space-between;
   align-items: center;
   height: 76px;
-  padding-inline: 24px 22px;
+  padding-inline: 22px 20px;
 }
 .cw-title {
   font-family: var(--font-display);
@@ -518,7 +553,7 @@
 }
 .cw-sub {
   margin-top: 3px;
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--ink-3);
   font-variant-numeric: tabular-nums;
 }
@@ -553,12 +588,12 @@
   gap: 1px;
 }
 .cw .ce-title {
-  font-size: 14.5px;
+  font-size: 15px;
   line-height: 19px;
 }
 .cw .ce-from {
   display: block;
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 16px;
   color: var(--ink-3);
   white-space: nowrap;
@@ -568,15 +603,15 @@
   align-items: center;
   gap: 10px;
   flex: none;
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--ink-3);
 }
 .cw .cd {
   border-radius: 13px;
   padding: 0 18px 0 10px;
 }
-.cw .cd-name {
-  font-size: 14.5px;
+.cw .csum-title {
+  font-size: 31px;
 }
 
 /* Mitteilungen über dem Fensterrand */
@@ -611,17 +646,17 @@
   color: var(--ink);
 }
 .ct-sub {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 16px;
   color: var(--ink-3);
 }
 
-/* Desktop-Szene: feste Entwurfsgröße 600 × 568, als Ganzes skaliert */
+/* Desktop-Szene: feste Entwurfsgröße 560 × 568, als Ganzes skaliert */
 .cs--win .cs-fit {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 600px;
+  width: 560px;
   height: 568px;
   transform: translate(-50%, -50%) scale(var(--k));
 }
@@ -629,7 +664,7 @@
   position: absolute;
   left: 0;
   top: 28px;
-  width: 560px;
+  width: 520px;
   height: 540px;
 }
 .cs--win .cw-list {
@@ -676,22 +711,13 @@
 
 .chaos-static {
   display: grid;
-  gap: clamp(72px, 10vw, 128px);
+  gap: clamp(64px, 9vw, 120px);
   padding-block: var(--section-y);
 }
 .chaos-row {
   display: grid;
-  gap: 28px;
+  gap: 24px;
   align-items: center;
-}
-.chaos-static .chaos-title {
-  font-size: clamp(32px, 8.4vw, 40px);
-}
-.chaos-static .chaos-text {
-  font-size: 17px;
-}
-.cs--static .cs-win {
-  display: none;
 }
 .cs--static .cs-flow {
   position: relative;
@@ -703,7 +729,7 @@
   margin-top: 10px;
 }
 .cs--static .cm-list.cs-flow {
-  max-height: 318px;
+  max-height: 300px;
 }
 .cs--static .cs-groups {
   display: grid;
@@ -747,22 +773,24 @@
 .cs--static .cs-rest {
   display: grid;
   place-items: center;
-  padding-block: 28px 20px;
+  padding-block: 20px 12px;
+}
+.cs--static .cm-list.cs-rest {
+  padding-block: 18px 4px;
 }
 
+/* ============================================================ Tablet hochkant */
+
 @media (min-width: 600px) and (max-width: 959px) {
-  /* Tablet hochkant: gleiche Komposition wie mobil, Schrift größer */
   .chaos-static .chaos-row {
     max-width: 640px;
     margin-inline: auto;
   }
   .chaos-frame {
     max-width: 680px;
-    padding-top: 108px;
   }
-  .chaos-title,
-  .chaos-static .chaos-title {
-    font-size: clamp(40px, 5.6vw, 50px);
+  .chaos-title {
+    font-size: clamp(38px, 5.4vw, 50px);
   }
   .chaos-text {
     font-size: 18px;
@@ -773,24 +801,29 @@
 
 @media (min-width: 960px) {
   .chaos--live {
-    height: 380vh;
-    height: calc(100svh + 280svh);
+    height: 280vh;
+    height: calc(100svh + 180svh);
     margin-bottom: 0;
-  }
-  .cw .csum-title {
-    font-size: 31px;
   }
   .chaos-frame {
     flex-direction: row;
     align-items: center;
     gap: clamp(36px, 4.4vw, 96px);
     max-width: calc(var(--shell) + var(--gutter) * 2);
-    padding-top: calc(var(--nav-offset) - 12px);
-    padding-bottom: 40px;
+    padding-top: calc(var(--nav-clear) - 4px);
+    padding-bottom: 32px;
+  }
+  /* Textspalte so breit wie der längste feste Zweizeiler (10,35 em der Überschrift) */
+  .chaos-copy,
+  .chaos-static .chaos-beat {
+    --t: clamp(34px, 4.4vw, 72px);
   }
   .chaos-copy {
-    flex: 0 0 39%;
-    max-width: 580px;
+    flex: 0 0 calc(var(--t) * 10.35);
+    max-width: 52%;
+  }
+  .chaos-title {
+    font-size: var(--t);
   }
   .chaos-copy .chaos-steps {
     position: static;
@@ -799,15 +832,10 @@
   .chaos-steps i {
     width: 28px;
   }
-  .chaos-title {
-    font-size: clamp(40px, 4.15vw, 70px);
-    line-height: 1.02;
-    letter-spacing: -0.042em;
-  }
   .chaos-text {
     margin-top: 24px;
     font-size: clamp(17px, 1.32vw, 20px);
-    max-width: 29em;
+    max-width: 30em;
   }
   .chaos-label {
     margin-bottom: 20px;
@@ -818,29 +846,29 @@
     margin-top: 0;
   }
   .chaos-glow {
-    left: 70%;
+    left: 72%;
     top: 16%;
     bottom: auto;
-    width: 900px;
+    width: 860px;
     height: 70%;
   }
 
   .chaos-row {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    grid-template-columns: auto minmax(0, 1fr);
     gap: clamp(40px, 5vw, 96px);
   }
-  .chaos-static .chaos-title {
-    font-size: clamp(38px, 3.8vw, 60px);
+  .chaos-static .chaos-beat {
+    width: calc(var(--t) * 10.35);
+    max-width: 52vw;
   }
-  .cs--static .cs-win {
-    display: block;
-  }
-  .cs--static .cs-stack {
-    display: none;
+  .cs--static-stack {
+    max-width: 460px;
+    margin-left: auto;
+    width: 100%;
   }
   .cs--static .cs-box {
     position: relative;
-    max-width: 600px;
+    max-width: 560px;
     padding: 28px 40px 0 0;
     margin-left: auto;
   }
@@ -879,23 +907,9 @@
     opacity: 0;
   }
 }
-
-@media (max-height: 740px) and (max-width: 959px) {
-  /* kleine Telefone: Text kompakter, Szene bekommt mehr Platz */
-  .chaos-frame {
-    padding-top: 76px;
-  }
-  .chaos-title {
-    font-size: clamp(28px, 7.6vw, 32px);
-  }
-  .chaos-text {
-    margin-top: 10px;
-    font-size: 16px;
-  }
-  .chaos-label {
-    margin-bottom: 10px;
-  }
-  .chaos-visual {
-    margin-top: 16px;
+@media (min-width: 960px) and (max-width: 1180px) {
+  .chaos-copy,
+  .chaos-static .chaos-beat {
+    --t: clamp(34px, 3.9vw, 72px);
   }
 }

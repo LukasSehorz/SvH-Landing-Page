@@ -4,9 +4,8 @@ import "./globals.css";
 import { meta, nav } from "./copy";
 import { company } from "./content";
 import { GTM_ID, SEARCH_CONSOLE_ID } from "./tracking";
-import SmoothScroll from "@/components/system/SmoothScroll";
 import Consent from "@/components/system/Consent";
-import Reveals from "@/components/system/Reveals";
+import Effects from "@/components/system/Effects";
 import Spotlight from "@/components/system/Spotlight";
 import SvgDefs from "@/components/system/SvgDefs";
 import Noise from "@/components/system/Noise";
@@ -17,7 +16,8 @@ import Footer from "@/components/system/Footer";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", weight: ["400", "500", "600"], display: "swap" });
 const interTight = Inter_Tight({ subsets: ["latin"], variable: "--font-inter-tight", weight: ["400", "500", "600"], display: "swap" });
 // Pinsel-Schreibschrift für die drei Akzentwörter (per Screenshot verglichen mit Yellowtail, Kaushan Script, Damion)
-const script = Mr_Dafoe({ subsets: ["latin"], variable: "--font-script-face", weight: "400", display: "swap" });
+// nicht vorladen: das Wort schreibt sich erst nach 1 s und soll nicht mit dem LCP konkurrieren
+const script = Mr_Dafoe({ subsets: ["latin"], variable: "--font-script-face", weight: "400", display: "swap", preload: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL(company.url),
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: "SvH Consulting",
     title: meta.title,
     description: meta.description,
-    url: company.url,
+    url: `${company.url}/`,
     images: [{ url: "/og.png", width: 1200, height: 630, alt: meta.ogAlt }],
   },
   twitter: { card: "summary_large_image", title: meta.title, description: meta.description, images: ["/og.png"] },
@@ -53,15 +53,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </a>
         {/* Kennung des Tag Manager nur als Text; geladen wird er erst nach Einwilligung */}
         <div id="gtm-id" data-gtm-id={GTM_ID} hidden />
+        {/* Einwilligung im DOM vor der Navigation: per Tab sofort erreichbar */}
+        <Consent />
         <SvgDefs />
         <Navbar />
         {children}
         <Footer />
         <Noise fixed opacity={0.035} />
-        <SmoothScroll />
-        <Reveals />
+        <Effects />
         <Spotlight />
-        <Consent />
       </body>
     </html>
   );

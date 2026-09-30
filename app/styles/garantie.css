@@ -42,9 +42,15 @@
   stroke-width: 0.7;
   opacity: 0.7;
 }
-.seal-ticks line {
+.seal-tick {
+  fill: none;
   stroke: rgba(185, 165, 255, 0.55);
-  stroke-width: 0.9;
+  stroke-width: 4;
+  stroke-dasharray: 0.09 0.91;
+}
+.seal-tick--long {
+  stroke-width: 7;
+  stroke-dasharray: 0.016 0.984;
 }
 .seal-text {
   transform-origin: 150px 150px;
@@ -93,6 +99,7 @@
 .gar-steps {
   position: relative;
   display: grid;
+  align-items: start;
   gap: 22px;
   margin-top: 30px;
   counter-reset: step;
@@ -137,6 +144,9 @@
 }
 .gar-step .body {
   margin-top: 4px;
+}
+.gar-cta {
+  margin-top: 28px;
 }
 .gar-capsule {
   display: inline-flex;

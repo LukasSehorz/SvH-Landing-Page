@@ -29,16 +29,18 @@ async function webp(src, dst, width, quality = 78, extract) {
   return info;
 }
 
-const media = {
-  flutlicht: [],
-};
 
 // ---------- Logo ----------
 mk(path.join(PUB, "logo"));
-for (const f of ["svh-wort-96.webp", "svh-bild-160.webp", "svh-wort-2400.webp"]) {
+for (const f of ["svh-wort-96.webp", "svh-bild-160.webp"]) {
   copy(path.join(A, "logo", f), path.join(PUB, "logo", f));
 }
 copy(path.join(A, "logo", "icon.png"), path.join(SITE, "app", "icon.png"));
+// Monogramm groß (Siegel, nie hochskaliert: 3x der größten Anzeige)
+await sharp(path.join(A, "logo", "svh-bild.png")).resize({ width: 480 }).webp({ quality: 90 }).toFile(path.join(PUB, "logo", "svh-bild-480.webp"));
+// Favicons in kleinen Größen (32/48 px) aus dem App-Icon
+await sharp(path.join(A, "logo", "icon.png")).resize(32, 32).png().toFile(path.join(SITE, "app", "icon1.png"));
+await sharp(path.join(A, "logo", "icon.png")).resize(48, 48).png().toFile(path.join(SITE, "app", "icon2.png"));
 copy(path.join(A, "logo", "apple-icon.png"), path.join(SITE, "app", "apple-icon.png"));
 // Nur das Wort CONSULTING aus der Wortmarke (für die große Marke am Fuß)
 {
@@ -73,16 +75,7 @@ for (const n of ["estera", "fuchs"]) {
 
 // Bier-Motiv: laut Auftraggeber nicht auf der Landingpage (nur LinkedIn)
 
-// ---------- KI: Flutlicht ----------
-for (const i of [1, 3]) {
-  // Variante 2 laut Abnahme nicht verwenden
-  const src = path.join(K, "flutlicht", `flutlicht-${i}-2400.webp`);
-  if (!exists(src)) continue;
-  await webp(src, path.join(PUB, "ki", `flutlicht-${i}.webp`), 2400, 72);
-  const m = await sharp(src).metadata();
-  media.flutlicht.push({ src: `/ki/flutlicht-${i}.webp`, w: m.width, h: m.height });
-}
-log(`Flutlicht: ${media.flutlicht.length}`);
+// Flutlicht-Bilder: derzeit nirgends verwendet, deshalb nicht mehr kopiert
 
 // Bildfolge „Vom Chaos zur Ruhe“: entfällt, die Szene ist jetzt DOM/SVG (Agent F)
 
@@ -93,21 +86,9 @@ fs.writeFileSync(
 
 Erzeugt von \`scripts/assets.mjs\` am ${new Date().toISOString().slice(0, 10)}. Nur Kopien bzw. verkleinerte Fassungen, die Originale liegen im Projektordner.
 
-- \`logo/\` aus \`assets/logo/\` (vom Auftraggeber geliefert, siehe dortige HERKUNFT.md). \`consulting-2400.webp\` ist ein Ausschnitt der Wortmarke.
+- \`logo/\` aus \`assets/logo/\` (vom Auftraggeber geliefert, siehe dortige HERKUNFT.md). \`consulting-2400.webp\` ist ein Ausschnitt der Wortmarke, \`svh-bild-480.webp\` das Monogramm in hoher Auflösung (Siegel).
 - \`aktuelles/\` aus \`assets/aktuelles/\` (Vorschaubilder des eigenen YouTube-Kanals, lokal ausgeliefert, damit ohne Einwilligung nichts an Google geht).
 - \`referenzen/\` aus \`assets/referenzen/\` (Screenshots der Kundenseiten estera.immobilien und fuchspools.com), auf 1600 px WebP verkleinert.
-- \`ki/flutlicht-1.webp\`, \`ki/flutlicht-3.webp\` aus \`assets-ki/flutlicht/\`: Atmosphäre, KI-generiert über kie.ai am 29.09.2026 (GPT Image 2.5 Flare). Prompts stehen vollständig in \`assets-ki/HERKUNFT.md\`. Keine Personen, keine Marken, keine Texte im Bild. Variante 2 bewusst nicht verwendet.
 - \`og.png\` Vorschaubild für geteilte Links (Agent E).
 `,
 );
-
-// ---------- Manifest ----------
-mk(path.join(SITE, "app", "generated"));
-const ts = `// Automatisch erzeugt von scripts/assets.mjs. Nicht von Hand ändern.
-export type Img = { src: string; w: number; h: number };
-export const media: {
-  flutlicht: Img[];
-} = ${JSON.stringify(media, null, 2)};
-`;
-fs.writeFileSync(path.join(SITE, "app", "generated", "media.ts"), ts);
-log("app/generated/media.ts geschrieben");

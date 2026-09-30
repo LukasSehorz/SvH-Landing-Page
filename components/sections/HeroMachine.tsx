@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
+import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { hero } from "@/app/copy";
 import { Check, Clock } from "@/components/system/Icons";
 import { PitchCenter } from "@/components/system/PitchLines";
@@ -13,6 +14,8 @@ import { PitchCenter } from "@/components/system/PitchLines";
    „Zeit gewonnen“ zählt mit. Der Kern ist die Partikel-Kugel der alten
    Seite (HeroField.tsx), hier als leichte 2D-Canvas-Fassung ohne three.js.
    ==================================================================== */
+
+if (typeof window !== "undefined") gsap.registerPlugin(MotionPathPlugin);
 
 const TASKS = hero.tasks;
 const MIN = hero.minutes;
@@ -73,7 +76,7 @@ class Core {
         z: z * r,
         s: 0.7 + Math.pow(rand(), 3.5) * 5.2,
         c: p < 0.32 ? 0 : p < 0.6 ? 1 : p < 0.86 ? 2 : 3,
-        spoke: rand() < 0.72,
+        spoke: rand() < 0.45,
         ph: rand() * Math.PI * 2,
         f: 0.5 + rand() * 0.9,
       });
@@ -171,7 +174,7 @@ class Core {
     ctx.lineWidth = 0.6;
     for (const q of proj) {
       if (!q.p.spoke) continue;
-      const al = (0.05 + 0.11 * q.d) * (1 + pv * 0.8);
+      const al = (0.03 + 0.066 * q.d) * (1 + pv * 0.8);
       ctx.strokeStyle = `rgba(160,176,255,${al.toFixed(3)})`;
       ctx.beginPath();
       ctx.moveTo(this.cx, this.cy);
@@ -217,7 +220,7 @@ function geo(W: number, H: number) {
   if (mobile) {
     // Senkrechter Fluss: oben ein Stapel Arbeit, mitten der Kern, unten der Stapel „erledigt“
     const cardW = Math.min(240, W * 0.8);
-    const cardH = 44;
+    const cardH = 48;
     const x = (W - cardW) / 2;
     const top = 14;
     const outY = H - 56 - 14 - cardH - 18;
@@ -229,8 +232,8 @@ function geo(W: number, H: number) {
       cx: W / 2,
       cy,
       R: Math.min(W * 0.2, (outY - top - cardH) * 0.36),
-      inSlot: (k: number): Slot => ({ x, y: top + 18 - k * 9, s: 1 - k * 0.05, a: [1, 0.55, 0.28, 0][k] ?? 0, z: 10 - k }),
-      outSlot: (k: number): Slot => ({ x, y: outY + k * 9, s: 1 - k * 0.05, a: [1, 0.55, 0.28, 0][k] ?? 0, z: 10 - k }),
+      inSlot: (k: number): Slot => ({ x, y: top + 14 - k * 7, s: 1 - k * 0.05, a: [1, 0.55, 0.28, 0][k] ?? 0, z: 10 - k }),
+      outSlot: (k: number): Slot => ({ x, y: outY + k * 7, s: 1 - k * 0.05, a: [1, 0.55, 0.28, 0][k] ?? 0, z: 10 - k }),
     };
   }
   const cardW = 212;
@@ -328,7 +331,8 @@ export default function HeroMachine() {
           step();
         },
       });
-      tl.to(flyer, { scale: 1.02, duration: 0.4, ease: "power2.out" })
+      // Ablauf mit festen Plätzen: ein Platz wird erst neu belegt, wenn er frei ist
+      tl.to(flyer, { scale: 1.02, duration: 0.35, ease: "power2.out" })
         .to(
           flyer,
           {
@@ -336,38 +340,40 @@ export default function HeroMachine() {
               path: g.mobile ? [s0, c] : [s0, { x: g.cx * 0.42, y: s0.y - 34 }, c],
               curviness: 1.25,
             },
-            scale: 0.18,
+            scale: 0.3,
             duration: 1.2,
             ease: "power2.inOut",
           },
-          0.22,
+          0.25,
         )
-        .to(flyer, { autoAlpha: 0, duration: 0.4, ease: "power1.in" }, 1.0)
-        .add(() => core.pulse(), 1.2)
-        .to(queue[1], { ...slotVars(g.inSlot(0)), duration: 0.9, ease: "expo.out" }, 0.5)
-        .to(queue[2], { ...slotVars(g.inSlot(1)), duration: 0.9, ease: "expo.out" }, 0.58)
-        .fromTo(queue[3], slotVars(g.inSlot(3)), { ...slotVars(g.inSlot(2)), duration: 0.9, ease: "expo.out" }, 0.66);
+        // unsichtbar, bevor es klein wird: kein Rest-Kärtchen im Kern
+        .to(flyer, { autoAlpha: 0, duration: 0.3, ease: "power1.in" }, 0.62)
+        .add(() => core.pulse(), 1.45)
+        .to(queue[1], { ...slotVars(g.inSlot(0)), duration: 0.8, ease: "expo.out" }, 0.75)
+        .to(queue[2], { ...slotVars(g.inSlot(1)), duration: 0.8, ease: "expo.out" }, 0.85)
+        .fromTo(queue[3], slotVars(g.inSlot(3)), { ...slotVars(g.inSlot(2)), duration: 0.8, ease: "expo.out" }, 1.25);
       done.slice(0, 3).forEach((d, k) => {
-        tl!.to(d, { ...slotVars(g.outSlot(k + 1)), duration: 0.8, ease: "expo.out" }, 1.2 + k * 0.06);
+        const last = k === 2;
+        tl!.to(d, { ...slotVars(g.outSlot(k + 1)), duration: last ? 0.35 : 0.7, ease: last ? "power1.out" : "expo.out" }, 1.35 + (2 - k) * 0.05);
       });
-      tl
-        .fromTo(
-          out,
-          { x: c.x, y: c.y, scale: 0.16, autoAlpha: 0, zIndex: o0.z + 1 },
-          {
-            motionPath: {
-              path: g.mobile ? [c, o0] : [c, { x: g.cx + (o0.x - g.cx) * 0.55, y: o0.y - 30 }, o0],
-              curviness: 1.2,
-            },
-            scale: 1,
-            autoAlpha: 1,
-            duration: 1.2,
-            ease: "expo.out",
-            immediateRender: false,
+      tl.fromTo(
+        out,
+        { x: c.x, y: c.y, scale: 0.3, autoAlpha: 0, zIndex: o0.z + 1 },
+        {
+          motionPath: {
+            path: g.mobile ? [c, o0] : [c, { x: g.cx + (o0.x - g.cx) * 0.55, y: o0.y - 30 }, o0],
+            curviness: 1.2,
           },
-          1.3,
-        );
-      if (check) tl.fromTo(check, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.45, ease: "power2.out" }, 1.9);
+          scale: 1,
+          duration: 1.1,
+          ease: "expo.out",
+          immediateRender: false,
+        },
+        1.75,
+      );
+      // erst sichtbar, wenn es über die halbe Größe gewachsen ist (kein Mini-Kärtchen im Kern)
+      tl.to(out, { autoAlpha: 1, duration: 0.35, ease: "power1.out" }, 1.87);
+      if (check) tl.fromTo(check, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.45, ease: "power2.out" }, 2.3);
       tl.add(() => {
         const from = minutes;
         minutes += add;
@@ -376,7 +382,7 @@ export default function HeroMachine() {
         plusEl.textContent = `+${add} Min.`;
         gsap.fromTo(plusEl, { y: 6, autoAlpha: 0 }, { y: -10, autoAlpha: 1, duration: 0.7, ease: "expo.out" });
         gsap.to(plusEl, { autoAlpha: 0, duration: 0.6, delay: 1.2, ease: "power1.inOut" });
-      }, 1.95).to({}, { duration: 1.4 });
+      }, 2.4).to({}, { duration: 1.3 });
     };
 
     // Erst nach kurzer Pause starten (der Blick liegt zuerst auf der Überschrift)

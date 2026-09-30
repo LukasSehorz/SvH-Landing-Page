@@ -40,10 +40,11 @@ function Foot({ n }: { n: number }) {
   );
 }
 
-function Title({ n, children }: { n: number; children: string }) {
+// Seitentitel ohne eigene Nummer: gezählt wird nur unten („02 / 04“)
+function Title({ children }: { children: string }) {
   return (
     <div className="md-title">
-      <span className="md-kicker">{String(n).padStart(2, "0")}</span>
+      <span className="md-kicker" />
       <span className="md-h">{children}</span>
     </div>
   );
@@ -83,44 +84,51 @@ export function Stamp() {
   );
 }
 
+/** Deckblatt mit Stempel. Auch einzeln nutzbar (z. B. neben dem Formular), braucht einen
+    Rahmen mit fester Größe: <div className="md"><div className="md-box"><CoverPage /></div></div> */
+export function CoverPage() {
+  return (
+    <div className="md-page md-cover" data-page="0">
+      <div className="md-sheet">
+        <div className="md-cover-band" aria-hidden="true">
+          <svg className="md-cover-pitch" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice">
+            <path d="M200 0 V160" />
+            <circle cx="200" cy="80" r="52" />
+            <circle cx="200" cy="80" r="2.2" className="dot" />
+            <path d="M0 22 H70 V138 H0" />
+            <path d="M400 22 H330 V138 H400" />
+            <path d="M70 52 A 40 40 0 0 1 70 108" />
+            <path d="M330 52 A 40 40 0 0 0 330 108" />
+          </svg>
+          <span className="md-cover-mono" />
+          <span className="md-sample md-sample--dark">{D.sample}</span>
+        </div>
+        <div className="md-cover-main">
+          <span className="md-cover-title">{D.coverTitle}</span>
+          <span className="md-cover-sub">{D.coverSub}</span>
+        </div>
+        <div className="md-cover-foot">
+          <span className="md-rule" />
+          <span className="md-cover-by">{D.coverBy}</span>
+        </div>
+        <Stamp />
+      </div>
+      <span className="md-shade" />
+    </div>
+  );
+}
+
 export default function Masterplan({ label }: Readonly<{ label: string }>) {
   return (
     <div className="md" role="img" aria-label={label}>
       <div className="md-box">
-        {/* Deckblatt */}
-        <div className="md-page md-cover" data-page="0">
-          <div className="md-sheet">
-            <div className="md-cover-band" aria-hidden="true">
-              <svg className="md-cover-pitch" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice">
-                <path d="M200 0 V160" />
-                <circle cx="200" cy="80" r="52" />
-                <circle cx="200" cy="80" r="2.2" className="dot" />
-                <path d="M0 22 H70 V138 H0" />
-                <path d="M400 22 H330 V138 H400" />
-                <path d="M70 52 A 40 40 0 0 1 70 108" />
-                <path d="M330 52 A 40 40 0 0 0 330 108" />
-              </svg>
-              <span className="md-cover-mono" />
-              <span className="md-sample md-sample--dark">{D.sample}</span>
-            </div>
-            <div className="md-cover-main">
-              <span className="md-cover-title">{D.coverTitle}</span>
-              <span className="md-cover-sub">{D.coverSub}</span>
-            </div>
-            <div className="md-cover-foot">
-              <span className="md-rule" />
-              <span className="md-cover-by">{D.coverBy}</span>
-            </div>
-            <Stamp />
-          </div>
-          <span className="md-shade" />
-        </div>
+        <CoverPage />
 
         {/* Zeitfresser */}
         <div className="md-page" data-page="1">
           <div className="md-sheet">
             <Head />
-            <Title n={1}>{D.pageZeitfresser}</Title>
+            <Title>{D.pageZeitfresser}</Title>
             <div className="md-chart">
               <span className="md-grid" aria-hidden="true">
                 <i />
@@ -149,7 +157,7 @@ export default function Masterplan({ label }: Readonly<{ label: string }>) {
         <div className="md-page" data-page="2">
           <div className="md-sheet">
             <Head />
-            <Title n={2}>{D.pageTop3}</Title>
+            <Title>{D.pageTop3}</Title>
             <ol className="md-top">
               {TOP.map((t, i) => (
                 <li key={t}>
@@ -175,7 +183,7 @@ export default function Masterplan({ label }: Readonly<{ label: string }>) {
         <div className="md-page" data-page="3">
           <div className="md-sheet">
             <Head />
-            <Title n={3}>{D.pageWeg}</Title>
+            <Title>{D.pageWeg}</Title>
             <div className="md-weg">
               {TOP.map((t, i) => (
                 <div className="md-weg-col" key={t}>

@@ -45,16 +45,15 @@ export default function Cta({
   };
 
   const cls = `btn ${variant === "primary" ? "btn-primary" : "btn-ghost"} ${size === "sm" ? "btn-sm" : ""} ${className}`;
-  return (
-    <Link
-      ref={ref}
-      href={href}
-      className={cls}
-      onPointerMove={onMove}
-      onPointerLeave={onLeave}
-      onClick={onClick}
-      data-cta-inline={inline && variant === "primary" ? "" : undefined}
-    >
+  const props = {
+    className: cls,
+    onPointerMove: onMove,
+    onPointerLeave: onLeave,
+    onClick,
+    "data-cta-inline": inline && variant === "primary" ? "" : undefined,
+  };
+  const inner = (
+    <>
       <span>{children}</span>
       {arrow ? (
         <span className="btn-arrow" aria-hidden="true">
@@ -62,6 +61,18 @@ export default function Cta({
           <Arrow />
         </span>
       ) : null}
+    </>
+  );
+  // Reine Anker (#termin) als normales <a>: kein unnötiger Prefetch der eigenen Seite
+  if (href.startsWith("#"))
+    return (
+      <a ref={ref} href={href} {...props}>
+        {inner}
+      </a>
+    );
+  return (
+    <Link ref={ref} href={href} prefetch={href.includes("#") ? false : undefined} {...props}>
+      {inner}
     </Link>
   );
 }

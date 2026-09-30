@@ -3,12 +3,13 @@ import { aktuelles, ergebnisse, team } from "@/app/copy";
 import Rich from "@/components/system/Rich";
 import { ArrowOut, Play } from "@/components/system/Icons";
 
-/* „Wer dahintersteckt“: zwei Gründer-Karten mit Monogramm (bis Fotos da sind)
-   und das neueste Video von Jannik. Vorschaubild liegt lokal, erst der Klick
-   öffnet YouTube in einem neuen Fenster (nichts wird eingebettet). */
+/* „Wer dahintersteckt“: kompakt. Links Text und die zwei Gründer als ruhige
+   Kapseln mit Monogramm (bis Fotos da sind), rechts als Hauptbild das neueste
+   Video von Jannik. Das Vorschaubild liegt lokal, erst der Klick öffnet YouTube
+   in einem neuen Fenster (nichts wird eingebettet). */
 
 // Namen nie über zwei Zeilen trennen
-const teamText = team.people.reduce((t, p) => t.replace(p.name, p.name.replace(/ /g, "\u00a0")), team.text);
+const teamText = team.people.reduce((t, p) => t.replace(p.name, p.name.replace(/ /g, " ")), team.text);
 const neuestes = [...aktuelles.videos].sort((a, b) => b.datumIso.localeCompare(a.datumIso))[0];
 
 function Monogramm({ initials }: Readonly<{ initials: string }>) {
@@ -27,25 +28,20 @@ function Monogramm({ initials }: Readonly<{ initials: string }>) {
 export default function Team() {
   return (
     <section className="section team" id="team" aria-labelledby="team-title">
-      <div className="shell">
-        <div className="team-head">
-          <div>
-            <p className="label" data-reveal="">
-              {team.label}
-            </p>
-            <h2 className="h2 team-title" id="team-title" data-split="">
-              <Rich text={team.title} />
-            </h2>
-          </div>
+      <div className="shell team-grid">
+        <div className="team-copy">
+          <p className="label" data-reveal="">
+            {team.label}
+          </p>
+          <h2 className="h2 team-title" id="team-title" data-split="">
+            <Rich text={team.title} />
+          </h2>
           <p className="lead team-text" data-reveal="">
             <Rich text={teamText} />
           </p>
-        </div>
-
-        <div className="team-grid">
-          <ul className="team-people">
+          <ul className="team-people" data-reveal="">
             {team.people.map((p) => (
-              <li key={p.name} className="team-card" data-reveal="">
+              <li key={p.name} className="team-person">
                 <Monogramm initials={p.initials} />
                 <span className="team-meta">
                   <h3 className="team-name">{p.name}</h3>
@@ -54,40 +50,39 @@ export default function Team() {
               </li>
             ))}
           </ul>
-
-          {neuestes ? (
-            <a className="team-video" href={neuestes.href} target="_blank" rel="noopener noreferrer" data-reveal="">
-              <span className="team-thumb">
-                <Image
-                  src={neuestes.bild}
-                  alt={neuestes.alt}
-                  width={1280}
-                  height={720}
-                  quality={85}
-                  // doppelte Anzeigegröße, damit das Vorschaubild auch ohne Retina gestochen scharf ist
-                  sizes="(max-width: 699px) calc(200vw - 80px), 1280px"
-                />
-                <span className="team-play" aria-hidden="true">
-                  <Play size={22} />
-                </span>
-              </span>
-              <span className="team-video-body">
-                <span className="team-video-meta">
-                  {aktuelles.latest} · <time className="nb" dateTime={neuestes.datumIso}>
-                    {neuestes.datum}
-                  </time>
-                </span>
-                <span className="team-video-text">{team.video}</span>
-                <span className="team-video-title">{neuestes.titel}</span>
-                <span className="team-video-cta">
-                  {team.videoCta}
-                  <ArrowOut />
-                  <span className="sr-only">({ergebnisse.newWindow})</span>
-                </span>
-              </span>
-            </a>
-          ) : null}
         </div>
+
+        {neuestes ? (
+          <a className="team-video" href={neuestes.href} target="_blank" rel="noopener noreferrer" data-reveal="">
+            <span className="team-thumb">
+              <Image
+                src={neuestes.bild}
+                alt={neuestes.alt}
+                width={1280}
+                height={720}
+                quality={85}
+                sizes="(max-width: 999px) calc(100vw - 40px), 640px"
+              />
+              <span className="team-play" aria-hidden="true">
+                <Play size={22} />
+              </span>
+            </span>
+            <span className="team-video-body">
+              <span className="team-video-meta">
+                {aktuelles.latest} ·{" "}
+                <time className="nb" dateTime={neuestes.datumIso}>
+                  {neuestes.datum}
+                </time>
+              </span>
+              <span className="team-video-text">{team.video}</span>
+              <span className="team-video-cta">
+                {team.videoCta}
+                <ArrowOut />
+                <span className="sr-only">({ergebnisse.newWindow})</span>
+              </span>
+            </span>
+          </a>
+        ) : null}
       </div>
     </section>
   );

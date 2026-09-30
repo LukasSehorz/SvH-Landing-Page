@@ -1,6 +1,6 @@
 // Leiste über Chaos (mobil, Hochscrollen), über Spielzug (1440×900), CTA-Leiste am Fahrplan-Ende
 import { chromium } from "playwright";
-const out = "../review/bau-runde1/A-integration";
+const out = "../review/bau-runde2/A/A-integration";
 (await import("node:fs")).mkdirSync(out, { recursive: true });
 const b = await chromium.launch();
 const go = async (p, y) => { const from = await p.evaluate(() => scrollY); const st = y > from ? 160 : -160; for (let v = from; st > 0 ? v < y : v > y; v += st) { await p.evaluate((q) => scrollTo(0, q), v); await p.waitForTimeout(45); } await p.evaluate((q) => scrollTo(0, q), y); };

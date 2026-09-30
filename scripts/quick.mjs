@@ -11,6 +11,6 @@ p.on("pageerror", (e) => logs.push("pageerror: " + e.message));
 await p.goto("http://localhost:3200" + url, { waitUntil: "networkidle" });
 await p.waitForTimeout(3500);
 if (+sy) { await p.evaluate((y) => window.scrollTo(0, y), +sy); await p.waitForTimeout(1500); }
-await p.screenshot({ path: `../review/bau-runde1/${name}.png` });
+await p.screenshot({ path: `../review/bau-runde2/A/${name}.png` });
 console.log(logs.join("\n") || "keine Konsolenmeldungen");
 await b.close();

@@ -1,4 +1,5 @@
-import { cta, hero } from "@/app/copy";
+import { Fragment } from "react";
+import { cta, geschenk, hero } from "@/app/copy";
 import Cta from "@/components/system/Cta";
 import Rich from "@/components/system/Rich";
 import HeroMachine from "./HeroMachine";
@@ -20,11 +21,14 @@ export default function Hero() {
           </p>
           <h1 className="hero-title" id="hero-title">
             {hero.h1.map((line, i) => (
-              <span className="hero-line" key={line} style={{ "--d": `${0.08 + i * 0.12}s` } as React.CSSProperties}>
-                <span className="hero-line-in">
-                  <Rich text={line} manualScript />
+              <Fragment key={line}>
+                {i > 0 ? " " : null}
+                <span className="hero-line" style={{ "--d": `${0.08 + i * 0.12}s` } as React.CSSProperties}>
+                  <span className="hero-line-in">
+                    <Rich text={line} manualScript />
+                  </span>
                 </span>
-              </span>
+              </Fragment>
             ))}
           </h1>
           <p className="lead hero-text" data-hero-in="" style={{ "--i": 1 } as React.CSSProperties}>
@@ -36,9 +40,19 @@ export default function Hero() {
               {hero.secondary}
             </Cta>
           </div>
-          <p className="hero-sub" data-hero-in="" style={{ "--i": 3 } as React.CSSProperties}>
-            {hero.sub}
-          </p>
+          <div className="hero-gift" data-hero-in="" style={{ "--i": 3 } as React.CSSProperties}>
+            <span className="hero-gift-doc" aria-hidden="true">
+              <span className="hero-gift-paper">
+                <i />
+                <i />
+                <i />
+              </span>
+              <span className="hero-gift-stamp">{geschenk.stamp}</span>
+            </span>
+            <p className="hero-sub">
+              <Rich text={hero.sub} />
+            </p>
+          </div>
           <ul className="hero-proof" data-hero-in="" style={{ "--i": 4 } as React.CSSProperties}>
             {hero.proof.map((p, i) => (
               <li key={p.big}>

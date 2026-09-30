@@ -1,6 +1,6 @@
 // Meine Abschnitte bei Zwischenbreiten: Start, Schalter, Ergebnisse, Garantie
 import { chromium } from "playwright";
-const out = "../review/bau-runde1/A-breiten";
+const out = "../review/bau-runde2/A/A-breiten";
 (await import("node:fs")).mkdirSync(out, { recursive: true });
 const b = await chromium.launch();
 for (const [w, h, mob] of [[834, 1112, 1], [1000, 800, 0], [1280, 800, 0], [1920, 1080, 0], [2560, 1440, 0]]) {

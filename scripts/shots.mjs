@@ -1,13 +1,17 @@
 // Durchscrollen mit Kontroll-Aufnahmen.
 // node scripts/shots.mjs <breite> <höhe> <mobil 0|1> <ordner> [pfad=/] [schritt=0.85] [start=#id]
-import { chromium } from "playwright";
+import { chromium, webkit, devices } from "playwright";
 import fs from "node:fs";
 const [, , w = "390", h = "844", mob = "1", dir = "A-390", url = "/", stepArg = "0.85", from = ""] = process.argv;
-const out = `../review/bau-runde1/${dir}`;
+const out = `../review/bau-runde2/A/${dir}`;
 fs.mkdirSync(out, { recursive: true });
 const mobile = mob === "1";
-const b = await chromium.launch();
-const ctx = await b.newContext({ viewport: { width: +w, height: +h }, deviceScaleFactor: mobile ? 3 : 1, isMobile: mobile, hasTouch: mobile });
+// w = "webkit" → Safari-Technik mit iPhone 15 Pro (echte sichtbare Höhe)
+const wk = w === "webkit";
+const b = wk ? await webkit.launch() : await chromium.launch();
+const ctx = wk
+  ? await b.newContext({ ...devices["iPhone 15 Pro"] })
+  : await b.newContext({ viewport: { width: +w, height: +h }, deviceScaleFactor: mobile ? 3 : 1, isMobile: mobile, hasTouch: mobile });
 // Einwilligung vorab beantworten, damit sie nicht jede Aufnahme verdeckt
 await ctx.addInitScript(() => { try { localStorage.setItem("svh-einwilligung", "notwendig"); } catch {} });
 const p = await ctx.newPage();
@@ -17,7 +21,7 @@ p.on("pageerror", (e) => logs.push("pageerror: " + e.message));
 await p.goto("http://localhost:3200" + url, { waitUntil: "networkidle" });
 await p.waitForTimeout(2500);
 if (from) { await p.evaluate((id) => document.querySelector(id)?.scrollIntoView(), from); await p.waitForTimeout(1200); }
-const vh = +h;
+const vh = wk ? devices["iPhone 15 Pro"].viewport.height : +h;
 let n = 0;
 let last = -1;
 for (let i = 0; i < 400; i++) {
@@ -30,7 +34,7 @@ for (let i = 0; i < 400; i++) {
   // in kleinen Schritten scrollen, damit ScrollTrigger und Lenis mitkommen
   const target = Math.min(max, y + vh * +stepArg);
   for (let yy = y; yy < target; yy += 180) {
-    if (mobile) await p.evaluate((v) => window.scrollTo(0, v), Math.min(target, yy + 180));
+    if (mobile || wk) await p.evaluate((v) => window.scrollTo(0, v), Math.min(target, yy + 180));
     else await p.mouse.wheel(0, 180);
     await p.waitForTimeout(90);
   }

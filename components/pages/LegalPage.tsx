@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { legal } from "@/app/copy";
 import PageHead from "./PageHead";
 import LegalToc from "./LegalToc";
+import LegalAnchors from "./LegalAnchors";
 
 export type LegalSection = { id: string; num?: string; title: string; body: ReactNode };
 
@@ -14,6 +15,7 @@ export default function LegalPage({ title, sections }: Readonly<{ title: string;
   const items = sections.map(({ id, num, title: t }) => ({ id, num, title: t }));
   return (
     <main id="inhalt" className="lg">
+      <LegalAnchors />
       <PageHead label={legal.label} title={title} quiet>
         <p className="lg-note pg-in" style={{ "--i": 2 } as React.CSSProperties}>
           {legal.note}

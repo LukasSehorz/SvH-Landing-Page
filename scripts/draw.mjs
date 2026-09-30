@@ -15,7 +15,7 @@ for (const [w, h, mob] of [[390, 844, 1], [1440, 900, 0], [2560, 1440, 0]]) {
     // alle Formen mit Strichmuster und pathLength (egal welcher Abschnitt)
     const els = [...document.querySelectorAll("svg path, svg circle, svg line, svg polyline, svg rect, svg ellipse")].filter((el) => {
       const cs = getComputedStyle(el);
-      return el.getAttribute("pathLength") && cs.strokeDasharray !== "none" && el.getBoundingClientRect().width > 0;
+      return el.getAttribute("pathLength") && !el.classList.contains("seal-tick") && cs.strokeDasharray !== "none" && el.getBoundingClientRect().width > 0;
     });
     const out = [];
     for (const el of els) {

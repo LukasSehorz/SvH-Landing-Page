@@ -34,7 +34,15 @@ export type Anfrage = {
 export type Feld = "tasks" | "hours" | "employees" | "name" | "company" | "email" | "consent";
 
 /** Liest beliebige Eingaben in eine saubere Anfrage (Längen begrenzt, nur bekannte Werte). */
-export function lesen(daten: unknown): Anfrage & { website: string } {
+/** Zusätzliche Felder nur für die Spam-Abwehr (nie in der Mail). */
+export type Abwehr = {
+  /** Falle: für Menschen unsichtbares Feld mit neutralem Namen (kein Autofill) */
+  nf_extra: string;
+  /** Millisekunden zwischen Öffnen des Formulars und Absenden (Zeitfalle) */
+  dauer: number;
+};
+
+export function lesen(daten: unknown): Anfrage & Abwehr {
   const d = (daten && typeof daten === "object" ? daten : {}) as Record<string, unknown>;
   // Steuerzeichen raus; einzeilige Felder ohne Zeilenumbrüche (Betreffzeile)
   const text = (k: string, max: number, mehrzeilig = false) => {
@@ -55,7 +63,8 @@ export function lesen(daten: unknown): Anfrage & { website: string } {
     phone: text("phone", 60),
     message: text("message", 4000, true),
     consent: d.consent === true,
-    website: text("website", 200),
+    nf_extra: text("nf_extra", 200),
+    dauer: Number.isFinite(Number(d.dauer)) ? Math.max(0, Math.round(Number(d.dauer))) : 0,
   };
 }
 

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Fragment } from "react";
 import { aktuelles, ergebnisse } from "@/app/copy";
 import { ArrowOut } from "@/components/system/Icons";
 
@@ -7,11 +8,29 @@ import { ArrowOut } from "@/components/system/Icons";
  * liegt bei uns (public/aktuelles), erst der Klick öffnet YouTube in einem
  * neuen Fenster. So geht beim Aufruf der Seite nichts an Google.
  * Die ganze Karte ist klickbar (gestreckter Link am Titel).
- * Vorschaubilder gehen unverändert raus (1280 px, WebP, ohne zweite Kompression):
- * mobil ca. 1,2-fach, am Desktop mindestens 2-fach der Anzeigegröße, gestochen scharf.
+ * Vorschaubilder über next/image (AVIF, Qualität 82) mit ehrlichen `sizes`:
+ * Der Browser holt die Breite passend zur Anzeige × Pixeldichte, auf Retina also
+ * 2- bis 3-fach (scharf), ohne die 1280-px-Quelle roh zu laden.
  */
 
 type Video = (typeof aktuelles.videos)[number];
+
+/** Bindestrich-Wörter nicht am Bindestrich trennen („Praxis-Use“, „KI-Anwendung“). Text bleibt wortgleich. */
+function NoBreak({ text }: Readonly<{ text: string }>) {
+  return (
+    <>
+      {text.split(/(\S*\w-\w\S*)/g).map((w, i) =>
+        i % 2 ? (
+          <span key={i} className="nb">
+            {w}
+          </span>
+        ) : (
+          <Fragment key={i}>{w}</Fragment>
+        ),
+      )}
+    </>
+  );
+}
 
 function PlayMark() {
   return (
@@ -34,9 +53,10 @@ function Card({ v, lead = false }: Readonly<{ v: Video; lead?: boolean }>) {
             alt={v.alt}
             width={1280}
             height={720}
-            sizes={lead ? "(max-width: 899px) calc(100vw - 40px), 640px" : "(max-width: 699px) calc(100vw - 40px), (max-width: 1099px) 46vw, 420px"}
-            unoptimized
+            sizes={lead ? "(max-width: 899px) 92vw, 640px" : "(max-width: 699px) 92vw, (max-width: 1099px) 44vw, (max-width: 1520px) 29vw, 450px"}
+            quality={82}
             loading={lead ? "eager" : "lazy"}
+            fetchPriority={lead ? "high" : "auto"}
           />
           <span className="vid-shade" aria-hidden="true" />
           <PlayMark />
@@ -49,11 +69,13 @@ function Card({ v, lead = false }: Readonly<{ v: Video; lead?: boolean }>) {
         </p>
         <h2 className="vid-title">
           <a className="vid-link" href={v.href} target="_blank" rel="noopener noreferrer">
-            {v.titel}
+            <NoBreak text={v.titel} />
             <span className="sr-only"> ({ergebnisse.newWindow})</span>
           </a>
         </h2>
-        <p className="vid-body">{v.body}</p>
+        <p className="vid-body">
+          <NoBreak text={v.body} />
+        </p>
         <span className="vid-go" aria-hidden="true">
           {aktuelles.watch}
           <ArrowOut />

@@ -38,7 +38,7 @@
 /* ------------------------------------------------------------ Kopf */
 
 .gs-title {
-  margin-top: 16px;
+  margin-top: 14px;
   max-width: 15ch;
 }
 .gs-title-script {
@@ -46,7 +46,7 @@
   font-size: 1.08em;
 }
 .gs-lead {
-  margin-top: 28px;
+  margin-top: 24px;
 }
 
 /* ------------------------------------------------------------ Bühne */
@@ -61,7 +61,8 @@
 
 /* mobil: Dokument klebt oben unter der Leiste, die Punkte ziehen darunter durch */
 .gs-stage[data-mode="motion"] {
-  margin-top: 8px;
+  /* der obere Teil des klebenden Streifens ist völlig durchsichtig und darf unter den Kopf reichen */
+  margin-top: -36px;
 }
 .gs-stage {
   --gs-shift: 62px; /* so weit rückt das Dokument hoch, wenn die Menüleiste weg ist */
@@ -71,23 +72,60 @@
   top: 0;
   z-index: 3;
 }
+/* Ist die Menüleiste ausgeblendet (von A: html[data-nav-hidden]), rückt das Dokument weich nach oben */
 @media (max-width: 1023px) {
-  .gs-stage[data-mode="motion"][data-navhidden] .gs-docwrap {
+  .gs-stage[data-mode="motion"] .gs-docwrap {
+    transition: top 0.6s var(--ease);
+  }
+  html[data-nav-hidden] .gs-stage[data-mode="motion"] .gs-docwrap {
     top: calc(var(--gs-shift) * -1);
   }
+}
+/* Messfühler für die Höhe der CTA-Leiste (var(--mobile-cta-h) ist ein calc mit env()) */
+.gs-probe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: var(--mobile-cta-h, 0px);
+  visibility: hidden;
+  pointer-events: none;
 }
 .gs-stage[data-mode="motion"] .gs-sticky {
   position: relative;
   padding-top: calc(var(--nav-offset) - 6px);
-  padding-bottom: 30px;
+  padding-bottom: 26px;
 }
 .gs-stage[data-mode="motion"] .gs-sticky::before {
-  /* deckt die vorbeiziehenden Punkte ab, oben und unten weich auslaufend */
+  /* deckt die vorbeiziehenden Punkte ab, oben und unten weich auslaufend (deckend, nichts scheint durch) */
   content: "";
   position: absolute;
   inset: 0 calc(var(--gutter) * -1);
-  background: linear-gradient(180deg, rgba(5, 5, 7, 0) 0, var(--bg) 40px, var(--bg) calc(100% - 30px), rgba(5, 5, 7, 0) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(5, 5, 7, 0) 0,
+    rgba(5, 5, 7, 0) 36px,
+    var(--bg) 66px,
+    var(--bg) calc(100% - 26px),
+    rgba(5, 5, 7, 0) 100%
+  );
   pointer-events: none;
+}
+/* Startzustand vor dem Aufbau der Bewegung: sauberer Stapel, Deckblatt vorn (wie stackAt in JS) */
+.gs-stage[data-mode="motion"] .md-page[data-page="0"] {
+  z-index: 10;
+}
+.gs-stage[data-mode="motion"] .md-page[data-page="1"] {
+  z-index: 9;
+  transform: translateY(4.8%) scale(0.95);
+}
+.gs-stage[data-mode="motion"] .md-page[data-page="2"] {
+  z-index: 8;
+  transform: translateY(9.6%) scale(0.9);
+}
+.gs-stage[data-mode="motion"] .md-page[data-page="3"] {
+  z-index: 7;
+  transform: translateY(14.4%) scale(0.85);
 }
 
 /* ------------------------------------------------------------ Punkte */
@@ -105,15 +143,15 @@
 }
 
 .gs-point {
-  --py: 18px;
+  --py: 14px;
   position: relative;
   display: grid;
   grid-template-columns: 40px minmax(0, 1fr);
-  gap: 18px;
+  gap: 16px;
   padding-block: var(--py);
 }
 .gs-stage[data-mode="motion"] .gs-point {
-  --py: max(24px, 3.4svh);
+  --py: 15px;
 }
 /* Verbindungslinie von Punkt zu Punkt, füllt sich, sobald der Punkt erledigt ist */
 .gs-point:not(:last-child)::before,
@@ -166,16 +204,18 @@
   z-index: -1;
 }
 .gs-pt {
-  padding-top: 7px;
+  padding-top: 8px;
 }
 .gs-pt-t {
-  font-size: 21px;
+  font-size: 19.5px;
   line-height: 1.22;
   transition: color 0.5s var(--ease);
 }
 .gs-pt-x {
-  margin-top: 8px;
+  margin-top: 6px;
   max-width: 30em;
+  font-size: 16px;
+  line-height: 1.5;
   transition: color 0.5s var(--ease);
 }
 
@@ -208,37 +248,42 @@
 
 .gs-foot {
   position: relative;
-  margin-top: 40px;
+  margin-top: 28px;
 }
 .gs-why {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
-  column-gap: 16px;
-  padding: 24px 22px 26px;
+  grid-template-columns: 36px minmax(0, 1fr);
+  column-gap: 12px;
+  padding: 18px 18px 20px;
 }
 .gs-why-icon {
-  grid-row: 1 / span 2;
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   border-radius: 999px;
   color: var(--lav);
   border: 1px solid rgba(185, 165, 255, 0.28);
   background: rgba(124, 106, 255, 0.08);
 }
+.gs-why-icon svg {
+  width: 19px;
+  height: 19px;
+}
 .gs-why-t {
   align-self: center;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
+  font-size: 19.5px;
+  text-wrap: balance;
 }
 .gs-why-x {
   grid-column: 1 / -1;
-  margin-top: 14px;
+  margin-top: 12px;
+  max-width: 62ch;
+  font-size: 16px;
+  line-height: 1.52;
 }
 .gs-cta {
-  margin-top: 22px;
+  margin-top: 16px;
 }
 
 /* =========================================================== Dokument */
@@ -314,7 +359,7 @@
   display: flex;
   align-items: center;
   gap: 2.2cqw;
-  font-size: max(10px, 2.3cqw);
+  font-size: max(11px, 2.3cqw);
   line-height: 1;
 }
 .md-mono {
@@ -356,12 +401,12 @@
   border-bottom: 1px solid var(--paper-rule);
 }
 .md-kicker {
-  font-family: var(--font-display);
-  font-size: max(11px, 2.4cqw);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--paper-violet);
-  letter-spacing: 0.04em;
+  align-self: center;
+  flex: 0 0 auto;
+  width: max(12px, 3.4cqw);
+  height: max(2px, 0.6cqw);
+  border-radius: 9px;
+  background: var(--paper-grad);
 }
 .md-h {
   font-family: var(--font-display);
@@ -378,7 +423,7 @@
   align-items: baseline;
   margin-top: auto;
   padding-top: 2.2cqw;
-  font-size: max(9.5px, 1.9cqw);
+  font-size: max(11px, 1.9cqw);
   letter-spacing: 0.04em;
   color: var(--paper-ink-3);
 }
@@ -459,7 +504,7 @@
 }
 .md-sample--dark {
   position: relative;
-  font-size: max(10px, 2.1cqw);
+  font-size: max(11px, 2.1cqw);
   border-color: rgba(244, 244, 246, 0.28);
   color: rgba(244, 244, 246, 0.8);
   line-height: 1;
@@ -499,7 +544,7 @@
   background: var(--paper-grad);
 }
 .md-cover-by {
-  font-size: max(10.5px, 2.1cqw);
+  font-size: max(11px, 2.1cqw);
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -698,7 +743,7 @@
   width: max(17px, 4cqw);
   height: max(17px, 4cqw);
   border-radius: 99px;
-  font-size: max(10px, 2.1cqw);
+  font-size: max(11px, 2.1cqw);
   font-weight: 600;
   color: #fff;
   background: var(--paper-violet);
@@ -801,15 +846,26 @@
     --gs-shift: 82px;
   }
   .gs-why {
-    grid-template-columns: 48px minmax(0, 1fr);
-    padding: 30px 32px 32px;
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: 16px;
+    padding: 26px 28px 28px;
   }
   .gs-why-icon {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
+  }
+  .gs-why-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+  .gs-why-t {
+    font-size: 22px;
   }
   .gs-pt-t {
-    font-size: 23px;
+    font-size: 22px;
+  }
+  .gs-pt-x {
+    font-size: 17px;
   }
 }
 
@@ -818,7 +874,7 @@
 @media (min-width: 1024px) {
   .gs-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
     grid-template-rows: auto auto auto;
     column-gap: clamp(48px, 6vw, 112px);
   }
@@ -831,10 +887,10 @@
     grid-row: 1;
   }
   .gs-title {
-    max-width: 15.5ch;
+    max-width: 17ch;
   }
   .gs-lead {
-    margin-top: 34px;
+    margin-top: 32px;
   }
   .gs-points,
   .gs-stage[data-mode="motion"] .gs-points {
@@ -845,7 +901,7 @@
   }
   /* Dokument bleibt nach dem letzten Punkt noch kurz stehen (Übersicht) */
   .gs-stage[data-mode="motion"] .gs-points {
-    padding-bottom: 14svh;
+    padding-bottom: 12svh;
   }
   .gs-docwrap,
   .gs-stage[data-mode="motion"] .gs-docwrap {
@@ -881,8 +937,8 @@
   }
   .gs-why,
   .gs-why.glass {
-    grid-template-columns: 48px minmax(0, 1fr);
-    column-gap: 18px;
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: 16px;
     padding: 0;
     background: none;
     border: 0;
@@ -894,8 +950,8 @@
     display: none;
   }
   .gs-why-x {
-    margin-top: 26px;
-    max-width: 38em;
+    margin-top: 22px;
+    max-width: 62ch;
     font-family: var(--font-display);
     font-size: clamp(21px, 1.7vw, 27px);
     line-height: 1.42;
@@ -937,7 +993,7 @@
     gap: 22px;
   }
   .gs-stage[data-mode="motion"] .gs-point {
-    --py: 7.5svh;
+    --py: 6svh;
   }
   .gs-cta {
     margin-top: 0;
@@ -957,7 +1013,7 @@
     padding: 7cqw 8cqw 6cqw;
   }
   .md-head {
-    font-size: max(10px, 2.2cqw);
+    font-size: max(11px, 2.2cqw);
   }
   .md-title {
     margin-top: 10cqw;
@@ -967,7 +1023,7 @@
     font-size: 7.4cqw;
   }
   .md-kicker {
-    font-size: 2.8cqw;
+    width: 4cqw;
   }
   .md-chart {
     margin-top: 6cqw;
@@ -1005,17 +1061,17 @@
   .md-weg {
     grid-template-columns: minmax(0, 1fr);
     align-content: start;
-    gap: 6cqw;
-    margin-top: 7cqw;
+    gap: 5.4cqw;
+    margin-top: 6.4cqw;
   }
   .md-weg-t {
     font-size: 4cqw;
     gap: 2.2cqw;
   }
   .md-weg-t b {
-    width: 5.4cqw;
-    height: 5.4cqw;
-    font-size: 2.8cqw;
+    width: max(17px, 5.4cqw);
+    height: max(17px, 5.4cqw);
+    font-size: max(11px, 2.8cqw);
   }
   .md-weg ul {
     gap: 2.2cqw;
@@ -1070,7 +1126,7 @@
     padding: 0 8cqw 8cqw;
   }
   .md-cover-by {
-    font-size: max(10.5px, 2.3cqw);
+    font-size: max(11px, 2.3cqw);
   }
   .md-stamp {
     width: 33cqw;
@@ -1081,7 +1137,7 @@
     font-size: 10cqw;
   }
   .md-foot {
-    font-size: max(9.5px, 2cqw);
+    font-size: max(11px, 2cqw);
   }
 }
 

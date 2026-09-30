@@ -138,26 +138,67 @@ export function DoneRow({ g, className = "" }: { g: number; className?: string }
   );
 }
 
-/** Zusammenfassung am Ende: „Alles erledigt“. */
-export function Summary({ className = "" }: { className?: string }) {
+/**
+ * Zusammenfassung am Ende: „Alles erledigt“.
+ * Fenster (Desktop): Zeile mit Anzahl und vier Kapseln.
+ * Stapel (mobil): der ganze Stapel fällt in eine einzige Mitteilung „Ihre Helfer · 148 erledigt“.
+ */
+export function Summary({ variant, className = "" }: { variant: "win" | "stack"; className?: string }) {
   return (
     <div className={`csum ${className}`}>
       <span className="csum-check">
-        <GradCheck size={56} ring />
+        <GradCheck size={variant === "win" ? 56 : 46} ring />
       </span>
       <p className="csum-title">{S.done}</p>
-      <p className="csum-line">
-        {S.doneLine} <b className="csum-n">{S.total}</b>
-      </p>
-      <ul className="csum-chips">
-        {GROUPS.map((g) => (
-          <li key={g.name}>
-            <GradCheck size={14} />
-            {g.name}
-          </li>
-        ))}
-      </ul>
+      {variant === "win" ? (
+        <>
+          <p className="csum-line">
+            {S.doneLine} <b className="csum-n">{S.total}</b>
+          </p>
+          <ul className="csum-chips">
+            {GROUPS.map((g) => (
+              <li key={g.name}>
+                <GradCheck size={14} />
+                {g.name}
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <div className="csum-card">
+          <span className="cd-ico">
+            <GradCheck size={21} />
+          </span>
+          <span className="ce-body">
+            <span className="ce-top">
+              <span className="ce-app">{S.helpers}</span>
+              <span className="ce-time">{S.now}</span>
+            </span>
+            <span className="csum-card-t">
+              <b className="csum-n">{S.total}</b> {S.doneShort}
+            </span>
+            <span className="csum-card-s">{GROUPS.map((g) => g.name).join(" · ")}</span>
+          </span>
+        </div>
+      )}
     </div>
+  );
+}
+
+/** Überschrift eines Takts: Zeichenkette oder feste Zeilen (Array). */
+export function TitleLines({ title }: { title: string | readonly string[] }) {
+  if (typeof title === "string") return <Words text={title} />;
+  return (
+    <>
+      {title.map((line, i) => (
+        <Fragment key={i}>
+          <span className="line">
+            <Words text={line} />
+          </span>
+          {i < title.length - 1 ? " " : null}
+        </Fragment>
+      ))}
+    </>
   );
 }
 

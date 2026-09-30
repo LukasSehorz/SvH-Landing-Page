@@ -14,6 +14,6 @@ const top = await p.evaluate((id) => document.querySelector(id).getBoundingClien
 for (let y = 0; y < top + +extra; y += 300) { await p.evaluate((v) => window.scrollTo(0, v), y); await p.waitForTimeout(40); }
 await p.evaluate((v) => window.scrollTo(0, v), top + +extra);
 await p.waitForTimeout(2600);
-await p.screenshot({ path: `../review/bau-runde1/${name}.png` });
+await p.screenshot({ path: `../review/bau-runde2/A/${name}.png` });
 console.log(logs.join("\n") || "ok");
 await b.close();

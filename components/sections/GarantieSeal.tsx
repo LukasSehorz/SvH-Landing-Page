@@ -18,8 +18,10 @@ export default function GarantieSeal() {
     () => {
       const el = root.current;
       if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      el.dataset.spin = "";
-      if (el.getBoundingClientRect().top < window.innerHeight * 0.85) return;
+      // langsame Drehung nur, solange das Siegel im Bild ist
+      const io = new IntersectionObserver(([e]) => el.toggleAttribute("data-spin", e.isIntersecting), { rootMargin: "80px" });
+      io.observe(el);
+      if (el.getBoundingClientRect().top < window.innerHeight * 0.85) return () => io.disconnect();
       const rings = el.querySelectorAll<SVGCircleElement>("[data-ring]");
       const seal = el.querySelector(".seal-body");
       const mono = el.querySelector(".seal-mono");
@@ -35,11 +37,11 @@ export default function GarantieSeal() {
         .to(text, { autoAlpha: 1, duration: 0.9, ease: "power1.out" }, 0.7)
         .to(mono, { autoAlpha: 1, duration: 0.7, ease: "power1.out" }, 0.9)
         .to(seal, { scale: 1, rotate: 0, duration: 1.8, ease: "expo.out" }, 0.8);
+      return () => io.disconnect();
     },
     { scope: root },
   );
 
-  const ticks = Array.from({ length: 72 });
   return (
     <div className="seal" ref={root} aria-hidden="true">
       <div className="seal-glow" />
@@ -62,19 +64,19 @@ export default function GarantieSeal() {
           <circle data-ring="" pathLength={1} cx="150" cy="150" r="134" className="seal-ring" transform="rotate(-90 150 150)" />
           <circle data-ring="" pathLength={1} cx="150" cy="150" r="100" className="seal-ring" transform="rotate(-90 150 150)" />
           <circle data-ring="" pathLength={1} cx="150" cy="150" r="93" className="seal-ring seal-ring--thin" transform="rotate(-90 150 150)" />
+          {/* Teilstriche als ein Kreis mit Strichmuster (statt 72 Einzellinien) */}
           <g className="seal-ticks">
-            {ticks.map((_, i) => (
-              <line key={i} x1="150" y1="53" x2="150" y2={i % 6 === 0 ? 60 : 57} transform={`rotate(${i * 5} 150 150)`} />
-            ))}
+            <circle cx="150" cy="150" r="95" pathLength={72} className="seal-tick" />
+            <circle cx="150" cy="150" r="93.5" pathLength={12} className="seal-tick seal-tick--long" />
           </g>
           <g className="seal-text">
             <text>
               <textPath href="#seal-path" startOffset="0" textLength={735} lengthAdjust="spacing">
-                {garantie.seal.toUpperCase()}
+                {garantie.seal.toUpperCase().replace(/\s+$/, "\u00a0")}
               </textPath>
             </text>
           </g>
-          <image className="seal-mono" href="/logo/svh-bild-160.webp" x="124" y="108" width="52" height="85" />
+          <image className="seal-mono" href="/logo/svh-bild-480.webp" x="124" y="108" width="52" height="85" />
           <path className="seal-star" d="M150 212 l2.2 4.6 5 .6 -3.7 3.4 1 5 -4.5 -2.5 -4.5 2.5 1 -5 -3.7 -3.4 5 -.6z" />
         </g>
       </svg>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { footer } from "@/app/copy";
 import { company } from "@/app/content";
 import ConsentWiderruf from "./ConsentWiderruf";
+import FooterMark from "./FooterMark";
 
 export default function Footer() {
   return (
@@ -14,7 +15,7 @@ export default function Footer() {
             <Image src="/logo/svh-wort-96.webp" alt={company.name} width={215} height={28} />
             <p className="footer-claim">{footer.claim}</p>
           </div>
-          <div>
+          <div className="footer-contact">
             <p className="footer-title">{footer.contactTitle}</p>
             <ul className="footer-list">
               <li>
@@ -30,7 +31,7 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-          <div>
+          <div className="footer-pages">
             <p className="footer-title">{footer.linksTitle}</p>
             <ul className="footer-list">
               {footer.links.map((l) => (
@@ -46,7 +47,10 @@ export default function Footer() {
         </div>
 
         <div className="footer-mark" role="img" aria-label={footer.watermark}>
-          <div className="footer-mark-img" data-wordmark="" />
+          <FooterMark />
+          <noscript>
+            <style>{".footer-mark-img{-webkit-mask:url(/logo/consulting-2400.webp) center/100% 100% no-repeat;mask:url(/logo/consulting-2400.webp) center/100% 100% no-repeat;opacity:1}"}</style>
+          </noscript>
         </div>
 
         <div className="footer-legal">

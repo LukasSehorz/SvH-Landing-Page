@@ -15,7 +15,7 @@ function Person() {
   );
 }
 
-export default function CaseGraphic({ kind }: Readonly<{ kind: "people" | "days" | "shrink" }>) {
+export default function CaseGraphic({ kind }: Readonly<{ kind: "people" | "days" | "shrink" | "bar" }>) {
   const ref = useRef<HTMLDivElement>(null);
   const state = useEntrance(ref, 0.6);
   const on = state !== "hidden";
@@ -37,6 +37,13 @@ export default function CaseGraphic({ kind }: Readonly<{ kind: "people" | "days"
           </span>
           <span className="cg-day">
             <i style={{ transitionDelay: "0.8s", ["--fill" as string]: "0.875" }} />
+          </span>
+        </div>
+      ) : null}
+      {kind === "bar" ? (
+        <div className="cg-bigbar">
+          <span className="cg-bigbar-track">
+            <i />
           </span>
         </div>
       ) : null}

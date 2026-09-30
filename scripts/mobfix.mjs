@@ -1,6 +1,6 @@
 // Mobil-Befunde prüfen: Hero 1./2. Bildschirm, Schalter-Band beim Scrollen, Garantie
 import { chromium } from "playwright";
-const out = "../review/bau-runde1/A-mobilfix";
+const out = "../review/bau-runde2/A/A-mobilfix";
 (await import("node:fs")).mkdirSync(out, { recursive: true });
 const b = await chromium.launch();
 for (const [w, h] of [[360, 740], [375, 667], [390, 844], [430, 932]]) {

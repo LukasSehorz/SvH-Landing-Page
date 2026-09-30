@@ -17,10 +17,11 @@ import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type Key
 import { AnimatePresence, motion } from "motion/react";
 import { abschluss, ergebnisse } from "@/app/copy";
 import { company } from "@/app/content";
-import { EMAIL, GROESSEN, STUNDEN, ZEITFRESSER, mailtoAdresse, type Anfrage } from "@/app/api/anfrage/format";
+import { EMAIL, GROESSEN, STUNDEN, ZEITFRESSER, mailtoAdresse, type Abwehr, type Anfrage } from "@/app/api/anfrage/format";
 import { Arrow, Mail, Phone } from "@/components/system/Icons";
 import Rich from "@/components/system/Rich";
 import { useMotionMode } from "@/lib/hooks";
+import { VORMERK_EVENT, getVorgemerkt, toggleVorgemerkt } from "@/lib/vormerken";
 import AutoHeight from "./AutoHeight";
 import Zahl from "./Zahl";
 import { Haken, Hinweis, Leute, Zeitfresser, Zurueck } from "./Symbole";
@@ -30,7 +31,7 @@ const { step1, step2, step3, errors: E } = abschluss;
 
 type Key = "tasks" | "employees" | "name" | "company" | "email" | "consent";
 type Status = "idle" | "sending" | "done" | "fallback" | "failure";
-type Texte = { industry: string; name: string; company: string; email: string; phone: string; message: string; website: string };
+type Texte = { industry: string; name: string; company: string; email: string; phone: string; message: string; falle: string };
 
 const STEP_KEYS: Key[][] = [["tasks"], ["employees"], ["name", "company", "email", "consent"]];
 const FELD_ID: Record<Key, string> = {
@@ -61,8 +62,10 @@ function insBild(el: Element | null, reduced: boolean, oben = 104) {
 }
 
 /** Schickt die Anfrage an /api/anfrage und übersetzt die Antwort in einen Zustand. */
-async function senden(anfrage: Anfrage & { website: string }, reduced: boolean): Promise<{ ergebnis: Status; felder?: Key[] }> {
+async function senden(anfrage: Anfrage & Abwehr, reduced: boolean, geoeffnetAm: number): Promise<{ ergebnis: Status; felder?: Key[] }> {
   const start = performance.now();
+  // Zeitfalle: wie lange war das Formular offen (Programme schicken in Millisekunden ab)
+  anfrage.dauer = Math.round(start - geoeffnetAm);
   let ergebnis: Status = "failure";
   let felder: Key[] | undefined;
   try {
@@ -90,7 +93,15 @@ async function senden(anfrage: Anfrage & { website: string }, reduced: boolean):
 
 /** Öffnet das E-Mail-Programm mit der fertigen Nachricht (Rückweg ohne Resend-Schlüssel). */
 function oeffneMailprogramm(href: string) {
-  window.location.assign(href);
+  // Über einen kurzen Link-Klick statt location.assign: öffnet das Mailprogramm,
+  // ohne die Seite zu „verlassen“ (keine hängende Navigation, Formularzustand bleibt)
+  const a = document.createElement("a");
+  a.href = href;
+  a.rel = "noopener";
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 }
 
 function Fehler({ id, children }: Readonly<{ id: string; children: string }>) {
@@ -117,18 +128,51 @@ export default function Formular() {
   const [tasks, setTasks] = useState<string[]>([]);
   const [hours, setHours] = useState<number>(STUNDEN.start);
   const [employees, setEmployees] = useState("");
-  const [t, setT] = useState<Texte>({ industry: "", name: "", company: "", email: "", phone: "", message: "", website: "" });
+  const [t, setT] = useState<Texte>({ industry: "", name: "", company: "", email: "", phone: "", message: "", falle: "" });
   const [consent, setConsent] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<Key, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<Key, boolean>>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [mailto, setMailto] = useState<string | null>(null);
   const [liveCalc, setLiveCalc] = useState("");
+  // Kacheln, die im Schalter vorgemerkt wurden (lib/vormerken.ts), und ob der Regler schon da ist
+  const [vorgemerkt, setVorgemerkt] = useState<string[]>([]);
+  const [reglerAn, setReglerAn] = useState(false);
+  const vorRef = useRef<string[]>([]);
+  const geoeffnet = useRef(0);
 
   const focusNext = useRef<"step" | "result" | null>(null);
   const stepRef = useRef(0);
 
   const { year, weeks } = step1.calc(hours);
+
+  /* Vormerken aus dem Schalter: beim Öffnen und bei jeder Änderung übernehmen.
+     Neu vorgemerkte Kacheln werden ausgewählt, im Schalter zurückgenommene wieder abgewählt. */
+  useEffect(() => {
+    const sync = () => {
+      const jetzt = getVorgemerkt().filter((x) => ZEITFRESSER.includes(x));
+      const vorher = vorRef.current;
+      vorRef.current = jetzt;
+      setVorgemerkt(jetzt);
+      setTasks((cur) => {
+        const bleiben = cur.filter((x) => jetzt.includes(x) || !vorher.includes(x));
+        return ZEITFRESSER.filter((x) => bleiben.includes(x) || jetzt.includes(x));
+      });
+      if (jetzt.length) {
+        setReglerAn(true);
+        setzeFehler("tasks", undefined);
+      }
+    };
+    geoeffnet.current = performance.now();
+    sync();
+    window.addEventListener(VORMERK_EVENT, sync);
+    return () => window.removeEventListener(VORMERK_EVENT, sync);
+  }, []);
+
+  // Erfolg: #termin bekommt data-gesendet, das Deckblatt daneben erhält den „0 €“-Stempel
+  useEffect(() => {
+    document.getElementById("termin")?.toggleAttribute("data-gesendet", status === "done");
+  }, [status]);
 
   // Rechnung für Screenreader erst nach kurzer Ruhe ansagen (nicht bei jedem Reglerschritt)
   useEffect(() => {
@@ -226,8 +270,12 @@ export default function Formular() {
 
   // Eingaben
   function toggleTask(tile: string) {
-    const next = tasks.includes(tile) ? tasks.filter((x) => x !== tile) : [...tasks, tile];
+    const an = !tasks.includes(tile);
+    const next = an ? [...tasks, tile] : tasks.filter((x) => x !== tile);
     setTasks(next);
+    if (an) setReglerAn(true);
+    // Im Formular abgewählt: auch im Schalter nicht mehr als vorgemerkt zeigen
+    if (!an && vorgemerkt.includes(tile)) toggleVorgemerkt(tile, false);
     if (touched.tasks) setzeFehler("tasks", pruefe("tasks", { ...werte, tasks: next }));
   }
   function waehleGroesse(s: string) {
@@ -279,7 +327,7 @@ export default function Formular() {
       }
     }
 
-    const anfrage: Anfrage & { website: string } = {
+    const anfrage: Anfrage & Abwehr = {
       tasks,
       hours,
       employees,
@@ -290,11 +338,12 @@ export default function Formular() {
       phone: t.phone.trim(),
       message: t.message.trim(),
       consent,
-      website: t.website,
+      nf_extra: t.falle,
+      dauer: 0,
     };
 
     setStatus("sending");
-    const { ergebnis, felder } = await senden(anfrage, reduced);
+    const { ergebnis, felder } = await senden(anfrage, reduced, geoeffnet.current);
 
     if (felder?.length) {
       // Server meldet fehlende Angaben: zurück zum passenden Schritt
@@ -325,6 +374,7 @@ export default function Formular() {
   };
 
   const sending = status === "sending";
+  const vorAktiv = vorgemerkt.some((x) => tasks.includes(x));
   const fertig = status === "done" || status === "fallback" || status === "failure";
   const p = (hours - STUNDEN.min) / (STUNDEN.max - STUNDEN.min);
 
@@ -493,7 +543,15 @@ export default function Formular() {
                             <h3 className="frm-title" tabIndex={-1} ref={fokusTitel(0)}>
                               {step1.title}
                             </h3>
-                            <span className="frm-hint">{step1.hint}</span>
+                            <span className="frm-hint">
+                              <span>{step1.hint}</span>
+                              {vorAktiv ? (
+                                <span className="frm-vor">
+                                  <Haken size={12} />
+                                  {step1.vorgemerkt}
+                                </span>
+                              ) : null}
+                            </span>
                           </legend>
                           <div className="frm-tiles">
                             {ZEITFRESSER.map((tile, i) => {
@@ -526,45 +584,55 @@ export default function Formular() {
                           {errors.tasks ? <Fehler id="frm-task-0-err">{errors.tasks}</Fehler> : null}
                         </fieldset>
 
-                        <div className="frm-slider">
-                          <label className="frm-q" htmlFor="frm-hours">
-                            {step1.slider}
-                          </label>
-                          <p className="frm-hours" aria-hidden="true">
-                            <span className="frm-hours-num tnum">{hours}</span>
-                            <span className="frm-hours-unit">{step1.unit}</span>
-                          </p>
-                          <input
-                            type="range"
-                            id="frm-hours"
-                            className="frm-range"
-                            min={STUNDEN.min}
-                            max={STUNDEN.max}
-                            step={1}
-                            value={hours}
-                            onChange={(e) => setHours(Number(e.target.value))}
-                            aria-valuetext={`${hours} ${step1.unit}`}
-                            style={{ "--p": p } as React.CSSProperties}
-                          />
-                          <div className="frm-scale" aria-hidden="true">
-                            <span>{STUNDEN.min}</span>
-                            <span>{STUNDEN.max}</span>
-                          </div>
-                          <p className="frm-calc" aria-hidden="true">
-                            {step1.calcBefore}
-                            <strong>
-                              <Zahl value={year} reduced={reduced} />
-                            </strong>
-                            {step1.calcMid}
-                            <strong>
-                              <Zahl value={weeks} reduced={reduced} />
-                            </strong>
-                            {step1.calcAfter}
-                          </p>
-                          <p className="sr-only" aria-live="polite">
-                            {liveCalc}
-                          </p>
-                        </div>
+                        {/* Regler + Rechnung erst nach der ersten Auswahl: Schritt 1 samt „Weiter“ passt so nach dem Sprung in einen Bildschirm */}
+                        {reglerAn ? (
+                          <motion.div
+                            className="frm-slider"
+                            initial={reduced ? false : { opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.45, ease: EASE, delay: 0.05 }}
+                          >
+                            <div className="frm-slider-head">
+                              <label className="frm-q" htmlFor="frm-hours">
+                                {step1.slider}
+                              </label>
+                              <p className="frm-hours" aria-hidden="true">
+                                <span className="frm-hours-num tnum">{hours}</span>
+                                <span className="frm-hours-unit">{step1.unit}</span>
+                              </p>
+                            </div>
+                            <input
+                              type="range"
+                              id="frm-hours"
+                              className="frm-range"
+                              min={STUNDEN.min}
+                              max={STUNDEN.max}
+                              step={1}
+                              value={hours}
+                              onChange={(e) => setHours(Number(e.target.value))}
+                              aria-valuetext={`${hours} ${step1.unit}`}
+                              style={{ "--p": p } as React.CSSProperties}
+                            />
+                            <div className="frm-scale" aria-hidden="true">
+                              <span>{STUNDEN.min}</span>
+                              <span>{STUNDEN.max}</span>
+                            </div>
+                            <p className="frm-calc" aria-hidden="true">
+                              {step1.calcBefore}
+                              <strong>
+                                <Zahl value={year} reduced={reduced} />
+                              </strong>
+                              {step1.calcMid}
+                              <strong>
+                                <Zahl value={weeks} reduced={reduced} />
+                              </strong>
+                              {step1.calcAfter}
+                            </p>
+                            <p className="sr-only" aria-live="polite">
+                              {liveCalc}
+                            </p>
+                          </motion.div>
+                        ) : null}
                       </>
                     ) : step === 1 ? (
                       <>
@@ -758,8 +826,19 @@ export default function Formular() {
 
                         {/* Falle für Programme, die jedes Feld ausfüllen: für Menschen unsichtbar und nicht erreichbar */}
                         <div className="frm-trap" aria-hidden="true">
-                          <label htmlFor="frm-website">Webseite</label>
-                          <input id="frm-website" type="text" name="website" tabIndex={-1} autoComplete="off" value={t.website} onChange={text("website")} />
+                          <label htmlFor="frm-nf">Nicht ausfüllen</label>
+                          <input
+                            id="frm-nf"
+                            type="text"
+                            name="nf_extra"
+                            tabIndex={-1}
+                            autoComplete="off"
+                            data-1p-ignore=""
+                            data-lpignore="true"
+                            data-form-type="other"
+                            value={t.falle}
+                            onChange={text("falle")}
+                          />
                         </div>
                       </>
                     )}

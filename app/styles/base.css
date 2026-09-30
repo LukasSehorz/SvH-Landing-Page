@@ -25,7 +25,8 @@
   /* bis 1920 maximal 1440 breit, auf sehr großen Schirmen moderat mehr (die alte
      Seite wurde für zu viel leeren Rand bei 2560 beanstandet) */
   --shell: clamp(1440px, 70vw, 1760px);
-  --section-y: clamp(88px, 10vw, 156px);
+  /* einheitlicher Sektionsabstand: Desktop ≈ 240 px zwischen zwei Inhalten */
+  --section-y: clamp(64px, 8.3vw, 120px);
   --nav-offset: 104px;
   --measure: 36em;
   --radius: 22px;
@@ -40,8 +41,8 @@
     --nav-offset: 84px;
     --radius: 18px;
     --nav-clear: 72px;
-    /* einheitlicher Sektionsabstand auf dem Telefon (≈ 140 px zwischen zwei Inhalten) */
-    --section-y: 64px;
+    /* einheitlicher Sektionsabstand auf dem Telefon (≈ 110 px zwischen zwei Inhalten) */
+    --section-y: 48px;
   }
 }
 @media (max-width: 899px) {
@@ -698,5 +699,21 @@ section[id] {
   }
   .btn {
     transform: none !important;
+  }
+}
+
+/* sehr große Schirme: Fließtext und Überschriften wachsen leicht mit */
+@media (min-width: 1920px) {
+  body {
+    font-size: 19px;
+  }
+  .lead {
+    font-size: 21px;
+  }
+  .body {
+    font-size: 18px;
+  }
+  .h2 {
+    font-size: clamp(72px, 3.6vw, 92px);
   }
 }

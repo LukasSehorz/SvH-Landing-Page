@@ -3,7 +3,9 @@ import { Entry, GROUPS, GroupHead, ITEMS, S, StackHead, Summary, Toast, WindowHe
 /* ====================================================================
    Statische Zustände der Szene (Server-HTML, ohne JavaScript und bei
    reduzierter Bewegung): 0 = Chaos, 1 = Muster (gruppiert), 2 = Ruhe.
-   Beide Fassungen stehen im HTML, das CSS zeigt je Breite eine davon.
+   Es steht immer nur eine Fassung im HTML: Server und erster Durchlauf
+   zeigen den Stapel (passt auf jede Breite), mit JavaScript wechselt ein
+   breites Fenster zum Posteingang.
    ==================================================================== */
 
 /** Neuester Eintrag je Gruppe (vorne im Stapel). */
@@ -42,7 +44,7 @@ function WindowState({ state }: { state: 0 | 1 | 2 }) {
             </div>
           ) : (
             <div className="cs-rest">
-              <Summary />
+              <Summary variant="win" />
             </div>
           )}
           {state === 0 ? <span className="cw-fade" aria-hidden="true" /> : null}
@@ -80,22 +82,17 @@ function StackState({ state }: { state: 0 | 1 | 2 }) {
         </div>
       ) : (
         <div className="cm-list cs-rest">
-          <Summary />
+          <Summary variant="stack" />
         </div>
       )}
     </div>
   );
 }
 
-export default function StaticScene({ state }: { state: 0 | 1 | 2 }) {
+export default function StaticScene({ state, variant }: { state: 0 | 1 | 2; variant: "win" | "stack" }) {
   return (
-    <div className="cs cs--static" data-state={state} aria-hidden="true">
-      <div className="cs-win">
-        <WindowState state={state} />
-      </div>
-      <div className="cs-stack">
-        <StackState state={state} />
-      </div>
+    <div className={`cs cs--static cs--static-${variant}`} data-state={state} aria-hidden="true">
+      {variant === "win" ? <WindowState state={state} /> : <StackState state={state} />}
     </div>
   );
 }

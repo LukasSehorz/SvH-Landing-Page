@@ -10,7 +10,7 @@ import { DoneRow, Entry, GROUPS, GroupHead, ITEMS, S, StackHead, Summary, Toast,
 
 export type Variant = "win" | "stack";
 
-function Moving() {
+function Moving({ variant }: { variant: Variant }) {
   return (
     <>
       {ITEMS.map((_, i) => (
@@ -23,7 +23,7 @@ function Moving() {
         <i className="cline-wash" />
         <i className="cline-bar" />
       </div>
-      <Summary />
+      <Summary variant={variant} />
     </>
   );
 }
@@ -39,7 +39,7 @@ export default function LiveScene({ variant }: { variant: Variant }) {
               {GROUPS.map((_, g) => (
                 <GroupHead key={g} g={g} />
               ))}
-              <Moving />
+              <Moving variant="win" />
               <span className="cw-fade c-fade" />
             </div>
           </div>
@@ -55,7 +55,7 @@ export default function LiveScene({ variant }: { variant: Variant }) {
       <div className="cs-fit">
         <StackHead count={S.start} time="08:50" />
         <div className="cm-list">
-          <Moving />
+          <Moving variant="stack" />
         </div>
         <span className="cm-fade c-fade" />
       </div>

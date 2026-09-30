@@ -1,7 +1,7 @@
 // Menü-Zustände prüfen: mobil Vollbild-Menü (mit Aktuelles offen) und Desktop-Aufklapper
 import { chromium } from "playwright";
 const b = await chromium.launch();
-const out = "../review/bau-runde1/A-menu";
+const out = "../review/bau-runde2/A/A-menu";
 (await import("node:fs")).mkdirSync(out, { recursive: true });
 const m = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
 await m.addInitScript(() => localStorage.setItem("svh-einwilligung", "notwendig"));

@@ -2,8 +2,9 @@ import { abschluss } from "@/app/copy";
 import { company } from "@/app/content";
 import Rich from "@/components/system/Rich";
 import { Clock, Mail, Phone } from "@/components/system/Icons";
-import Formular from "./abschluss/Formular";
+import Formular from "./abschluss/LazyFormular";
 import { Haken } from "./abschluss/Symbole";
+import Deckblatt from "./abschluss/Deckblatt";
 
 /* Abschluss (#termin): Überschrift, Formular in drei Schritten, Direktkontakt.
    Hintergrund: nur ein ruhiger Lichtschein. Flutlicht-Foto (unscharf hinter Text)
@@ -21,19 +22,28 @@ export default function Abschluss() {
       </div>
 
       <div className="shell abs-grid">
+        {/* Ziel aller Knöpfe: hier wird nichts eingeblendet, alles steht sofort da
+            (auch das Schreibschrift-Wort bleibt im Endzustand, data-script="manual"). */}
         <div className="abs-head">
-          <p className="label" data-reveal="">
-            {abschluss.label}
-          </p>
-          <h2 className="h2 abs-title" id="abs-title" data-reveal="">
-            <Rich text={abschluss.title} />
+          <p className="label">{abschluss.label}</p>
+          <h2 className="h2 abs-title" id="abs-title">
+            <Rich text={abschluss.title} manualScript />
           </h2>
-          <p className="lead abs-text" data-reveal="">
+          <p className="lead abs-text">
             <Rich text={abschluss.text} />
           </p>
         </div>
 
         <div className="abs-form">
+          <noscript>
+            <p className="abs-noscript">
+              {abschluss.noscriptBefore}
+              <a href={`tel:${company.phoneHref}`}>{company.phone}</a>
+              {abschluss.errorMid}
+              <a href={`mailto:${company.email}`}>{company.email}</a>
+              {abschluss.errorAfter}
+            </p>
+          </noscript>
           <Formular />
           <ul className="abs-below">
             {abschluss.below.split(" · ").map((b) => (
@@ -45,6 +55,7 @@ export default function Abschluss() {
           </ul>
         </div>
 
+        <div className="abs-side">
         <aside className="abs-direct" aria-labelledby="abs-direct-title">
           <p className="abs-direct-title" id="abs-direct-title">
             {abschluss.direct.title}
@@ -79,6 +90,9 @@ export default function Abschluss() {
             </li>
           </ul>
         </aside>
+          {/* Desktop: das Geschenk am Entscheidungsort; mobil ausgeblendet */}
+          <Deckblatt />
+        </div>
       </div>
     </section>
   );

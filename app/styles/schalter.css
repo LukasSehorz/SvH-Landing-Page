@@ -11,8 +11,7 @@
 
 /* Schalterleiste: mobil klebt sie oben, während die Karten vorbeiziehen */
 .sw-bar {
-  position: sticky;
-  top: calc(var(--nav-clear) - 2px);
+  position: relative;
   z-index: 6;
   display: flex;
   justify-content: center;
@@ -21,11 +20,23 @@
   border-bottom: 1px solid transparent;
   transition:
     top 0.6s var(--ease),
+    opacity 0.35s var(--ease),
     background-color 0.3s var(--ease),
     border-color 0.3s var(--ease);
 }
-html[data-nav-hidden] .sw-bar {
-  top: 0;
+/* nur Tablet: klebt unter der Leiste bzw. am oberen Rand, wenn die Leiste ausgeblendet ist */
+@media (min-width: 700px) and (max-width: 1099px) {
+  .sw-bar {
+    position: sticky;
+    top: calc(var(--nav-clear) - 2px);
+  }
+  html[data-nav-hidden] .sw-bar {
+    top: 0;
+  }
+}
+.sw-bar[data-leaving] {
+  opacity: 0;
+  pointer-events: none;
 }
 /* klebt es oben, wird es zum deckenden Band mit Haarlinie; nichts scheint durch */
 .sw-bar[data-stuck] {
@@ -124,12 +135,48 @@ html[data-nav-hidden] .sw-bar[data-stuck] {
 }
 
 .sw-grid {
-  display: grid;
-  gap: 16px;
-  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+  margin: 18px calc(-1 * var(--gutter)) 0;
+  padding: 2px var(--gutter) 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.sw-grid::-webkit-scrollbar {
+  display: none;
+}
+.sw-grid > .sw-card {
+  flex: 0 0 min(84%, 330px);
+  scroll-snap-align: start;
+}
+.sw-grid .sw-stage {
+  height: 118px;
+}
+.sw-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.sw-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 99px;
+  background: rgba(244, 244, 246, 0.2);
+  transition: width 0.4s var(--ease), background-color 0.4s var(--ease);
+}
+.sw-dots i[data-on="true"] {
+  width: 18px;
+  background: var(--lav);
 }
 .sw-card {
-  padding: 16px 16px 22px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 18px;
   transition:
     border-color 0.6s var(--ease),
     background-color 0.6s var(--ease),
@@ -139,8 +186,8 @@ html[data-nav-hidden] .sw-bar[data-stuck] {
   border-color: rgba(244, 244, 246, 0.08);
 }
 .sw[data-on="true"] .sw-card {
-  border-color: rgba(185, 165, 255, 0.28);
-  box-shadow: 0 0 0 1px rgba(124, 106, 255, 0.08), 0 20px 60px -30px rgba(124, 106, 255, 0.55);
+  border-color: rgba(185, 165, 255, 0.24);
+  box-shadow: 0 0 0 1px rgba(124, 106, 255, 0.04), 0 20px 60px -30px rgba(124, 106, 255, 0.27);
 }
 .sw-stage {
   height: 150px;
@@ -151,7 +198,7 @@ html[data-nav-hidden] .sw-bar[data-stuck] {
   transition: filter 0.6s var(--ease), background 0.6s var(--ease);
 }
 .sw[data-on="true"] .sw-stage {
-  background: radial-gradient(80% 90% at 50% 50%, rgba(124, 106, 255, 0.14), rgba(91, 140, 255, 0.03) 70%, transparent);
+  background: radial-gradient(80% 90% at 50% 50%, rgba(124, 106, 255, 0.07), rgba(91, 140, 255, 0.015) 70%, transparent);
 }
 .sw-row {
   display: flex;
@@ -188,25 +235,91 @@ html[data-nav-hidden] .sw-bar[data-stuck] {
 .sw-texts {
   display: grid;
   margin-top: 10px;
+  flex: 1;
 }
 .sw-texts p {
   grid-area: 1 / 1;
-  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease), visibility 0.45s;
+  /* einblenden: erst nach dem Ausblenden des alten Textes */
+  transition:
+    opacity 0.32s var(--ease) 0.16s,
+    transform 0.32s var(--ease) 0.16s,
+    visibility 0s linear 0.16s;
 }
 .sw[data-on="true"] .sw-texts [data-v="off"],
 .sw[data-on="false"] .sw-texts [data-v="on"] {
   opacity: 0;
   visibility: hidden;
-  transform: translateY(8px);
+  transform: translateY(6px);
+  /* ausblenden: kurz und sofort */
+  transition:
+    opacity 0.16s ease-in,
+    transform 0.16s ease-in,
+    visibility 0s linear 0.16s;
 }
 .sw[data-on="false"] .sw-texts [data-v="off"] {
   color: var(--ink-3);
 }
 .sw-note {
-  margin-top: 24px;
+  margin-top: 22px;
   font-size: 16px;
   color: var(--ink-2);
-  max-width: 44em;
+  max-width: 60ch;
+  text-wrap: balance;
+}
+.sw-cta {
+  margin-top: 22px;
+}
+
+/* „Das kenne ich“: merkt die Aufgabe für das Formular vor */
+.sw-mark {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 16px;
+}
+.sw-mark-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 16px 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  transition: border-color 0.3s var(--ease), background-color 0.3s var(--ease);
+}
+.sw-mark-btn:hover {
+  border-color: rgba(185, 165, 255, 0.45);
+}
+.sw-mark-btn[aria-pressed="true"] {
+  border-color: rgba(185, 165, 255, 0.55);
+  background: rgba(124, 106, 255, 0.14);
+}
+.sw-mark-box {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1.5px solid rgba(244, 244, 246, 0.4);
+  color: #07060f;
+}
+.sw-mark-btn[aria-pressed="true"] .sw-mark-box {
+  border-color: transparent;
+  background: var(--grad);
+}
+.sw-mark-hint {
+  font-size: 14px;
+  color: var(--lav);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+}
+.sw-mark-hint[data-show="true"] {
+  opacity: 1;
 }
 
 /* ---- Szenen ---- */
@@ -449,14 +562,24 @@ html[data-nav-hidden] .sw-bar[data-stuck] {
 
 @media (min-width: 700px) {
   .sw-grid {
+    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px;
+    margin-inline: 0;
+    padding: 0;
+    overflow: visible;
+  }
+  .sw-grid > .sw-card {
+    flex: none;
+  }
+  .sw-dots {
+    display: none;
   }
   .sw-card {
     padding: 18px 18px 26px;
   }
-  .sw-stage {
-    height: 170px;
+  .sw-grid .sw-stage {
+    height: 150px;
   }
 }
 @media (min-width: 1100px) {

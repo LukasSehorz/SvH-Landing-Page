@@ -74,7 +74,7 @@ export const chaos = {
     },
     {
       label: "",
-      title: "Diese Arbeit ist wichtig. Aber sie ist immer gleich.",
+      title: ["Diese Arbeit ist wichtig.", "Aber sie ist immer gleich."],
       text: "Und genau solche Aufgaben kann eine KI heute übernehmen.",
     },
     {
@@ -92,6 +92,9 @@ export const chaos = {
     done: "Alles erledigt",
     doneLine: "Heute erledigt von Ihren Helfern",
     doneShort: "erledigt",
+    // Zusammenfassung am Ende (mobil als eine einzige Mitteilung)
+    helpers: "Ihre Helfer",
+    now: "jetzt",
     total: 148,
     start: 12,
     // Gruppen: Anzahlen ergeben zusammen die 148 aus dem Zähler
@@ -105,11 +108,11 @@ export const chaos = {
     items: [
       { g: 1, title: "Rückruf erbeten", from: "Telefonnotiz", time: "07:41" },
       { g: 2, title: "Rechnung 2026-114 prüfen", from: "Buchhaltung", time: "08:12" },
-      { g: 0, title: "Anfrage: Angebot für Terrassenüberdachung", from: "Kontaktformular", time: "08:46" },
+      { g: 0, title: "Anfrage: Terrassendach", from: "Kontaktformular", time: "08:46" },
       { g: 3, title: "Termin verschieben?", from: "Kunde", time: "09:31" },
       { g: 2, title: "Lieferschein abtippen", from: "Lager", time: "10:14" },
       { g: 1, title: "Bewerbung eingegangen", from: "Karriere", time: "11:02" },
-      { g: 0, title: "Preisanfrage: Wartungsvertrag", from: "E-Mail", time: "11:47" },
+      { g: 0, title: "Preisanfrage Wartung", from: "E-Mail", time: "11:47" },
       { g: 3, title: "Besichtigung bestätigen", from: "Außendienst", time: "12:36" },
       { g: 2, title: "Preisliste aktualisieren", from: "Einkauf", time: "13:28" },
       { g: 1, title: "Mahnung vorbereiten", from: "Buchhaltung", time: "14:15" },
@@ -165,6 +168,12 @@ export const schalter = {
     },
   ],
   note: "Das sind nur Beispiele. Welche Helfer sich bei Ihnen am meisten lohnen, steht in Ihrem Masterplan.",
+  // ZUSATZ: Vormerken für das Formular (Kachelnamen exakt wie abschluss.step1.tiles)
+  kenne: "Das kenne ich",
+  vorgemerkt: "Vorgemerkt",
+  hinweis: "Im Formular vorgemerkt",
+  kachel: { angebote: "Angebote schreiben", emails: "E-Mails beantworten", wissen: "Wissen suchen", kunden: "Daten abtippen" } as Record<string, string>,
+  karten: "Beispiele, zum Wischen", // ZUSATZ (Screenreader-Name der wischbaren Kartenreihe)
 };
 
 export const ergebnisse = {
@@ -258,14 +267,14 @@ export const geschenk = {
     bars: ["Angebote", "E-Mails", "Abtippen", "Suchen", "Nachfassen", "Berichte"],
   },
   stamp: "0 €",
-  whyTitle: "Warum wir das verschenken",
+  whyTitle: "Warum wir das verschenken", // geschütztes Leerzeichen: „verschenken“ nie allein in der Zeile (Safari)
   whyText:
     "Weil KI erst dann Sinn ergibt, wenn man sieht, was sie im eigenen Betrieb bewirkt. Wir zeigen es Ihnen lieber, als es zu versprechen. Gefällt Ihnen der Plan, setzen wir ihn gern mit Ihnen um. Setzen Sie ihn lieber selbst um, ist das völlig in Ordnung. Den Plan behalten Sie so oder so.",
 };
 
 export const spielzug = {
   label: "So läuft es ab",
-  title: ["Vier Schritte zu mehr Zeit.", "Die ersten drei kosten _nichts_."],
+  title: ["Vier Schritte zu mehr Zeit.", "Die ersten drei kosten _nichts_."], // geschütztes Leerzeichen: „nichts.“ nie allein (Safari)
   steps: [
     {
       title: "Kostenloser KI-Workshop",
@@ -368,6 +377,7 @@ export const abschluss = {
   step1: {
     title: "Was frisst bei Ihnen am meisten Zeit?",
     hint: "Mehrfachauswahl",
+    vorgemerkt: "Aus dem Schalter vorgemerkt", // ZUSATZ (Hinweis, wenn Kacheln im Schalter vorgemerkt wurden)
     tiles: [
       "Angebote schreiben",
       "E-Mails beantworten",
@@ -419,6 +429,8 @@ export const abschluss = {
   errorBefore: "Das hat leider nicht geklappt. Rufen Sie uns gern direkt an unter ",
   errorMid: " oder schreiben Sie an ",
   errorAfter: ".",
+  // ZUSATZ: Hinweis ohne JavaScript (danach Telefon, errorMid, E-Mail, errorAfter)
+  noscriptBefore: "Das Formular lässt sich ohne JavaScript nicht absenden. Rufen Sie uns gern direkt an unter ",
   // ZUSATZ (alte Seite): erscheint, wenn der Versand über die Seite noch nicht eingerichtet ist
   fallback: "Ihr E-Mail-Programm öffnet sich mit Ihrer Nachricht an uns. Sie müssen sie nur noch abschicken.",
   errors: {

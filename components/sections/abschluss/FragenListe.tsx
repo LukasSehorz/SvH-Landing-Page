@@ -1,18 +1,18 @@
 "use client";
 
 import { useId, useRef, useState, type KeyboardEvent } from "react";
-import { motion } from "motion/react";
 import Rich from "@/components/system/Rich";
-import { useIsoLayoutEffect, useMotionMode } from "@/lib/hooks";
+import { useIsoLayoutEffect } from "@/lib/hooks";
 
 /*
- * Aufklapp-Liste: immer nur eine Frage offen, weiche Höhenanimation (Motion).
- * Im Server-HTML (und ohne JavaScript) stehen alle Antworten offen, damit sie
- * lesbar sind. Erst im Browser klappt die Liste zu, nur die erste bleibt offen.
+ * Aufklapp-Liste: immer nur eine Frage offen, weiche Höhe per CSS
+ * (grid-template-rows 0fr → 1fr), ohne Motion, damit die Bibliothek nicht im
+ * ersten Paket liegt. Im Server-HTML (und ohne JavaScript) stehen alle
+ * Antworten offen. Erst im Browser klappt die Liste zu, nur die erste bleibt
+ * offen; die Übergänge werden erst danach eingeschaltet (kein Zuklappen beim Laden).
  * Tastatur: Enter/Leertaste öffnen, Pfeil hoch/runter, Pos1/Ende springen.
+ * Bewusst ohne role="region" (bei acht Antworten wären es acht Landmarken).
  */
-
-const EASE = [0.22, 1, 0.36, 1] as const;
 
 type Item = { q: string; a: string };
 
@@ -23,7 +23,7 @@ function Frage({ text }: Readonly<{ text: string }>) {
   if (w.length < 3) return <>{text}</>;
   return (
     <>
-      {w.slice(0, -2).join(" ")} <span className="nb">{w.slice(-2).join("\u00A0")}</span>
+      {w.slice(0, -2).join(" ")} <span className="nb">{w.slice(-2).join(" ")}</span>
     </>
   );
 }
@@ -31,11 +31,15 @@ function Frage({ text }: Readonly<{ text: string }>) {
 export default function FragenListe({ items }: Readonly<{ items: readonly Item[] }>) {
   const uid = useId().replace(/:/g, "");
   const [ready, setReady] = useState(false);
+  const [anim, setAnim] = useState(false);
   const [open, setOpen] = useState<number | null>(0);
-  const mode = useMotionMode();
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
 
-  useIsoLayoutEffect(() => setReady(true), []);
+  useIsoLayoutEffect(() => {
+    setReady(true);
+    const id = requestAnimationFrame(() => requestAnimationFrame(() => setAnim(true)));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   const onKey = (e: KeyboardEvent<HTMLButtonElement>, i: number) => {
     const n = items.length;
@@ -49,10 +53,8 @@ export default function FragenListe({ items }: Readonly<{ items: readonly Item[]
     buttons.current[to]?.focus();
   };
 
-  const duration = mode === "reduced" ? 0 : 0.5;
-
   return (
-    <ul className="faq-list">
+    <ul className="faq-list" data-anim={anim ? "true" : "false"}>
       {items.map((it, i) => {
         const isOpen = !ready || open === i;
         const qId = `faq-${uid}-q${i}`;
@@ -81,28 +83,13 @@ export default function FragenListe({ items }: Readonly<{ items: readonly Item[]
                 <span className="faq-icon" aria-hidden="true" />
               </button>
             </h3>
-            {ready ? (
-              <motion.div
-                id={aId}
-                role="region"
-                aria-labelledby={qId}
-                className="faq-a"
-                initial={false}
-                animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
-                transition={{ height: { duration, ease: EASE }, opacity: { duration: duration * 0.7, ease: EASE } }}
-                inert={!isOpen}
-              >
-                <p className="faq-a-in">
-                  <Rich text={it.a} />
-                </p>
-              </motion.div>
-            ) : (
-              <div id={aId} role="region" aria-labelledby={qId} className="faq-a">
+            <div id={aId} className="faq-a" inert={!isOpen}>
+              <div className="faq-a-clip">
                 <p className="faq-a-in">
                   <Rich text={it.a} />
                 </p>
               </div>
-            )}
+            </div>
           </li>
         );
       })}

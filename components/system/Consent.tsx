@@ -7,7 +7,7 @@
  * lädt nichts und speichert nur die Entscheidung im Browser.
  */
 
-import { useCallback, useEffect, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { einwilligung } from "@/app/copy";
 import { CONSENT_KEY, GTM_ID, type Einwilligung } from "@/app/tracking";
@@ -68,6 +68,7 @@ let defaultGesetzt = false;
 export default function Consent() {
   const stand = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const offen = stand === "offen";
+  const first = useRef<HTMLButtonElement>(null);
 
   // Grundzustand des Consent Mode einmal setzen, bevor irgendetwas von Google lädt
   useEffect(() => {
@@ -106,11 +107,14 @@ export default function Consent() {
     };
   }, []);
 
-  // Feste CTA-Leiste mobil weicht dem Feld aus
+  // Feste CTA-Leiste mobil weicht dem Feld aus; beim Öffnen Fokus auf den ersten Knopf
+  // (nicht modal, ohne zu scrollen), damit Tastatur-Nutzer das Feld sofort erreichen
   useEffect(() => {
     const html = document.documentElement;
-    if (offen) html.setAttribute("data-consent-open", "");
-    else html.removeAttribute("data-consent-open");
+    if (offen) {
+      html.setAttribute("data-consent-open", "");
+      requestAnimationFrame(() => first.current?.focus({ preventScroll: true }));
+    } else html.removeAttribute("data-consent-open");
   }, [offen]);
 
   const entscheide = useCallback((wahl: Einwilligung) => {
@@ -119,8 +123,9 @@ export default function Consent() {
     } catch {
       (window as unknown as { __svhWahl?: string }).__svhWahl = wahl;
     }
-    setzeConsent(wahl);
-    if (wahl === "alle") ladeGtm();
+    // Consent-Update und Laden übernimmt der Effekt auf „stand“ (kein doppelter Push);
+    // „Nur das Nötige“ meldet die Ablehnung hier, weil der Effekt nur „alle“ behandelt
+    if (wahl !== "alle") setzeConsent(wahl);
     window.dispatchEvent(new Event(EVENT));
   }, []);
 
@@ -139,7 +144,7 @@ export default function Consent() {
               {einwilligung.kurz} <Link href={einwilligung.mehrHref}>{einwilligung.kurzLink}</Link>
             </p>
             <div className="cons-buttons">
-              <button type="button" className="cons-btn" onClick={() => entscheide("alle")}>
+              <button ref={first} type="button" className="cons-btn" onClick={() => entscheide("alle")}>
                 {einwilligung.alle}
               </button>
               <button type="button" className="cons-btn" onClick={() => entscheide("notwendig")}>

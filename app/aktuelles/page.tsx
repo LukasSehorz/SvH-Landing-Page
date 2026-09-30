@@ -17,6 +17,20 @@ const title = `${aktuelles.meta.title} | ${company.name}`;
 
 export const metadata: Metadata = pageMeta({ title: aktuelles.meta.title, description: aktuelles.meta.description, path: "/aktuelles" });
 
+/**
+ * Veröffentlichungsdatum als ISO 8601 mit Uhrzeit und Zeitzone (Empfehlung von Google).
+ * Die genaue Uhrzeit steht nicht in der Liste; 12 Uhr deutscher Zeit hält den Tag
+ * in allen Zeitzonen stabil. Sommer- und Winterzeit werden je Datum berechnet.
+ */
+function uploadDate(isoDay: string): string {
+  const noonUtc = new Date(`${isoDay}T12:00:00Z`);
+  const name = new Intl.DateTimeFormat("en-US", { timeZone: "Europe/Berlin", timeZoneName: "longOffset" })
+    .formatToParts(noonUtc)
+    .find((p) => p.type === "timeZoneName")?.value; // z. B. "GMT+02:00"
+  const offset = name && name !== "GMT" ? name.replace("GMT", "") : "+00:00";
+  return `${isoDay}T12:00:00${offset}`;
+}
+
 // Strukturierte Daten: Liste der Videos (nur Angaben, die auch sichtbar sind)
 const jsonLd = {
   "@context": "https://schema.org",
@@ -33,7 +47,7 @@ const jsonLd = {
         "@type": "VideoObject",
         name: v.titel,
         description: v.body,
-        uploadDate: v.datumIso,
+        uploadDate: uploadDate(v.datumIso),
         thumbnailUrl: `${company.url}${v.bild}`,
         url: v.href,
       },

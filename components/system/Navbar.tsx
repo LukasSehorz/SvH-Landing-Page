@@ -31,8 +31,10 @@ export default function Navbar() {
   const pathname = usePathname();
   const onHome = pathname === "/";
   const pre = onHome ? "" : "/";
-  const [hidden, setHidden] = useState(false);
+  const [down, setDown] = useState(false); // scrollt gerade nach unten (jenseits des Starts)
   const [scrolled, setScrolled] = useState(false);
+  const [dropSeen, setDropSeen] = useState(false); // Vorschaubilder erst laden, wenn einmal geöffnet
+  const [subSeen, setSubSeen] = useState(false);
   const [active, setActive] = useState<string | null>(null);
   const [dropOpen, setDropOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -56,7 +58,7 @@ export default function Navbar() {
         const y = window.scrollY;
         setScrolled(y > 24);
         if (Math.abs(y - lastY) > 6) {
-          setHidden(y > lastY && y > 160);
+          setDown(y > lastY && y > 160);
           lastY = y;
         }
       });
@@ -163,7 +165,29 @@ export default function Navbar() {
     setDropOpen(false);
   }
 
-  const showBar = !hidden || sheetOpen || dropOpen;
+  // Handy (< 900 px): Leiste blendet beim Runterscrollen aus, die CTA-Leiste unten übernimmt.
+  // Ab 900 px verschwindet der Knopf nie: die Leiste schrumpft zur kompakten Pille.
+  const [wide, setWide] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 900px)");
+    const set = () => setWide(mq.matches);
+    set();
+    mq.addEventListener("change", set);
+    return () => mq.removeEventListener("change", set);
+  }, []);
+  const menuActive = sheetOpen || dropOpen;
+  const hidden = !wide && down && !menuActive;
+  const compact = wide && down && !menuActive;
+  const showBar = !hidden;
+
+  // Unterseiten haben keine CTA-Leiste unten: dort zeigt die Leiste ihren Knopf auch mobil.
+  // (Auf der Startseite steuert MobileCta data-nav-cta.)
+  useEffect(() => {
+    if (onHome) return;
+    const html = document.documentElement;
+    html.setAttribute("data-nav-cta", "");
+    return () => html.removeAttribute("data-nav-cta");
+  }, [onHome]);
 
   // Zustand der Leiste für mitlaufende Elemente (z. B. Schalter-Band) bereitstellen
   useEffect(() => {
@@ -174,11 +198,16 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="nav" data-hidden={showBar ? "false" : "true"} data-scrolled={scrolled ? "true" : "false"}>
+      <header
+        className="nav"
+        data-hidden={hidden ? "true" : "false"}
+        data-compact={compact ? "true" : "false"}
+        data-scrolled={scrolled ? "true" : "false"}
+      >
         <nav className="nav-bar" aria-label="Hauptmenü">
           <Link href="/" className="nav-mark" aria-label={nav.home}>
-            <Image className="wort" src="/logo/svh-wort-96.webp" alt="" width={169} height={22} priority />
-            <Image className="mono" src="/logo/svh-bild-160.webp" alt="" width={18} height={30} priority />
+            <Image className="wort" src="/logo/svh-wort-96.webp" alt="" width={169} height={22} loading="eager" />
+            <Image className="mono" src="/logo/svh-bild-160.webp" alt="" width={18} height={30} loading="eager" unoptimized />
           </Link>
 
           <ul className="nav-links">
@@ -201,10 +230,12 @@ export default function Navbar() {
                   if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") openedByKey.current = true;
                   if (e.key === "ArrowDown") {
                     e.preventDefault();
+                    setDropSeen(true);
                     setDropOpen(true);
                   }
                 }}
                 onClick={() => {
+                  setDropSeen(true);
                   setDropOpen((o) => !o);
                   setTimeout(() => (openedByKey.current = false), 0);
                 }}
@@ -223,9 +254,9 @@ export default function Navbar() {
               >
                 <p className="label nav-panel-title">{nav.panelTitle}</p>
                 <div>
-                  {VIDEOS.map((v) => (
-                    <VideoRow key={v.id} v={v} onPick={() => setDropOpen(false)} />
-                  ))}
+                  {dropSeen || dropOpen
+                    ? VIDEOS.map((v) => <VideoRow key={v.id} v={v} onPick={() => setDropOpen(false)} />)
+                    : null}
                 </div>
                 <div className="nav-panel-foot">
                   <Link href="/aktuelles" onClick={() => setDropOpen(false)}>
@@ -278,15 +309,16 @@ export default function Navbar() {
               </li>
             ))}
             <li style={{ "--i": 4 } as React.CSSProperties}>
-              <button type="button" className="nav-sheet-link" aria-expanded={sheetSub} aria-controls={`${sheetId}-sub`} onClick={() => setSheetSub((s) => !s)}>
+              <button type="button" className="nav-sheet-link" aria-expanded={sheetSub} aria-controls={`${sheetId}-sub`} onClick={() => {
+                  setSubSeen(true);
+                  setSheetSub((s) => !s);
+                }}>
                 {nav.aktuelles}
                 <Caret />
               </button>
               <div className="nav-sheet-sub" id={`${sheetId}-sub`} data-open={sheetSub ? "true" : "false"} inert={!sheetSub}>
                 <div className="nav-sheet-sub-inner">
-                  {VIDEOS.map((v) => (
-                    <VideoRow key={v.id} v={v} />
-                  ))}
+                  {subSeen || sheetSub ? VIDEOS.map((v) => <VideoRow key={v.id} v={v} />) : null}
                   <div className="nav-panel-foot">
                     <Link href="/aktuelles" onClick={() => closeSheet(false)}>
                       {nav.allVideos} <Arrow size={16} />

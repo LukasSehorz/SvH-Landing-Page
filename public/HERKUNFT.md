@@ -2,8 +2,7 @@
 
 Erzeugt von `scripts/assets.mjs` am 2026-09-29. Nur Kopien bzw. verkleinerte Fassungen, die Originale liegen im Projektordner.
 
-- `logo/` aus `assets/logo/` (vom Auftraggeber geliefert, siehe dortige HERKUNFT.md). `consulting-2400.webp` ist ein Ausschnitt der Wortmarke.
+- `logo/` aus `assets/logo/` (vom Auftraggeber geliefert, siehe dortige HERKUNFT.md). `consulting-2400.webp` ist ein Ausschnitt der Wortmarke, `svh-bild-480.webp` das Monogramm in hoher Auflösung (Siegel).
 - `aktuelles/` aus `assets/aktuelles/` (Vorschaubilder des eigenen YouTube-Kanals, lokal ausgeliefert, damit ohne Einwilligung nichts an Google geht).
 - `referenzen/` aus `assets/referenzen/` (Screenshots der Kundenseiten estera.immobilien und fuchspools.com), auf 1600 px WebP verkleinert.
-- `ki/flutlicht-1.webp`, `ki/flutlicht-3.webp` aus `assets-ki/flutlicht/`: Atmosphäre, KI-generiert über kie.ai am 29.09.2026 (GPT Image 2.5 Flare). Prompts stehen vollständig in `assets-ki/HERKUNFT.md`. Keine Personen, keine Marken, keine Texte im Bild. Variante 2 bewusst nicht verwendet.
 - `og.png` Vorschaubild für geteilte Links (Agent E).

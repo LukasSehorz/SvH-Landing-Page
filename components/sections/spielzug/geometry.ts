@@ -6,7 +6,10 @@
    ==================================================================== */
 
 export type Pt = { x: number; y: number };
-type Box = { x: number; y: number; w: number; h: number };
+export type Box = { x: number; y: number; w: number; h: number };
+
+/** Ab dieser Breite liegt die Tafel waagrecht (darunter senkrecht) */
+export const WIDE_QUERY = "(min-width: 1280px)";
 
 export type Geo = {
   key: string;
@@ -25,8 +28,8 @@ export type Geo = {
   goalFrame: string;
   goalNet: string;
   ring: { cx: number; cy: number; r: number };
-  /** Aussparung der Spielfeldlinien hinter der Tor-Schrift */
-  hole: { x: number; y: number; w: number; h: number } | null;
+  /** Aussparungen der Spielfeldlinien unter Karten (nichts scheint durch) */
+  holes: Box[];
   /** Zeitpunkte 0…1 entlang der Laufachse (y mobil, x breit) */
   t: { nodes: number[]; fork: number; with: number; bracketFrom: number; bracketTo: number };
 };
@@ -67,13 +70,12 @@ export function measure(root: HTMLElement): Geo | null {
   const fork = q("fork")[0];
   const withEl = q("with")[0];
   const goal = q("goal")[0];
-  const goalText = q("goaltext")[0];
   if (nodes.length < 4 || cards.length < 4 || !free || !fork || !withEl || !goal) return null;
 
   const W = root.clientWidth;
   const H = root.clientHeight;
   if (!W || !H) return null;
-  const layout: "v" | "h" = window.matchMedia("(min-width: 1024px)").matches ? "h" : "v";
+  const layout: "v" | "h" = window.matchMedia(WIDE_QUERY).matches ? "h" : "v";
 
   const nb = nodes.map((n) => box(n, root));
   const S = nb.map((b) => ({ x: b.x + b.w / 2, y: b.y + b.h / 2 }));
@@ -84,11 +86,10 @@ export function measure(root: HTMLElement): Geo | null {
   const gb = box(goal, root);
 
   const geo = layout === "v" ? vertical(W, H, S, cb, lb, fb, wb, gb) : horizontal(W, H, S, cb, lb, fb, wb, gb);
-  if (layout === "h" && goalText) {
-    const tb = box(goalText, root);
-    geo.hole = { x: tb.x - 14, y: tb.y - 10, w: tb.w + 28, h: tb.h + 20 };
-  }
-  geo.key = [layout, W, H, ...S.map((p) => `${p.x},${p.y}`), cb.map((b) => `${b.x},${b.y},${b.w},${b.h}`).join(";"), lb.x, lb.y, lb.h, fb.x, fb.y, fb.h, wb.x, wb.y, gb.x, gb.y, gb.w, gb.h, geo.hole ? `${geo.hole.x},${geo.hole.y},${geo.hole.w}` : ""].join("|");
+  geo.holes = [...cb, fb];
+  // Schlüssel auf 2 px gerundet: Rundungsreste (z. B. beim Pinnen) lösen keinen Neuaufbau aus
+  const k = (v: number) => Math.round(v / 2);
+  geo.key = [layout, k(W), k(H), ...S.map((p) => `${k(p.x)},${k(p.y)}`), cb.map((b) => `${k(b.x)},${k(b.y)},${k(b.w)},${k(b.h)}`).join(";"), k(lb.x), k(lb.y), k(lb.h), k(fb.x), k(fb.y), k(fb.h), k(wb.x), k(wb.y), k(gb.x), k(gb.y), k(gb.w), k(gb.h)].join("|");
   return geo;
 }
 
@@ -132,14 +133,14 @@ function vertical(W: number, H: number, S: Pt[], cb: Box[], lb: Box, fb: Box, wb
 
   let goalLines = `M${L} ${B}H${R}`;
   const pw2 = Math.min(W * 0.66, 250);
-  const ph2 = 92;
+  const ph2 = 72;
+  const spotY = B - 50;
   goalLines += `M${r1(cx - pw2 / 2)} ${B}V${B - ph2}H${r1(cx + pw2 / 2)}V${B}`;
-  const gw2 = Math.min(gb.w + 58, pw2 * 0.6);
-  goalLines += `M${r1(cx - gw2 / 2)} ${B}V${B - 30}H${r1(cx + gw2 / 2)}V${B}`;
+  const gw2 = Math.min(gb.w + 54, pw2 * 0.6);
+  goalLines += `M${r1(cx - gw2 / 2)} ${B}V${B - 24}H${r1(cx + gw2 / 2)}V${B}`;
   {
-    const sy = B - 64;
-    const rA = 40;
-    const dy = sy - (B - ph2);
+    const rA = 34;
+    const dy = spotY - (B - ph2);
     const dx = Math.sqrt(rA * rA - dy * dy);
     goalLines += `M${r1(cx - dx)} ${B - ph2}A${rA} ${rA} 0 0 1 ${r1(cx + dx)} ${B - ph2}`;
   }
@@ -147,7 +148,7 @@ function vertical(W: number, H: number, S: Pt[], cb: Box[], lb: Box, fb: Box, wb
 
   const spots = [
     { x: cx, y: midY, r: 2 },
-    { x: cx, y: B - 64, r: 1.8 },
+    { x: cx, y: spotY, r: 1.8 },
   ];
 
   const g = { x: Math.round(gb.x), y: B, w: Math.round(gb.w), h: Math.round(gb.h) };
@@ -175,7 +176,7 @@ function vertical(W: number, H: number, S: Pt[], cb: Box[], lb: Box, fb: Box, wb
     goalFrame,
     goalNet,
     ring: { cx: gx, cy: g.y + g.h / 2, r: g.w * 0.62 },
-    hole: null,
+    holes: [],
     t: {
       nodes: S.map((p) => tt(p.y)),
       fork: tt(J.y),
@@ -270,7 +271,7 @@ function horizontal(W: number, H: number, S: Pt[], cb: Box[], lb: Box, fb: Box, 
     goalFrame,
     goalNet,
     ring: { cx: g.x + g.w / 2, cy, r: g.h * 0.62 },
-    hole: null,
+    holes: [],
     t: {
       nodes: S.map((p) => tt(p.x)),
       fork: tt(S3.x),

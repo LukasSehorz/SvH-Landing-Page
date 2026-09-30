@@ -1,4 +1,6 @@
-import { garantie } from "@/app/copy";
+import { Fragment } from "react";
+import { cta, garantie } from "@/app/copy";
+import Cta from "@/components/system/Cta";
 import Rich from "@/components/system/Rich";
 import GarantieSeal from "./GarantieSeal";
 
@@ -15,10 +17,13 @@ export default function Garantie() {
             {garantie.label}
           </p>
           <h2 className="h2 gar-title" id="gar-title" data-reveal="">
-            {garantie.title.map((l) => (
-              <span className="line" key={l}>
-                <Rich text={l} />
-              </span>
+            {garantie.title.map((l, i) => (
+              <Fragment key={l}>
+                {i > 0 ? " " : null}
+                <span className="line">
+                  <Rich text={l} />
+                </span>
+              </Fragment>
             ))}
           </h2>
           <p className="lead gar-text" data-reveal="">
@@ -40,6 +45,11 @@ export default function Garantie() {
           <p className="gar-capsule" data-reveal="">
             {garantie.small}
           </p>
+          <div className="gar-cta" data-reveal="">
+            <Cta href="#termin" className="btn-block-m">
+              {cta.main}
+            </Cta>
+          </div>
         </div>
       </div>
     </section>

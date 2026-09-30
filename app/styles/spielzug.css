@@ -2,18 +2,16 @@
    Taktiktafel: Spielfeld aus der Vogelperspektive, vier Stationen, Passlinie,
    Ball, Klammer „0 €“, Gabelung bei Station 3, Tor.
    Mobil zuerst: senkrechte Tafel, Linie links, Karten daneben.
-   Ab 1024 px: waagrechte Tafel, Karten unter den Stationen.
+   1024 bis 1279 px: Kopf links (klebt), Tafel senkrecht rechts.
+   Ab 1280 px: waagrechte Tafel, Kopf + Tafel gemeinsam gepinnt.
    ======================================================================= */
 
 .sz-head {
   max-width: 920px;
+  margin-bottom: clamp(32px, 4.5vw, 56px);
 }
 .sz-title {
   margin-top: 16px;
-}
-
-.sz-stage {
-  margin-top: clamp(36px, 5vw, 64px);
 }
 
 /* ------------------------------------------------------------ Tafel */
@@ -139,7 +137,7 @@
   display: grid;
   grid-template-columns: var(--rail) minmax(0, 1fr);
   column-gap: 12px;
-  row-gap: 18px;
+  row-gap: 14px;
 }
 
 .sz-step {
@@ -164,7 +162,7 @@
 .sz-free {
   grid-column: 2;
   grid-row: 1;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
   font-size: 16px;
   font-weight: 500;
   line-height: 22px;
@@ -300,12 +298,7 @@
   padding-top: 14px;
 }
 .sz-tag .chip {
-  border-radius: 16px;
-  height: auto;
-  min-height: 30px;
-  padding-block: 5px;
-  line-height: 1.25;
-  white-space: normal;
+  white-space: nowrap;
 }
 .sz-chip-guarantee {
   color: #07060f;
@@ -385,15 +378,32 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 148px;
+  margin-top: 88px;
 }
 .sz-goalmouth {
   display: block;
   width: 76px;
   height: 24px;
 }
+
+/* „Tor! Zeit gewonnen.“ und direkt darunter der Knopf */
+.sz-finish {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.sz-finish--head {
+  display: none;
+}
+.sz-finish--board {
+  margin-top: 18px;
+  padding-inline: 6px;
+}
+.sz-finish .btn {
+  margin-top: 18px;
+}
 .sz-goaltext {
-  margin-top: 26px;
   text-align: center;
   font-family: var(--font-display);
   line-height: 1.05;
@@ -416,12 +426,6 @@
   font-size: 26px;
   font-weight: 500;
   color: var(--ink);
-}
-
-.sz-cta {
-  display: flex;
-  justify-content: center;
-  margin-top: clamp(32px, 4vw, 56px);
 }
 
 /* ------------------------------------------------ ab 700 px: mehr Luft */
@@ -456,23 +460,73 @@
   }
 }
 
-/* ------------------------------------------------ ab 1024 px: waagrecht */
+/* ------------------------------------ 1024 bis 1279: Kopf links, Tafel senkrecht */
 
-/* 1024 bis 1279: Tafel etwas über den Rand, damit die vier Karten Luft haben */
 @media (min-width: 1024px) and (max-width: 1279px) {
+  .sz-stage {
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    gap: clamp(36px, 4vw, 56px);
+    align-items: start;
+  }
+  .sz-head {
+    position: sticky;
+    top: calc(var(--nav-clear) + 24px);
+    margin: 0;
+  }
   .sz-board {
-    margin-inline: calc(16px - var(--gutter));
+    margin: 0;
   }
 }
 
-@media (min-width: 1024px) {
+/* ------------------------------------------------ ab 1280 px: waagrecht */
+
+@media (min-width: 1280px) {
+  .sz-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 40px;
+    max-width: none;
+    margin-bottom: 18px;
+  }
+  .sz-title {
+    font-size: clamp(34px, min(4.4vw, 7.2vh), 72px);
+  }
+  .sz-finish--board {
+    display: none;
+  }
+  .sz-finish--head {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: flex-end;
+    width: auto;
+    padding-bottom: 4px;
+  }
+  .sz-finish--head .sz-goaltext {
+    text-align: right;
+    white-space: nowrap;
+  }
+  .sz-finish--head .sz-goal-big {
+    font-size: clamp(30px, 2.4vw, 40px);
+  }
+  .sz-finish--head .sz-goal-sub {
+    display: inline;
+    margin: 0 0 0 0.25em;
+    font-size: clamp(20px, 1.6vw, 26px);
+  }
+  .sz-finish--head .btn {
+    margin-top: 14px;
+  }
+
   .sz-board {
-    --node: 44px;
-    --gap: clamp(14px, 1.4vw, 24px);
-    --goal-col: clamp(132px, 13vw, 224px);
-    --pad-x: clamp(20px, 2.6vw, 40px);
-    padding: 34px var(--pad-x) 36px;
-    border-radius: 32px;
+    --node: 40px;
+    --gap: clamp(14px, 1.3vw, 22px);
+    --goal-col: clamp(96px, 7.5vw, 140px);
+    --pad-x: clamp(24px, 2.4vw, 36px);
+    margin-inline: 0;
+    padding: 22px var(--pad-x) 24px;
+    border-radius: 30px;
   }
   .sz-dots {
     -webkit-mask-image: radial-gradient(ellipse 60% 70% at 50% 45%, #000 0%, transparent 80%);
@@ -491,7 +545,7 @@
     align-self: start;
     width: auto;
     height: 0;
-    margin: 52px 0 0;
+    margin: 42px 0 0;
     border-left: 0;
     border-top: 1px dashed rgba(185, 165, 255, 0.4);
   }
@@ -501,7 +555,7 @@
     grid-row: 1;
     justify-self: center;
     align-self: end;
-    margin: 0 0 32px;
+    margin: 0 0 30px;
     font-size: 16px;
     text-align: center;
   }
@@ -509,41 +563,63 @@
     grid-column: 6 / 9;
     grid-row: 1;
     align-self: end;
-    margin: 0 calc(var(--gap) / 2) 6px 60px;
-    padding: 16px 18px;
+    margin: 0 calc(var(--gap) / 2) 4px 56px;
+    padding: 11px 16px 13px;
+  }
+  .sz-fork-title {
+    font-size: 18px;
+  }
+  .sz-fork-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+  }
+  .sz-fork-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+  .sz-fork-text {
+    margin-top: 3px;
+    font-size: 16px;
   }
   .sz-nodecell {
     grid-row: 2;
     grid-column: var(--c);
     justify-content: center;
-    padding: 30px 0 52px;
+    padding: 20px 0 44px;
   }
   .sz-card {
     grid-row: 3;
     grid-column: var(--c);
     margin-inline: calc(var(--gap) / 2);
-    padding: 18px 18px 20px;
+    padding: 14px 16px 15px;
   }
   .sz-card-title {
-    font-size: clamp(19px, 1.45vw, 23px);
+    margin-top: 6px;
+    font-size: clamp(18px, 1.35vw, 21px);
   }
   .sz-card-text {
-    font-size: clamp(16px, 1.15vw, 17px);
+    margin-top: 6px;
+    font-size: 16px;
+    line-height: 1.42;
+  }
+  .sz-tag {
+    padding-top: 11px;
   }
   .sz-with {
     grid-row: 2;
     grid-column: 6 / 8;
     justify-self: center;
     align-self: end;
-    margin-bottom: 10px;
-    height: 34px;
+    margin-bottom: 8px;
+    height: 32px;
     font-size: 15px;
   }
   .sz-with-arrow {
     transform: none;
   }
   .sz-goal {
-    --gm-h: clamp(84px, 8vw, 112px);
+    --gm-h: clamp(80px, 7vw, 104px);
     grid-column: 9;
     grid-row: 1 / -1;
     position: relative;
@@ -556,20 +632,5 @@
     top: calc(50% - var(--gm-h) / 2);
     width: 22px;
     height: var(--gm-h);
-  }
-  .sz-goaltext {
-    position: absolute;
-    right: 0;
-    left: 10px;
-    top: calc(50% + var(--gm-h) / 2 + 22px);
-    margin: 0;
-    text-align: right;
-  }
-  .sz-goal-big {
-    font-size: clamp(34px, 3vw, 48px);
-  }
-  .sz-goal-sub {
-    font-size: clamp(17px, 1.45vw, 22px);
-    white-space: nowrap;
   }
 }

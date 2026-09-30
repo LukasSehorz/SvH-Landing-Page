@@ -1,6 +1,6 @@
 // Erster Bildschirm mit Einwilligung, reduzierte Bewegung, ohne JavaScript
 import { chromium } from "playwright";
-const out = "../review/bau-runde1/A-checks";
+const out = "../review/bau-runde2/A/A-checks";
 (await import("node:fs")).mkdirSync(out, { recursive: true });
 const b = await chromium.launch();
 const shot = async (name, opts, fn) => {
@@ -21,6 +21,7 @@ const shot = async (name, opts, fn) => {
 };
 await shot("consent-1440x800", { viewport: { width: 1440, height: 800 } });
 await shot("consent-390x844", { viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
+await shot("consent-360x740", { viewport: { width: 360, height: 740 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
 await shot("consent-375x667", { viewport: { width: 375, height: 667 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
 const rm = { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: "reduce" };
 for (const id of ["#alltag", "#ergebnisse", "#garantie"]) {
