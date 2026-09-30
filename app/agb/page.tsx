@@ -26,7 +26,7 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für alle Verträge zwischen {company.legalName}, handelnd unter {company.name}, {company.street}, {company.zipCity}{" "}
+          Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für alle Verträge zwischen {company.legalName}, handelnd unter {company.name}, {company.street || company.streetPending}, {company.zipCity}{" "}
           (nachfolgend „Auftragnehmer“) und ihren Kundinnen und Kunden (nachfolgend „Auftraggeber“) über Beratungs-, Automatisierungs-, Marketing- und Webleistungen.
         </p>
         <p>

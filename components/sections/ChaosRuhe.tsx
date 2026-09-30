@@ -101,12 +101,12 @@ function LiveStory({ variant }: { variant: Variant }) {
   }, []);
 
   useGSAP(
-    () => {
+    (_ctx, contextSafe) => {
       const root = stage.current;
       const section = root?.parentElement;
       if (!root || !section || !near) return;
       fitScene(root, variant);
-      const tl = buildTimeline(root, variant, ENTRY, RUN[variant]);
+      const tl = buildTimeline(root, variant, ENTRY, RUN[variant], contextSafe);
       const st = ScrollTrigger.create({
         trigger: section,
         start: `top ${Math.round(ENTRY * 100)}%`,

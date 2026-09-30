@@ -50,18 +50,49 @@
   background: linear-gradient(180deg, transparent, var(--bg));
 }
 
+/* Alle Bausteine liegen direkt im Raster. Desktop: Text links (52 %), Videofenster rechts, mittig
+   zu Kennzeile bis Geschenkzeile (die Beweisleiste läuft darunter; so bleibt das Fenster auch bei
+   800 px Höhe frei von der Einwilligungs-Box). Das Raster ist zugleich Container: die Überschrift
+   misst sich an der Breite der Textspalte (52cqi), damit jede Zeile einzeilig steht. */
 .hero-grid {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-  gap: clamp(28px, 3vw, 56px);
-  align-items: center;
-}
-
-.hero-copy {
   container-type: inline-size;
-  min-width: 0;
+  grid-template-columns: minmax(0, 52%) minmax(0, 1fr);
+  grid-template-areas:
+    "eyebrow vsl"
+    "title vsl"
+    "text vsl"
+    "actions vsl"
+    "gift vsl"
+    "proof .";
+  column-gap: clamp(32px, 4vw, 72px);
+  align-items: start;
+  align-content: center;
+}
+.hero-eyebrow {
+  grid-area: eyebrow;
+  justify-self: start;
+}
+.hero-title {
+  grid-area: title;
+}
+.hero-vsl {
+  grid-area: vsl;
+  align-self: center;
+}
+.hero-text {
+  grid-area: text;
+}
+.hero-actions {
+  grid-area: actions;
+}
+.hero-gift {
+  grid-area: gift;
+}
+.hero-proof {
+  grid-area: proof;
 }
 
 .hero-eyebrow {
@@ -71,7 +102,8 @@
 .hero-title {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(44px, 10.7cqi, 124px);
+  /* 10,7 % der Textspalte (52 % des Rasters) */
+  font-size: clamp(40px, calc(52cqi * 0.107), 124px);
   line-height: 0.98;
   letter-spacing: -0.04em;
   color: var(--ink);
@@ -211,13 +243,6 @@
   max-width: 17em;
 }
 
-.hero-visual {
-  position: relative;
-  min-width: 0;
-  align-self: stretch;
-  min-height: clamp(460px, 64vh, 640px);
-}
-
 /* Auftritt rein per CSS: läuft ab dem ersten Bild, ohne auf JavaScript zu warten.
    Zeilen steigen aus einer Maske, danach schreibt sich das Schreibschrift-Wort. */
 @property --w {
@@ -305,33 +330,208 @@
   }
 }
 
+/* ------------------------------------------------ Videofenster (VSL) */
+
+.vsl {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  isolation: isolate;
+}
+/* weicher Schein hinter dem Fenster */
+.vsl::before {
+  content: "";
+  position: absolute;
+  inset: -16% -10%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(124, 106, 255, 0.26), rgba(91, 140, 255, 0.08) 55%, transparent 100%);
+  pointer-events: none;
+}
+/* Haarlinie als feiner Verlauf: 1 px Rahmen um den Bildschirm */
+.vsl-frame {
+  position: relative;
+  padding: 1px;
+  border-radius: 24px;
+  background: linear-gradient(155deg, rgba(185, 165, 255, 0.48), rgba(244, 244, 246, 0.1) 32%, rgba(244, 244, 246, 0.06) 62%, rgba(124, 106, 255, 0.36));
+  box-shadow:
+    0 50px 100px -50px rgba(124, 106, 255, 0.55),
+    0 30px 60px -30px rgba(0, 0, 0, 0.9);
+}
+.vsl-screen {
+  container: vsl / inline-size;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 23px;
+  background: radial-gradient(90% 90% at 50% 50%, #100f1c 0%, #09090e 72%);
+  isolation: isolate;
+}
+.vsl-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+/* leichte Abdunklung: oben für die Titelzeile, an den Rändern für Ruhe */
+.vsl-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(6, 6, 10, 0.72) 0%, rgba(6, 6, 10, 0) 24%),
+    radial-gradient(130% 110% at 50% 50%, transparent 58%, rgba(6, 6, 10, 0.55) 100%);
+}
+.vsl-title {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding: clamp(10px, 2.7cqw, 17px) clamp(13px, 3.4cqw, 22px);
+  font-size: clamp(11.5px, 2.4cqw, 15px);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  color: rgba(244, 244, 246, 0.86);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+.vsl-hit {
+  /* Knopfgröße und -höhe; kompakt kleiner und etwas über der Mitte (wie der Kern in geo()) */
+  --play: clamp(54px, 13.5cqw, 88px);
+  --cy: 50%;
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  color: inherit;
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+button.vsl-hit {
+  cursor: pointer;
+}
+button.vsl-hit:focus-visible {
+  outline: none;
+}
+/* großer, ruhiger Abspielknopf: Glas-Kreis mit Haarlinie, sitzt genau auf dem KI-Kern */
+.vsl-play {
+  position: absolute;
+  left: 50%;
+  top: var(--cy);
+  display: grid;
+  place-items: center;
+  width: var(--play);
+  height: var(--play);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(14, 13, 26, 0.5);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 14px 34px -14px rgba(0, 0, 0, 0.85),
+    0 0 0 7px rgba(124, 106, 255, 0.07);
+  color: #fff;
+  transform: translate(-50%, -50%);
+  transition:
+    transform 0.6s var(--ease),
+    background-color 0.35s var(--ease),
+    border-color 0.35s var(--ease);
+}
+.vsl-play svg {
+  width: 38%;
+  height: 38%;
+  /* Dreieck optisch mittig */
+  margin-left: 7%;
+}
+@media (hover: hover) {
+  button.vsl-hit:hover .vsl-play {
+    transform: translate(-50%, -50%) scale(1.05);
+    background: rgba(124, 106, 255, 0.34);
+    border-color: rgba(185, 165, 255, 0.6);
+  }
+}
+button.vsl-hit:active .vsl-play {
+  transform: translate(-50%, -50%) scale(0.97);
+}
+button.vsl-hit:focus-visible .vsl-play {
+  outline: 2px solid var(--lav);
+  outline-offset: 5px;
+}
+/* Platzhalter: Knopf ist nur Bild (gedämpft), darunter „Video folgt“ */
+.vsl-hit[data-soon] {
+  cursor: default;
+}
+.vsl-hit[data-soon] .vsl-play {
+  color: rgba(255, 255, 255, 0.72);
+}
+.vsl-soon {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--cy) + var(--play) / 2 + clamp(8px, 1.8cqw, 12px));
+  transform: translateX(-50%);
+  padding: clamp(3px, 0.8cqw, 5px) clamp(9px, 2cqw, 12px);
+  border-radius: 99px;
+  border: 1px solid rgba(185, 165, 255, 0.24);
+  background: rgba(10, 10, 18, 0.78);
+  font-size: clamp(10px, 1.9cqw, 12px);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lav);
+  white-space: nowrap;
+}
+
 /* ------------------------------------------------ Aufgaben-Maschine */
 
+/* Läuft als Vorschau im Videofenster und skaliert wie ein Video: alle Maße sind Entwurfs-Pixel
+   einer 600 px breiten Bühne (kompakt: 400 px, unter 480 px Fensterbreite) mal --u.
+   Muss zu geo() und WIDE_MIN in HeroMachine.tsx passen. */
 .machine {
   position: absolute;
   inset: 0;
-  --card-w: 212px;
-  --card-h: 52px;
+  --u: calc(100cqw / 600);
+  /* Höhe des Kerns: als Anteil (Schein, Mittelkreis) und als Länge (Kartenplätze; Fenster = 56,25cqw hoch) */
+  --cy: 50%;
+  --cyl: calc(56.25cqw * 0.5);
+  --card-w: calc(212 * var(--u));
+  --card-h: calc(52 * var(--u));
+  --m: calc(18 * var(--u));
+  --gap: calc(66 * var(--u));
 }
 .machine-glow {
   position: absolute;
   left: 50%;
-  top: 45%;
-  width: 78%;
+  top: var(--cy);
+  width: 62%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(124, 106, 255, 0.2) 0%, rgba(91, 140, 255, 0.07) 50%, transparent 100%);
+  background: radial-gradient(closest-side, rgba(124, 106, 255, 0.24) 0%, rgba(91, 140, 255, 0.08) 50%, transparent 100%);
   pointer-events: none;
 }
+/* Mittelkreis passt senkrecht ins Fenster, Mittellinie läuft durch den Knopf */
 .machine-pitch {
   left: 50%;
-  top: 45%;
-  width: 118%;
-  height: auto;
+  top: var(--cy);
+  width: auto;
+  height: 112%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
-  opacity: 0.7;
+  opacity: 0.55;
 }
 .machine-core {
   position: absolute;
@@ -342,17 +542,24 @@
 
 .task {
   position: absolute;
+  left: 0;
+  top: 0;
+  /* Platz per transform (nicht top/left): übernimmt das Skript, ändert sich nur transform,
+     kein Layout-Sprung beim Hydrieren */
+  transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--ts, 1));
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: calc(10 * var(--u));
   width: var(--card-w);
   height: var(--card-h);
-  padding: 0 14px 0 12px;
-  border-radius: 14px;
+  padding: 0 calc(14 * var(--u)) 0 calc(12 * var(--u));
+  border-radius: calc(14 * var(--u));
   border: 1px solid rgba(244, 244, 246, 0.14);
   background: #0e0e16;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 14px 30px -14px rgba(0, 0, 0, 0.8);
-  font-size: 14.5px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 calc(14 * var(--u)) calc(30 * var(--u)) calc(-14 * var(--u)) rgba(0, 0, 0, 0.8);
+  font-size: calc(14.5 * var(--u));
   font-weight: 500;
   color: var(--ink);
   white-space: nowrap;
@@ -361,28 +568,36 @@
 .task-label {
   flex: 1 1 auto;
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .task-dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 6px;
+  width: calc(18 * var(--u));
+  height: calc(18 * var(--u));
+  border-radius: calc(6 * var(--u));
   border: 1.5px dashed rgba(244, 244, 246, 0.35);
   flex: 0 0 auto;
 }
 .task-out {
   border-color: rgba(185, 165, 255, 0.35);
   background: linear-gradient(180deg, #19172d, #0f0e18);
-  box-shadow: inset 0 1px 0 rgba(185, 165, 255, 0.22), 0 14px 30px -18px rgba(124, 106, 255, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(185, 165, 255, 0.22),
+    0 calc(14 * var(--u)) calc(30 * var(--u)) calc(-18 * var(--u)) rgba(124, 106, 255, 0.5);
 }
 .task-check {
   display: grid;
   place-items: center;
-  width: 20px;
-  height: 20px;
+  width: calc(20 * var(--u));
+  height: calc(20 * var(--u));
   border-radius: 99px;
   background: var(--grad);
   color: #07060f;
   flex: 0 0 auto;
+}
+.task-check svg {
+  width: calc(13 * var(--u));
+  height: calc(13 * var(--u));
 }
 .task-text {
   display: flex;
@@ -391,73 +606,75 @@
   line-height: 1.2;
 }
 .task-badge {
-  margin-top: 2px;
-  font-size: 11px;
+  margin-top: calc(2 * var(--u));
+  font-size: calc(10.5 * var(--u));
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--lav);
 }
 
-/* statische Anordnung (Server, ohne Bewegung) */
+/* statische Anordnung (Server, ohne Bewegung): gleiche Plätze wie geo() im Skript */
 .task-in {
-  left: 0;
+  --tx: var(--m);
 }
 .task-out {
-  right: 0;
+  --tx: calc(100cqw - var(--m) - var(--card-w));
 }
 .task[data-slot="0"] {
-  top: calc(45% - var(--card-h) / 2 - 68px);
+  --ty: calc(var(--cyl) - var(--card-h) / 2 - var(--gap));
 }
 .task[data-slot="1"] {
-  top: calc(45% - var(--card-h) / 2);
+  --ty: calc(var(--cyl) - var(--card-h) / 2);
 }
 .task[data-slot="2"] {
-  top: calc(45% - var(--card-h) / 2 + 68px);
+  --ty: calc(var(--cyl) - var(--card-h) / 2 + var(--gap));
 }
 .task[data-slot="3"] {
-  top: calc(45% - var(--card-h) / 2 + 136px);
+  --ty: calc(var(--cyl) - var(--card-h) / 2 + var(--gap) * 2);
   visibility: hidden;
 }
 .machine[data-js] .task {
-  left: 0;
-  top: 0;
-  right: auto;
   visibility: visible;
 }
 
 .machine-counter {
   position: absolute;
+  z-index: 1;
   left: 50%;
-  bottom: 2%;
+  bottom: calc(15 * var(--u));
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 14px;
-  height: 56px;
-  padding: 0 22px 0 18px;
+  gap: calc(12 * var(--u));
+  height: calc(44 * var(--u));
+  padding: 0 calc(18 * var(--u)) 0 calc(15 * var(--u));
   border-radius: 999px;
   border: 1px solid rgba(185, 165, 255, 0.3);
   background: #0d0c17;
-  box-shadow: 0 18px 40px -20px rgba(124, 106, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 calc(18 * var(--u)) calc(40 * var(--u)) calc(-20 * var(--u)) rgba(124, 106, 255, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   white-space: nowrap;
 }
 .machine-counter-label {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12.5px;
+  gap: calc(7 * var(--u));
+  font-size: calc(11 * var(--u));
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-2);
 }
 .machine-counter-label svg {
+  width: calc(14 * var(--u));
+  height: calc(14 * var(--u));
   color: var(--lav);
 }
 .machine-counter-value {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: calc(19 * var(--u));
   font-weight: 600;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
@@ -466,29 +683,113 @@
   background-clip: text;
   color: transparent;
 }
-.machine-counter {
-  transition: opacity 0.35s var(--ease);
-}
-.machine-counter[data-away] {
-  opacity: 0;
-}
 .machine-plus {
   position: absolute;
-  right: 18px;
-  top: -8px;
-  padding: 4px 10px;
+  right: calc(16 * var(--u));
+  top: calc(-8 * var(--u));
+  padding: calc(3 * var(--u)) calc(9 * var(--u));
   border-radius: 99px;
   background: var(--grad);
   color: #07060f;
-  font-size: 12.5px;
+  font-size: calc(11 * var(--u));
   font-weight: 700;
   opacity: 0;
   pointer-events: none;
 }
 
+/* Kompakt (Fenster unter 480 px, also Handy und schmale Spalten): links ein Stapel Arbeit,
+   rechts der Stapel „erledigt“; von jedem Stapel zeigt nur die vorderste Karte Text */
+@container vsl (max-width: 479.98px) {
+  .vsl-hit {
+    --play: clamp(44px, 12.5cqw, 54px);
+  }
+  .vsl-hit[data-preview="machine"] {
+    --cy: 44.5%;
+  }
+  .machine {
+    --u: calc(100cqw / 410);
+    --cy: 44.5%;
+    --cyl: calc(56.25cqw * 0.445);
+    /* breit genug für die längste Aufgabe („Kunden nachfassen“) in 12 px */
+    --card-w: calc(158 * var(--u));
+    --card-h: calc(42 * var(--u));
+    --m: calc(10 * var(--u));
+  }
+  .machine-glow {
+    width: 54%;
+  }
+  .task {
+    gap: calc(7 * var(--u));
+    padding: 0 calc(9 * var(--u));
+    border-radius: calc(12 * var(--u));
+    font-size: calc(12 * var(--u));
+  }
+  .task-dot {
+    width: calc(14 * var(--u));
+    height: calc(14 * var(--u));
+    border-radius: calc(4.5 * var(--u));
+  }
+  .task-check {
+    width: calc(16 * var(--u));
+    height: calc(16 * var(--u));
+  }
+  .task-check svg {
+    width: calc(10.5 * var(--u));
+    height: calc(10.5 * var(--u));
+  }
+  /* kompakt reicht der Haken: kein „erledigt“ unter dem Text */
+  .task-badge {
+    display: none;
+  }
+  /* statischer Stapel: gleiche Plätze wie im Skript */
+  .task[data-slot] {
+    --ty: calc(var(--cyl) - var(--card-h) / 2);
+    z-index: 3;
+  }
+  .task[data-slot="1"] {
+    --ty: calc(var(--cyl) - var(--card-h) / 2 - 6 * var(--u));
+    --ts: 0.95;
+    opacity: 0.55;
+    z-index: 2;
+  }
+  .task[data-slot="2"] {
+    --ty: calc(var(--cyl) - var(--card-h) / 2 - 12 * var(--u));
+    --ts: 0.9;
+    opacity: 0.28;
+    z-index: 1;
+  }
+  .machine-counter {
+    bottom: calc(11 * var(--u));
+    height: calc(32 * var(--u));
+    gap: calc(9 * var(--u));
+    padding: 0 calc(14 * var(--u)) 0 calc(12 * var(--u));
+  }
+  .machine-counter-label {
+    font-size: calc(10.5 * var(--u));
+    letter-spacing: 0.12em;
+    gap: calc(6 * var(--u));
+  }
+  .machine-counter-label svg {
+    width: calc(12 * var(--u));
+    height: calc(12 * var(--u));
+  }
+  .machine-counter-value {
+    font-size: calc(15.5 * var(--u));
+  }
+  /* „+15 Min.“ rechts neben dem Zähler statt darüber (dort steht „Video folgt“) */
+  .machine-plus {
+    right: auto;
+    left: calc(100% + 7 * var(--u));
+    top: calc(50% - 10 * var(--u));
+    padding: calc(3 * var(--u)) calc(8 * var(--u));
+    font-size: calc(10.5 * var(--u));
+  }
+}
+
 /* --------------------------------------------------------- Breiten */
 
-/* Einspaltig: bis 1023 px und 1024–1179 px hochkant (Maschine quer unter dem Text) */
+/* Einspaltig: bis 1023 px und 1024–1179 px hochkant. Handy-Reihenfolge: Überschrift, Video,
+   Knopf, Geschenk, Einleitung, Beweisleiste (Video und Knopf im ersten Bildschirm) */
 @media (max-width: 1023px), (max-width: 1179px) and (orientation: portrait) {
   .hero {
     min-height: 0;
@@ -496,149 +797,57 @@
   }
   .hero-grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: 36px;
-  }
-  .hero-visual {
-    min-height: 0;
-    height: clamp(380px, 56vw, 500px);
+    grid-template-areas:
+      "eyebrow"
+      "title"
+      "vsl"
+      "actions"
+      "gift"
+      "text"
+      "proof";
   }
   .hero-title {
     font-size: min(10.7cqi, 76px);
   }
-  .machine-pitch {
-    width: auto;
-    height: 116%;
+  .hero-vsl {
+    width: min(100%, 720px);
+    margin-top: 32px;
+  }
+  .hero-text {
+    margin-top: 28px;
   }
   .hero-bg .dots {
-    -webkit-mask-image: radial-gradient(ellipse 70% 40% at 60% 78%, #000 0%, transparent 78%);
-    mask-image: radial-gradient(ellipse 70% 40% at 60% 78%, #000 0%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 40% at 60% 58%, #000 0%, transparent 78%);
+    mask-image: radial-gradient(ellipse 70% 40% at 60% 58%, #000 0%, transparent 78%);
   }
 }
 
-/* 1024–1179 px quer: zweispaltig wie am Desktop, Start bleibt ein Bildschirm hoch;
-   die Maschine läuft in der schmalen rechten Spalte senkrecht (siehe unten) */
+/* 1024–1179 px quer: zweispaltig wie am Desktop, etwas knapper gesetzt. Textspalte 54 %,
+   der zweite Knopf entfällt (steht auch in der Leiste), damit der Start ein Bildschirm bleibt */
 @media (min-width: 1024px) and (max-width: 1179px) and (orientation: landscape) {
-  /* Maschine kompakt und mittig zur Textspalte: Stapel und Mittelkreis liegen dicht beieinander */
-  .hero-visual {
-    align-self: center;
-    min-height: 0;
-    height: clamp(420px, 60vh, 480px);
+  .hero-grid {
+    grid-template-columns: minmax(0, 54%) minmax(0, 1fr);
+    column-gap: 32px;
+  }
+  .hero-title {
+    font-size: calc(54cqi * 0.107);
   }
   .hero-actions .btn {
     padding-inline: 24px 20px;
     gap: 10px;
   }
+  .hero-actions .btn-ghost {
+    display: none;
+  }
   .hero-proof strong {
     font-size: 20px;
   }
   .hero-proof li {
-    padding-right: 16px;
-    margin-right: 16px;
+    padding-right: 14px;
+    margin-right: 14px;
   }
-}
-
-/* Senkrechter Fluss (Handy und 1024–1179 px quer): oben ein Stapel Arbeit, mitten der Kern,
-   unten der Stapel „erledigt“, darunter der Zähler. Muss zu VERTICAL in HeroMachine.tsx passen. */
-@media (max-width: 699px), (min-width: 1024px) and (max-width: 1179px) and (orientation: landscape) {
-  .machine {
-    --card-w: min(240px, 80%);
-    --card-h: 48px;
-  }
-  .machine-glow,
-  .machine-pitch {
-    top: var(--cy, 42.5%);
-  }
-  .machine-glow {
-    width: 70%;
-  }
-  .machine-pitch {
-    width: var(--pd, 64%);
-    height: auto;
-  }
-  .task {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    font-size: 14px;
-    gap: 9px;
-    padding: 0 12px 0 11px;
-    border-radius: 12px;
-  }
-  .task-dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 5px;
-  }
-  .task-check {
-    width: 18px;
-    height: 18px;
-  }
-  .task-check svg {
-    width: 12px;
-    height: 12px;
-  }
-  .task-badge {
-    font-size: 11px;
-    margin-top: 1px;
-  }
-  /* statischer Stapel (Server, ohne Bewegung): gleiche Plätze wie im Skript */
-  .task-in,
-  .task-out {
-    left: calc(50% - var(--card-w) / 2);
-    right: auto;
-  }
-  .task-in[data-slot="0"] {
-    top: 22px;
-    z-index: 3;
-  }
-  .task-in[data-slot="1"] {
-    top: 15px;
-    transform: scale(0.95);
-    opacity: 0.55;
-    z-index: 2;
-  }
-  .task-in[data-slot="2"] {
-    top: 8px;
-    transform: scale(0.9);
-    opacity: 0.28;
-    z-index: 1;
-  }
-  /* Zähler 44 px, darüber 12 px Luft, 14 px Stapelversatz, Karte 48 px */
-  .task-out[data-slot="0"] {
-    top: calc(100% - 118px);
-    z-index: 3;
-  }
-  .task-out[data-slot="1"] {
-    top: calc(100% - 111px);
-    transform: scale(0.95);
-    opacity: 0.55;
-    z-index: 2;
-  }
-  .task-out[data-slot="2"] {
-    top: calc(100% - 104px);
-    transform: scale(0.9);
-    opacity: 0.28;
-    z-index: 1;
-    visibility: visible;
-  }
-  .task-out[data-slot="3"] {
-    visibility: hidden;
-  }
-  .machine[data-js] .task {
-    transform: none;
-    opacity: 1;
-  }
-  .machine-counter {
-    bottom: 0;
-    height: 44px;
-    gap: 10px;
-    padding: 0 16px 0 14px;
-  }
-  .machine-counter-label {
-    font-size: 11px;
-    letter-spacing: 0.12em;
-  }
-  .machine-counter-value {
-    font-size: 18px;
+  .hero-proof .proof-small {
+    font-size: 13px;
   }
 }
 
@@ -667,7 +876,7 @@
     text-wrap: balance;
   }
   /* Handy: erste Zeile steht sofort (größtes Element, früher LCP), nur die zweite Zeile
-     mit „gewinnen“ steigt in 0,5 s ohne Verzögerung aus der Maske */
+     mit „gewinnst“ steigt in 0,5 s ohne Verzögerung aus der Maske */
   .hero-line {
     animation-duration: 0.55s;
     animation-delay: 0s;
@@ -680,8 +889,8 @@
   .hero-line:first-child .hero-line-in {
     animation: none;
   }
-  /* Kennzeile und Einleitungstext stehen ebenfalls sofort: der Text ist mobil das größte
-     Element und würde sonst als spätes LCP gemessen (erst unsichtbar, dann eingeblendet) */
+  /* Kennzeile und Einleitungstext stehen ebenfalls sofort: Text bleibt das LCP-Element
+     (erst unsichtbar, dann eingeblendet würde als spätes LCP gemessen) */
   .hero-eyebrow[data-hero-in],
   .hero-text[data-hero-in] {
     animation: none;
@@ -699,11 +908,24 @@
     animation-duration: 0.8s;
     animation-delay: calc(0.15s + var(--i, 0) * 0.06s);
   }
+  .hero-vsl {
+    width: 100%;
+    margin-top: 20px;
+  }
+  .vsl::before {
+    inset: -10% -6%;
+  }
+  .vsl-frame {
+    border-radius: 18px;
+  }
+  .vsl-screen {
+    border-radius: 17px;
+  }
   .hero-text {
-    margin-top: 18px;
+    margin-top: 22px;
   }
   .hero-actions {
-    margin-top: 24px;
+    margin-top: 18px;
     gap: 10px;
   }
   .hero-actions .btn-primary {
@@ -713,7 +935,7 @@
     display: none;
   }
   .hero-gift {
-    margin-top: 18px;
+    margin-top: 16px;
     gap: 18px;
   }
   .hero-gift-doc {
@@ -773,42 +995,52 @@
   .proof-check {
     display: inline-grid;
   }
-  /* dichte Maschine: Stapel, Kern und Zähler eng beieinander */
-  .hero-visual {
-    height: 320px;
-    margin-top: 0;
-  }
-  .hero-grid {
-    gap: 14px;
-  }
 }
 
-@media (max-width: 699px) and (max-height: 720px) {
+/* niedrigere Telefone (bis 800 px hoch): enger gesetzt, damit Überschrift, Video und Knopf
+   über der Einwilligungs-Leiste stehen */
+@media (max-width: 699px) and (max-height: 800px) {
   .hero {
     padding-top: calc(var(--nav-offset) + 2px);
   }
   .hero-eyebrow {
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   .hero-title {
-    font-size: clamp(38px, 11.6vw, 46px);
+    font-size: clamp(36px, 11.2vw, 44px);
   }
-  .hero-text {
+  .hero-vsl {
     margin-top: 14px;
-    font-size: 16px;
   }
   .hero-actions {
-    margin-top: 18px;
+    margin-top: 14px;
+  }
+  .hero-text {
+    font-size: 16px;
   }
 }
 
-/* 320 px (iPhone SE 1. Gen.): Dachzeile etwas kleiner und enger, damit sie vollständig in
-   einer Zeile steht; reicht der Platz trotzdem nicht, bricht sie um statt abzuschneiden */
+/* niedrige Telefone (bis 700 px hoch, z. B. iPhone in Safari mit Leisten, 375 × 667, 320 × 568):
+   Überschrift in zwei Zeilen wie am Desktop, jede Zeile einzeilig (Schriftgröße aus der Breite,
+   längste Zeile ≈ 8,83 × Schriftgröße). Kein Umbruch heißt auch: kein Sprung beim Schriftwechsel. */
+@media (max-width: 699px) and (max-height: 700px) {
+  .hero-title {
+    font-size: min(44px, calc(100cqi / 9));
+  }
+  .hero-line,
+  .hero-line-in {
+    white-space: nowrap;
+    text-wrap: nowrap;
+  }
+}
+
+/* 320 px (iPhone SE 1. Gen.): Dachzeile etwas kleiner und enger, damit sie in einer Zeile steht
+   (275 von 280 px). Kein Umbruch: die Ersatzschrift ist 14 px breiter und würde sonst beim Laden
+   zweizeilig stehen und beim Schriftwechsel alles darunter verschieben; so läuft sie in dieser
+   Zeit nur ein paar Pixel in den Seitenrand. */
 @media (max-width: 359px) {
   .hero-eyebrow {
     font-size: 11px;
     letter-spacing: 0.05em;
-    white-space: normal;
-    text-wrap: balance;
   }
 }

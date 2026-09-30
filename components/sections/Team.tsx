@@ -43,9 +43,9 @@ export default function Team() {
           <p className="lead team-text" data-reveal="">
             <Rich text={teamText} />
           </p>
-          <ul className="team-people" data-reveal="">
+          <ul className="team-people">
             {team.people.map((p) => (
-              <li key={p.name} className="team-person">
+              <li key={p.name} className="team-person" data-reveal="">
                 <Monogramm initials={p.initials} />
                 <span className="team-meta">
                   <h3 className="team-name">{kapselName(p.name)}</h3>

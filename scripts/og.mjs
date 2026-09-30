@@ -1,6 +1,9 @@
 // OG-Bild erzeugen (1200 × 630) → public/og.png
 // Aufruf in site/: node scripts/og.mjs   (Dev-Server muss auf Port 3200 laufen)
 //
+// Slogan wie im Start: „Wir stellen die KI auf, / du *gewinnst* die Zeit.“ (Schreibschrift-Wort „gewinnst“).
+// Wortmarke: /logo/svh-wort-96.webp (737 × 96 px, bei 262 px Anzeige und 2-facher Aufnahme scharf).
+//
 // Die Schriften (Inter Tight, Inter, Mr Dafoe) kommen aus der laufenden Seite:
 // Das Skript liest die @font-face-Regeln, die next/font ausliefert, und setzt
 // sie in eine kleine HTML-Vorlage. Aufgenommen wird doppelt so groß (2400 × 1260)
@@ -100,9 +103,9 @@ h1 span.line{display:block}
   </g>
   <circle cx="1072" cy="298" r="3.6" fill="#b9a5ff"/>
 </svg>
-<img class="mark" src="${ORIGIN}/logo/svh-wort-2400.webp" alt="">
+<img class="mark" src="${ORIGIN}/logo/svh-wort-96.webp" alt="">
 <p class="eyebrow">KI-Automatisierung für den Mittelstand</p>
-<h1><span class="line">Wir stellen die KI auf.</span><span class="line">Sie <span class="script"><span class="script-text">gewinnen</span>
+<h1><span class="line">Wir stellen die KI auf,</span><span class="line">du <span class="script"><span class="script-text">gewinnst</span>
 <svg class="swoosh" viewBox="0 0 300 40" preserveAspectRatio="none"><path d="M6 30 C 70 21, 150 15, 226 16 C 262 16.5, 284 20, 296 9" stroke="url(#sw)" stroke-width="3.4"/>
 <path d="M34 37 C 104 30, 176 27, 250 30" stroke="url(#sw)" stroke-width="1.5" opacity=".7"/></svg></span> die Zeit.</span></h1>
 <div class="rule"></div>
@@ -118,6 +121,9 @@ await p.evaluate(async (f) => {
   await document.fonts.ready;
   await Promise.all([...document.images].map((i) => (i.complete ? null : new Promise((r) => (i.onload = i.onerror = r)))));
 }, fonts);
+// fehlende Wortmarke (z. B. umbenannte Datei) nicht stillschweigend weglassen
+const broken = await p.evaluate(() => [...document.images].filter((i) => !i.naturalWidth).map((i) => i.src));
+if (broken.length) throw new Error(`Bild nicht geladen: ${broken.join(", ")}`);
 await p.waitForTimeout(300);
 const buf = await p.screenshot({ type: "png" });
 await b.close();

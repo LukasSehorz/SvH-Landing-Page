@@ -57,7 +57,9 @@ export default function Abschluss() {
           </ul>
         </div>
 
-        <aside className="abs-side abs-direct" aria-labelledby="abs-direct-title">
+        {/* Nur der Direktkontakt blendet beim normalen Hineinscrollen ein. Nach einem Knopf-
+            oder Menü-Sprung steht er sofort (Reveals stellt den Zielbereich fertig hin). */}
+        <aside className="abs-side abs-direct" aria-labelledby="abs-direct-title" data-reveal="">
           <p className="abs-direct-title" id="abs-direct-title">
             {abschluss.direct.title}
           </p>

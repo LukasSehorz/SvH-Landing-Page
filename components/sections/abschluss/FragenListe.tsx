@@ -60,7 +60,7 @@ export default function FragenListe({ items }: Readonly<{ items: readonly Item[]
         const qId = `faq-${uid}-q${i}`;
         const aId = `faq-${uid}-a${i}`;
         return (
-          <li key={it.q} className="faq-item" data-open={isOpen ? "true" : "false"}>
+          <li key={it.q} className="faq-item" data-open={isOpen ? "true" : "false"} data-reveal="">
             <h3 className="faq-h">
               <button
                 ref={(el) => {

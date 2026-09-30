@@ -18,7 +18,8 @@ import Scene from "./SchalterScenes";
    Mobil: wischbare Kartenreihe mit Einrasten und angeschnittener Folgekarte.
    ==================================================================== */
 
-const SPRING = { type: "spring", stiffness: 520, damping: 32, mass: 0.9 } as const;
+// Knopf gleitet ruhig um (fast kritisch gedämpft, kein Nachschwingen; vorher 520/32 ≈ 0,2 s, wirkte wie ein Schnappen)
+const SPRING = { type: "spring", stiffness: 260, damping: 30, mass: 1 } as const;
 
 function Vormerken({ id }: { id: string }) {
   const tile = schalter.kachel[id];
@@ -171,7 +172,7 @@ export default function Schalter() {
             </h2>
           </div>
           <div className="sw-bar" ref={bar}>
-            <div className="sw-switchwrap">
+            <div className="sw-switchwrap" data-reveal="">
               <button type="button" className="sw-side" data-active={!on} onClick={() => set(false)} tabIndex={-1} aria-hidden="true">
                 {schalter.off}
               </button>
@@ -202,8 +203,8 @@ export default function Schalter() {
                       key={on ? "on" : "off"}
                       className="sw-kpi-in"
                       initial={{ y: 14, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.16 } }}
-                      exit={{ y: -14, opacity: 0, transition: { duration: 0.16, ease: [0.4, 0, 1, 1] } }}
+                      animate={{ y: 0, opacity: 1, transition: { duration: 0.6, ease: [0.25, 1, 0.5, 1], delay: 0.22 } }}
+                      exit={{ y: -14, opacity: 0, transition: { duration: 0.24, ease: [0.4, 0, 1, 1] } }}
                     >
                       {on ? c.kpiOn : c.kpiOff}
                     </motion.span>

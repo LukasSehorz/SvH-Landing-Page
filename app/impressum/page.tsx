@@ -24,7 +24,7 @@ const sections: LegalSection[] = [
         <br />
         {company.legalName}
         <br />
-        {company.street}
+        {company.street || company.streetPending}
         <br />
         {company.zipCity}
         <br />
@@ -67,7 +67,7 @@ const sections: LegalSection[] = [
       <p>
         {company.partners[0]}
         <br />
-        {company.street}
+        {company.street || company.streetPending}
         <br />
         {company.zipCity}
         <br />

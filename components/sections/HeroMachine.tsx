@@ -13,6 +13,8 @@ import { PitchCenter } from "@/components/system/PitchLines";
    gezogen und kommen rechts als „erledigt“ wieder heraus; der Zähler
    „Zeit gewonnen“ zählt mit. Der Kern ist die Partikel-Kugel der alten
    Seite (HeroField.tsx), hier als leichte 2D-Canvas-Fassung ohne three.js.
+   Seit 30.09. läuft die Maschine als Vorschau im Videofenster (hero/Vsl.tsx);
+   der Kern liegt genau hinter dem Abspielknopf.
    ==================================================================== */
 
 if (typeof window !== "undefined") gsap.registerPlugin(MotionPathPlugin);
@@ -214,52 +216,44 @@ class Core {
 
 type Slot = { x: number; y: number; s: number; a: number; z: number };
 
-/* Senkrechter Fluss auf dem Handy und bei 1024–1179 px quer (Maschine in der schmalen rechten Spalte).
-   Muss zur gleichlautenden Abfrage in app/styles/hero.css passen. */
-const VERTICAL = "(max-width: 699px), (min-width: 1024px) and (max-width: 1179px) and (orientation: landscape)";
+/* Die Maschine läuft im 16:9-Videofenster des Starts (Vsl.tsx) und skaliert wie ein Video mit:
+   Alle Maße sind Entwurfs-Pixel einer 600 px (breit) bzw. 410 px (kompakt) breiten Bühne, mal u.
+   Die Grenze muss zur Container-Abfrage „vsl“ in app/styles/hero.css passen. */
+export const WIDE_MIN = 480;
 
-function geo(W: number, H: number, counterTop: number) {
-  // nach Bildschirmbreite (wie im CSS), nicht nach Bühnenbreite
-  const mobile = window.matchMedia(VERTICAL).matches;
-  if (mobile) {
-    // Senkrechter Fluss: oben ein Stapel Arbeit, mitten der Kern, unten der Stapel „erledigt“,
-    // darunter der Zähler. Dicht gepackt: der Kern füllt genau den Raum zwischen den Stapeln.
-    const cardW = Math.min(240, W * 0.8);
-    const cardH = 48;
-    const x = (W - cardW) / 2;
-    const inY = 22; // vorderste Karte oben (zwei weitere lugen je 7 px darüber hervor)
-    const outY = (counterTop > 0 ? counterTop : H - 44) - 12 - 14 - cardH;
-    const gap = Math.max(60, outY - inY - cardH);
-    const cy = inY + cardH + gap / 2;
-    return {
-      mobile,
-      cardW,
-      cardH,
-      cx: W / 2,
-      cy,
-      R: Math.min(W * 0.2, gap * 0.5),
-      // Mittelkreis umschließt den Kern und berührt die Stapel (Kreis = 71,3 % der Grafik)
-      pitch: Math.min(W * 0.92, (gap + 28) / 0.713),
-      inSlot: (k: number): Slot => ({ x, y: inY - k * 7, s: 1 - k * 0.05, a: [1, 0.55, 0.28, 0][k] ?? 0, z: 10 - k }),
-      outSlot: (k: number): Slot => ({ x, y: outY + k * 7, s: 1 - k * 0.05, a: [1, 0.55, 0.28, 0][k] ?? 0, z: 10 - k }),
-    };
-  }
-  const cardW = 212;
-  const cardH = 52;
-  const cy = H * 0.45;
+function geo(W: number, H: number) {
+  const wide = W >= WIDE_MIN;
+  const u = W / (wide ? 600 : 410);
   const cx = W / 2;
-  const gap = 66;
+  if (!wide) {
+    // Kompakt (Handy): links ein Stapel Arbeit, rechts der Stapel „erledigt“. Von jedem Stapel
+    // zeigt nur die vorderste Karte Text, die beiden dahinter lugen je 6 px darüber hervor.
+    // Kern und Knopf etwas über der Mitte (--cy: 44,5 % im CSS), darunter „Video folgt“ und der Zähler.
+    const cy = H * 0.445;
+    const cardW = 158 * u;
+    const cardH = 42 * u;
+    const m = 10 * u;
+    const y0 = cy - cardH / 2;
+    const stack = (x: number) => (k: number): Slot => ({ x, y: y0 - k * 6 * u, s: 1 - k * 0.05, a: [1, 0.55, 0.28, 0][k] ?? 0, z: 10 - k });
+    return { stacked: true, u, cardW, cardH, cx, cy, R: Math.min(W * 0.17, H * 0.3), inSlot: stack(m), outSlot: stack(W - m - cardW) };
+  }
+  // Breit: je drei Karten links (warten) und rechts (erledigt), der Kern mittig hinter dem Abspielknopf
+  const cy = H / 2;
+  const cardW = 212 * u;
+  const cardH = 52 * u;
+  const gap = 66 * u;
+  const m = 18 * u;
   const slotY = (k: number) => cy - cardH / 2 + (k - 1) * gap;
   return {
-    mobile,
+    stacked: false,
+    u,
     cardW,
     cardH,
     cx,
     cy,
     R: Math.min(W * 0.27, H * 0.29),
-    pitch: 0,
-    inSlot: (k: number): Slot => ({ x: 0, y: slotY(k), s: 1, a: k < 3 ? 1 : 0, z: 1 }),
-    outSlot: (k: number): Slot => ({ x: W - cardW, y: slotY(k), s: 1, a: k < 3 ? 1 : 0, z: 1 }),
+    inSlot: (k: number): Slot => ({ x: m, y: slotY(k), s: 1, a: k < 3 ? 1 : 0, z: 1 }),
+    outSlot: (k: number): Slot => ({ x: W - m - cardW, y: slotY(k), s: 1, a: k < 3 ? 1 : 0, z: 1 }),
   };
 }
 
@@ -278,16 +272,15 @@ export default function HeroMachine() {
     if (!el || !cv) return;
     const core = new Core(cv);
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const counterEl = el.querySelector<HTMLElement>(".machine-counter");
-    const measure = () => geo(el.clientWidth, el.clientHeight, counterEl?.offsetTop ?? 0);
+    // Bruchteil-genau wie die Container-Abfrage im CSS (clientWidth rundet)
+    const measure = () => {
+      const r = el.getBoundingClientRect();
+      return geo(r.width, r.height);
+    };
     let g = measure();
     const fit = () => {
       g = measure();
       core.resize(el.clientWidth, el.clientHeight, g.cx, g.cy, g.R);
-      // Mittelkreis und Schein folgen dem Kern (senkrechter Fluss)
-      el.style.setProperty("--cy", `${Math.round(g.cy)}px`);
-      if (g.pitch) el.style.setProperty("--pd", `${Math.round(g.pitch)}px`);
-      else el.style.removeProperty("--pd");
     };
     fit();
     if (reduced) {
@@ -316,17 +309,17 @@ export default function HeroMachine() {
       if (l) l.textContent = text;
     };
 
-    // Inhalt einer Karte (Punkt/Haken, Text). Im senkrechten Stapel zeigen die hinteren Karten
+    // Inhalt einer Karte (Punkt/Haken, Text). Im kompakten Stapel zeigen die hinteren Karten
     // nur ihre Kante, nie Text: so liegt beim Nachrücken nie Text über Text.
     const inner = (c: HTMLElement) => Array.from(c.children) as HTMLElement[];
     const place = () => {
       queue.forEach((c, k) => {
         gsap.set(c, slotVars(g.inSlot(k)));
-        gsap.set(inner(c), { opacity: g.mobile && k > 0 ? 0 : 1 });
+        gsap.set(inner(c), { opacity: g.stacked && k > 0 ? 0 : 1 });
       });
       done.forEach((c, k) => {
         gsap.set(c, slotVars(g.outSlot(k)));
-        gsap.set(inner(c), { opacity: g.mobile && k > 0 ? 0 : 1 });
+        gsap.set(inner(c), { opacity: g.stacked && k > 0 ? 0 : 1 });
       });
     };
     place();
@@ -348,7 +341,7 @@ export default function HeroMachine() {
           // Karten weiterreichen
           label(flyer, TASKS[next % TASKS.length]);
           gsap.set(flyer, slotVars(g.inSlot(3)));
-          if (g.mobile) gsap.set(inner(flyer), { opacity: 0 });
+          if (g.stacked) gsap.set(inner(flyer), { opacity: 0 });
           queue = [queue[1], queue[2], queue[3], flyer];
           done = [out, done[0], done[1], done[2]];
           current = (current + 1) % TASKS.length;
@@ -356,13 +349,15 @@ export default function HeroMachine() {
           step();
         },
       });
+      // kompakter Stapel: die abfliegende Karte liegt über der nachrückenden (kein Text scheint durch)
+      if (g.stacked) tl.set(flyer, { zIndex: 12 }, 0);
       // Ablauf mit festen Plätzen: ein Platz wird erst neu belegt, wenn er frei ist
-      tl.to(flyer, { scale: 1.02, duration: 0.35, ease: "power2.out" })
+      tl.to(flyer, { scale: 1.02, duration: 0.35, ease: "power2.out" }, 0)
         .to(
           flyer,
           {
             motionPath: {
-              path: g.mobile ? [s0, c] : [s0, { x: g.cx * 0.42, y: s0.y - 34 }, c],
+              path: g.stacked ? [s0, c] : [s0, { x: g.cx * 0.42, y: s0.y - 34 * g.u }, c],
               curviness: 1.25,
             },
             scale: 0.3,
@@ -377,22 +372,22 @@ export default function HeroMachine() {
         .to(queue[1], { ...slotVars(g.inSlot(0)), duration: 0.8, ease: "expo.out" }, 0.75)
         .to(queue[2], { ...slotVars(g.inSlot(1)), duration: 0.8, ease: "expo.out" }, 0.85)
         .fromTo(queue[3], slotVars(g.inSlot(3)), { ...slotVars(g.inSlot(2)), duration: 0.8, ease: "expo.out" }, 1.25);
-      // senkrechter Stapel: die nachrückende Karte zeigt ihren Text erst, wenn sie vorne liegt
-      if (g.mobile) tl.to(inner(queue[1]), { opacity: 1, duration: 0.3, ease: "power1.out" }, 0.85);
+      // kompakter Stapel: die nachrückende Karte zeigt ihren Text erst, wenn sie vorne liegt
+      if (g.stacked) tl.to(inner(queue[1]), { opacity: 1, duration: 0.3, ease: "power1.out" }, 0.85);
       done.slice(0, 3).forEach((d, k) => {
         const last = k === 2;
         tl!.to(d, { ...slotVars(g.outSlot(k + 1)), duration: last ? 0.35 : 0.7, ease: last ? "power1.out" : "expo.out" }, 1.35 + (2 - k) * 0.05);
       });
-      // senkrechter Stapel: erst geht der Text der bisherigen Karte (sie rückt nach hinten),
+      // kompakter Stapel: erst geht der Text der bisherigen Karte (sie rückt nach hinten),
       // dann fährt die neue ein; die neue trägt ihren Text von Anfang an
       tl.set(inner(out), { opacity: 1 }, 0);
-      if (g.mobile) tl.to(inner(done[0]), { opacity: 0, duration: 0.22, ease: "power1.out" }, 1.3);
+      if (g.stacked) tl.to(inner(done[0]), { opacity: 0, duration: 0.22, ease: "power1.out" }, 1.3);
       tl.fromTo(
         out,
         { x: c.x, y: c.y, scale: 0.3, autoAlpha: 0, zIndex: o0.z + 1 },
         {
           motionPath: {
-            path: g.mobile ? [c, o0] : [c, { x: g.cx + (o0.x - g.cx) * 0.55, y: o0.y - 30 }, o0],
+            path: g.stacked ? [c, o0] : [c, { x: g.cx + (o0.x - g.cx) * 0.55, y: o0.y - 30 * g.u }, o0],
             curviness: 1.2,
           },
           scale: 1,
@@ -411,7 +406,7 @@ export default function HeroMachine() {
         const o = { v: from };
         gsap.to(o, { v: minutes, duration: 0.9, ease: "power2.out", onUpdate: () => (valueEl.textContent = fmt(Math.round(o.v))) });
         plusEl.textContent = `+${add} Min.`;
-        gsap.fromTo(plusEl, { y: 6, autoAlpha: 0 }, { y: -10, autoAlpha: 1, duration: 0.7, ease: "expo.out" });
+        gsap.fromTo(plusEl, { y: 6 * g.u, autoAlpha: 0 }, { y: -10 * g.u, autoAlpha: 1, duration: 0.7, ease: "expo.out" });
         gsap.to(plusEl, { autoAlpha: 0, duration: 0.6, delay: 1.2, ease: "power1.inOut" });
       }, 2.4).to({}, { duration: 1.3 });
     };
@@ -434,13 +429,6 @@ export default function HeroMachine() {
     );
     io.observe(el);
 
-    // Zähler-Kapsel blendet aus, bevor sie beim Weiterscrollen unter die Leiste gerät
-    const away = new IntersectionObserver(
-      ([e]) => counterEl?.toggleAttribute("data-away", !e.isIntersecting && e.boundingClientRect.top < 140),
-      { rootMargin: "-100px 0px 0px 0px", threshold: 1 },
-    );
-    if (counterEl) away.observe(counterEl);
-
     let rt = 0;
     const ro = new ResizeObserver(() => {
       window.clearTimeout(rt);
@@ -462,7 +450,6 @@ export default function HeroMachine() {
       window.clearTimeout(startTimer);
       window.clearTimeout(rt);
       io.disconnect();
-      away.disconnect();
       ro.disconnect();
       tl?.kill();
       core.stop();

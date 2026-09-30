@@ -1,0 +1,364 @@
+/* ============================================================ Lösungen
+   Handy zuerst: drei kurze Listen, Icon links, Titel und Satz rechts.
+   Tablet: zwei gleich lange Spalten. Ab 1280 px: Raster aus fünf Glaskarten-Spalten. */
+
+.loe-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ---- Kopf ---- */
+.loe-head {
+  display: grid;
+  gap: 16px;
+}
+.loe-head > * {
+  min-width: 0;
+}
+.loe-title {
+  margin-top: 16px;
+  max-width: 17ch;
+  overflow-wrap: break-word; /* nur Notfall bei 320 px */
+}
+.loe-text {
+  max-width: 34em;
+}
+
+/* ---- Gruppen ---- */
+.loe-groups {
+  display: grid;
+  gap: 26px;
+  margin-top: 30px;
+}
+.loe-group {
+  min-width: 0;
+}
+/* kleine Gruppenüberschrift mit auslaufender Haarlinie */
+.loe-group-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.loe-group-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line), transparent);
+}
+
+.loe-list {
+  display: grid;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+/* Handy und Tablet: Listenzeile statt Karte (der Glas-Stil greift erst ab 1280 px) */
+.loe-item {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  column-gap: 14px;
+  align-items: start;
+}
+@media (max-width: 1279px) {
+  /* nur die Breite nullen (nicht die Farbe), sonst blitzt beim Wechsel über 1280 px eine helle Kante auf */
+  .loe-item.glass {
+    border-width: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .loe-item.glass::before,
+  .loe-item.glass::after {
+    display: none;
+  }
+}
+
+/* Icon-Kachel: Glas mit Haarlinie, Linien-Icon im Markenverlauf */
+.loe-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  /* Kachel mittig zur ersten Titelzeile, ohne die Zeile höher zu machen */
+  margin-top: -7px;
+  border-radius: 11px;
+  border: 1px solid rgba(185, 165, 255, 0.2);
+  background: linear-gradient(160deg, rgba(124, 106, 255, 0.12), rgba(91, 140, 255, 0.03) 70%), #0a0a10;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+.loe-svg {
+  width: 21px;
+  height: 21px;
+  overflow: visible;
+}
+.loe-svg path {
+  fill: none;
+  stroke: url(#loe-grad);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.loe-copy {
+  min-width: 0;
+}
+.loe-item-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.loe-item-text {
+  margin-top: 2px;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+/* ---- Fuß: Programme und Schlusszeile ---- */
+.loe-foot {
+  display: grid;
+  gap: 16px;
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line-2);
+}
+/* Programme als ruhige Textzeile: Etikett grau, Namen etwas heller, im selben Fluss */
+.loe-tools {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink-3);
+  text-wrap: balance; /* kein einsamer Name in der letzten Zeile */
+}
+.loe-tools-label,
+.loe-tools-list,
+.loe-tools-list li {
+  display: inline;
+}
+.loe-tools-list {
+  color: var(--ink-2);
+  font-weight: 500;
+}
+.loe-tools-list li {
+  white-space: nowrap;
+}
+/* Trenner hängt am Ende des Namens (nie ein Punkt am Zeilenanfang) */
+.loe-tools-list li:not(:last-child)::after {
+  content: "\00a0·";
+  color: var(--ink-3);
+  font-weight: 400;
+}
+.loe-more {
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+.loe-more-ask {
+  display: block;
+  color: var(--ink-2);
+}
+.loe-link {
+  color: var(--ink);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: rgba(185, 165, 255, 0.4);
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color 0.3s var(--ease), color 0.3s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.loe-link:hover {
+  text-decoration-color: var(--lav);
+}
+.loe-link-arrow {
+  display: inline-block;
+  margin-left: 6px;
+  vertical-align: -0.16em;
+  color: var(--lav);
+  transition: transform 0.45s var(--ease);
+}
+.loe-link:hover .loe-link-arrow {
+  transform: translateX(3px);
+}
+
+/* sehr schmale Telefone: Kachel etwas kleiner, mehr Platz für den Text */
+@media (max-width: 359px) {
+  .loe-item {
+    grid-template-columns: 32px minmax(0, 1fr);
+    column-gap: 12px;
+  }
+  .loe-icon {
+    width: 32px;
+    height: 32px;
+    margin-top: -5px;
+    border-radius: 10px;
+  }
+  .loe-svg {
+    width: 19px;
+    height: 19px;
+  }
+}
+
+/* ---- Tablet: zwei gleich lange Spalten ---- */
+@media (min-width: 700px) {
+  .loe-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "wissen ablaeufe"
+      "kommunikation ablaeufe";
+    column-gap: clamp(32px, 5vw, 64px);
+    row-gap: 32px;
+    margin-top: 44px;
+  }
+  .loe-group--wissen {
+    grid-area: wissen;
+  }
+  .loe-group--kommunikation {
+    grid-area: kommunikation;
+    align-self: start;
+  }
+  .loe-group--ablaeufe {
+    grid-area: ablaeufe;
+  }
+  .loe-list {
+    gap: 22px;
+    margin-top: 18px;
+  }
+  .loe-foot {
+    margin-top: 44px;
+  }
+}
+
+/* ---- Kopf zweispaltig: Überschrift links, Einleitung rechts auf Höhe der letzten Zeile ---- */
+@media (min-width: 1024px) {
+  .loe-head {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    align-items: end;
+    gap: clamp(40px, 5vw, 96px);
+  }
+  .loe-text {
+    margin-bottom: 0.3em;
+  }
+  .loe-foot {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 40px;
+  }
+  .loe-more {
+    max-width: 30em;
+    text-align: right;
+  }
+}
+
+/* ---- Desktop: fünf Spalten, Glaskarten ----
+   erst ab 1280 px: darunter wäre „KI-Wissensmanagement“ breiter als die Karte */
+@media (min-width: 1280px) {
+  .loe-groups {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-rows: none;
+    grid-template-areas: none;
+    column-gap: 18px;
+    row-gap: 40px;
+    margin-top: 56px;
+  }
+  .loe-group {
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+  /* Wissen (2) + Kommunikation (3) füllen Reihe 1, Abläufe (5) Reihe 2 */
+  .loe-group--wissen,
+  .loe-group--kommunikation,
+  .loe-group--ablaeufe {
+    grid-area: auto;
+    grid-column: span var(--n);
+    align-self: stretch;
+  }
+  .loe-list {
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 18px;
+  }
+  .loe-item {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 18px 24px;
+    transition:
+      border-color 0.5s var(--ease),
+      background-color 0.5s var(--ease);
+  }
+  .loe-item:hover {
+    border-color: rgba(185, 165, 255, 0.28);
+  }
+  .loe-icon {
+    width: 44px;
+    height: 44px;
+    margin-top: 0;
+    border-radius: 13px;
+    transition: border-color 0.5s var(--ease);
+  }
+  .loe-item:hover .loe-icon {
+    border-color: rgba(185, 165, 255, 0.42);
+  }
+  .loe-svg {
+    width: 24px;
+    height: 24px;
+  }
+  .loe-copy {
+    margin-top: 20px;
+  }
+  /* Titel wächst mit der Kartenbreite (das längste Wort passt bei jeder Breite) */
+  .loe-item-title {
+    font-size: clamp(17px, calc(1.6vw - 3.5px), 19px);
+    line-height: 1.25;
+  }
+  .loe-item-text {
+    margin-top: 8px;
+  }
+  .loe-foot {
+    margin-top: 48px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .loe-item {
+    padding: 22px 22px 26px;
+  }
+  .loe-copy {
+    margin-top: 22px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .loe-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+  }
+  .loe-svg {
+    width: 26px;
+    height: 26px;
+  }
+  .loe-item-text {
+    font-size: 17px;
+  }
+  .loe-item-title {
+    font-size: 21px;
+  }
+}

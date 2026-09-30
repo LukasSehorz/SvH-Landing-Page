@@ -5,6 +5,7 @@ import { geschenk } from "@/app/copy";
 import Rich from "@/components/system/Rich";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { useMediaQuery, useMotionMode } from "@/lib/hooks";
+import { MOTION as M } from "@/lib/motion";
 import { requestRefresh } from "@/lib/refresh";
 import Masterplan from "./Masterplan";
 
@@ -94,7 +95,7 @@ export default function GeschenkStage() {
       <div className="gs-points">
         <ol className="gs-list">
           {P.map((p, i) => (
-            <li className="gs-point" key={p.title}>
+            <li className="gs-point" key={p.title} data-reveal="">
               <span className="gs-num" aria-hidden="true">
                 {i + 1}
               </span>
@@ -170,18 +171,19 @@ function setup(el: HTMLElement): () => void {
     if (c.boxes.length) gsap.set(c.boxes, { "--f": 0 });
     if (c.checks.length) gsap.set(c.checks, { strokeDashoffset: 1 });
   };
-  // Aufbau straff (Runde 4): nach rund 0,5 s ab Seitenwechsel steht die Seite fast fertig da,
-  // damit auch ein kurzer Blick nie eine halb aufgebaute, blasse Seite erwischt
+  // Aufbau ruhig, aber zügig (Runde 6): Inhalt nach ≈ 0,5 s lesbar, nach ≈ 1,1 s fertig.
+  // Runde 4 hatte auf 0,2 bis 0,5 s gestrafft; das wirkte gehetzt, der alte Inhalt verschwand
+  // auf dem Telefon in 4 Bildern (67 ms). Jetzt wie das übrige Bewegungssystem (lib/motion.ts).
   const build = (i: number) => {
     if (i === 0) return;
     const c = parts(i);
-    if (c.bars.length) gsap.to(c.bars, { scaleX: 1, duration: 0.5, ease: "expo.out", stagger: 0.035 });
-    if (c.items.length) gsap.to(c.items, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.06 });
-    if (c.heads.length) gsap.to(c.heads, { opacity: 1, y: 0, duration: 0.36, ease: "power3.out", stagger: 0.06 });
-    if (c.lines.length) gsap.to(c.lines, { scaleX: 1, duration: 0.5, ease: "expo.out", stagger: 0.018, delay: 0.05 });
-    if (c.gauges.length) gsap.to(c.gauges, { scaleX: 1, duration: 0.5, ease: "expo.out", stagger: 0.05, delay: 0.1 });
-    if (c.boxes.length) gsap.to(c.boxes, { "--f": 1, duration: 0.2, ease: "power2.out", stagger: 0.025, delay: 0.08 });
-    if (c.checks.length) gsap.to(c.checks, { strokeDashoffset: 0, duration: 0.26, ease: "power2.out", stagger: 0.025, delay: 0.12 });
+    if (c.bars.length) gsap.to(c.bars, { scaleX: 1, duration: 0.85, ease: M.ease, stagger: 0.05 });
+    if (c.items.length) gsap.to(c.items, { opacity: 1, y: 0, duration: 0.65, ease: M.ease, stagger: 0.07 });
+    if (c.heads.length) gsap.to(c.heads, { opacity: 1, y: 0, duration: 0.6, ease: M.ease, stagger: 0.07 });
+    if (c.lines.length) gsap.to(c.lines, { scaleX: 1, duration: 0.8, ease: M.ease, stagger: 0.025, delay: 0.06 });
+    if (c.gauges.length) gsap.to(c.gauges, { scaleX: 1, duration: 0.85, ease: M.ease, stagger: 0.06, delay: 0.12 });
+    if (c.boxes.length) gsap.to(c.boxes, { "--f": 1, duration: 0.35, ease: "power2.out", stagger: 0.04, delay: 0.14 });
+    if (c.checks.length) gsap.to(c.checks, { strokeDashoffset: 0, duration: 0.45, ease: "power2.out", stagger: 0.04, delay: 0.2 });
   };
 
   // Startzustand: Stapel mit Deckblatt vorn (entspricht dem CSS-Startzustand)
@@ -202,9 +204,9 @@ function setup(el: HTMLElement): () => void {
     if (want !== cur) go(want);
   };
 
-  const OUT = 0.12; // Inhalt der alten Seite blendet aus
-  const IN = 0.2; // Inhalt der neuen Seite blendet ein
-  const MOVE = 0.45; // neue Seite steigt auf, die übrigen gleiten an ihren Stapelplatz
+  const OUT = 0.22; // Inhalt der alten Seite blendet aus (vorher 0,12 s: auf dem Telefon 4 Bilder, wirkte wie Flackern)
+  const IN = 0.45; // Inhalt der neuen Seite blendet ein (vorher 0,2 s)
+  const MOVE = 0.7; // neue Seite steigt auf, die übrigen gleiten an ihren Stapelplatz (vorher 0,45 s)
 
   const go = (next: number) => {
     if (next === cur) return;
@@ -219,7 +221,7 @@ function setup(el: HTMLElement): () => void {
       // heraus); zurück zum Stapel wird sie sofort gesetzt (im Raster überlappt nichts).
       if (next !== 4) applyZ(next);
       pages.forEach((p, i) => {
-        tl!.to(p, { ...posFor(i, next), duration: 0.95, ease: "power3.inOut" }, i * 0.035);
+        tl!.to(p, { ...posFor(i, next), duration: 1.05, ease: "power3.inOut" }, i * 0.04);
         tl!.to(shades[i], { opacity: shadeFor(i, next), duration: 0.6, ease: "power2.out" }, 0);
       });
       return;
@@ -231,7 +233,7 @@ function setup(el: HTMLElement): () => void {
     const newContent = contentOf(fNext);
 
     // 1) erst aus: Inhalt der vorderen Seite verschwindet, das Papier bleibt
-    tl.to(oldContent, { opacity: 0, duration: OUT, ease: "power1.in" }, 0);
+    tl.to(oldContent, { opacity: 0, duration: OUT, ease: M.out }, 0);
     // 2) Tausch: die neue Seite liegt deckend vorn (Inhalt noch unsichtbar), 12 px tiefer
     tl.add(() => {
       prep(fNext);
@@ -243,8 +245,8 @@ function setup(el: HTMLElement): () => void {
     // die alte Seite bekommt ihren Inhalt zurück, sobald sie ganz verdeckt hinten liegt
     tl.set(oldContent, { opacity: 1 }, OUT + MOVE + 0.02);
     // 3) dann ein: Seite steigt auf, Inhalt blendet ein und baut sich parallel auf
-    tl.to(pages[fNext], { y: 0, duration: MOVE, ease: "power3.out" }, OUT);
-    tl.to(newContent, { opacity: 1, duration: IN, ease: "power1.out" }, OUT + 0.02);
+    tl.to(pages[fNext], { y: 0, duration: MOVE, ease: M.ease }, OUT);
+    tl.to(newContent, { opacity: 1, duration: IN, ease: M.fade }, OUT + 0.02);
     tl.add(() => build(fNext), OUT + 0.04);
     // die übrigen Seiten gleiten unsichtbar an ihren Stapelplatz
     pages.forEach((p, i) => {
@@ -337,25 +339,25 @@ function setup(el: HTMLElement): () => void {
   if (box.getBoundingClientRect().top > window.innerHeight * 0.85) {
     stampShown = false;
     gsap.set(box, { opacity: 0, y: 36 });
-    gsap.set(stamp, { opacity: 0, scale: 1.16 });
+    gsap.set(stamp, { opacity: 0, scale: 1.1 });
     enter = new IntersectionObserver(
       ([e]) => {
         if (!e.isIntersecting) return;
         enter?.disconnect();
-        gsap.to(box, { opacity: 1, duration: 0.55, ease: "power1.out" });
-        gsap.to(box, { y: 0, duration: 1.1, ease: "expo.out" });
+        gsap.to(box, { opacity: 1, duration: M.block.fade, ease: M.fade });
+        gsap.to(box, { y: 0, duration: 1.1, ease: M.ease });
         gsap.to(stamp, {
           opacity: 1,
           scale: 1,
-          duration: 1.0,
-          ease: "expo.out",
-          delay: 0.75,
+          duration: 0.9,
+          ease: M.ease,
+          delay: 0.8,
           onStart: () => {
             stampShown = true;
           },
         });
       },
-      { rootMargin: "0px 0px -16% 0px" },
+      { rootMargin: "0px 0px -15% 0px" },
     );
     enter.observe(box);
   }

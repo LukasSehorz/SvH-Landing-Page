@@ -37,11 +37,14 @@ export default function Geschenk() {
           <p className="label" data-reveal="">
             {geschenk.label}
           </p>
-          {/* Einblendung als Ganzes (kein Zeilen-Split): Screenreader lesen die volle Überschrift,
-              die Schreibschrift schreibt sich trotzdem (Reveals, data-script) */}
-          <h2 className="h2 gs-title" id="gs-title" data-reveal="">
-            <span className="line">{geschenk.title[0]}</span>{" "}
-            <span className="line gs-title-script">
+          {/* Erste Zeile steigt zeilenweise aus der Maske (wie die übrigen Überschriften),
+              die Schreibschrift-Zeile blendet ein und schreibt sich (Reveals, data-script).
+              Der Split sitzt auf der Zeile, nicht auf der Überschrift: Screenreader lesen den vollen Text. */}
+          <h2 className="h2 gs-title" id="gs-title">
+            <span className="line" data-split="">
+              {geschenk.title[0]}
+            </span>{" "}
+            <span className="line gs-title-script" data-reveal="">
               <Rich text={geschenk.title[1]} />
             </span>
           </h2>

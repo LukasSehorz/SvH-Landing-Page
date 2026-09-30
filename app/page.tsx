@@ -1,6 +1,7 @@
 import Hero from "@/components/sections/Hero";
 import ChaosRuhe from "@/components/sections/ChaosRuhe";
 import Schalter from "@/components/sections/LazySchalter";
+import Loesungen from "@/components/sections/Loesungen";
 import Ergebnisse from "@/components/sections/Ergebnisse";
 import Geschenk from "@/components/sections/Geschenk";
 import Spielzug from "@/components/sections/Spielzug";
@@ -35,7 +36,7 @@ export default function Home() {
           email: company.email,
           address: {
             "@type": "PostalAddress",
-            streetAddress: company.street,
+            ...(company.street ? { streetAddress: company.street } : {}),
             postalCode: company.zipCity.split(" ")[0],
             addressLocality: company.zipCity.split(" ").slice(1).join(" "),
             addressCountry: "DE",
@@ -48,6 +49,7 @@ export default function Home() {
       <Hero />
       <ChaosRuhe />
       <Schalter />
+      <Loesungen />
       <Divider variant="arc" />
       <Ergebnisse />
       <Geschenk />

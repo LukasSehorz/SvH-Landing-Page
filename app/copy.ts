@@ -12,8 +12,8 @@
 export const meta = {
   title: "KI-Automatisierung für den Mittelstand | SvH Consulting",
   description:
-    "Wir bauen digitale Helfer, die die immer gleiche Arbeit in Ihrem Betrieb übernehmen. Starten Sie mit einem kostenlosen KI-Workshop und Ihrem persönlichen KI-Masterplan.",
-  ogAlt: "Wir stellen die KI auf. Sie gewinnen die Zeit.",
+    "Wir bauen digitale Helfer, die die immer gleiche Arbeit in deinem Betrieb übernehmen. Starte mit einem kostenlosen KI-Workshop und deinem persönlichen KI-Masterplan.",
+  ogAlt: "Wir stellen die KI auf, du gewinnst die Zeit.",
 };
 
 export const cta = {
@@ -23,6 +23,7 @@ export const cta = {
 
 export const nav = {
   links: [
+    { label: "Lösungen", href: "#loesungen", id: "loesungen" }, // ZUSATZ (30.09.2026)
     { label: "So läuft es ab", href: "#fahrplan", id: "fahrplan" },
     { label: "Ergebnisse", href: "#ergebnisse", id: "ergebnisse" },
     { label: "Masterplan", href: "#masterplan", id: "masterplan" },
@@ -40,14 +41,14 @@ export const nav = {
 
 export const hero = {
   eyebrow: "KI-Automatisierung für den Mittelstand",
-  h1: ["Wir stellen die KI auf.", "Sie *gewinnen* die Zeit."],
-  text: "Wir bauen digitale Helfer für Ihren Betrieb. Die Helfer schreiben Angebote, beantworten E-Mails und tragen Daten ein, ganz von allein. Ihr Team hat wieder Zeit für die Arbeit, die wirklich zählt.",
-  sub: "30 bis 45 Minuten · danach Ihr KI-Masterplan geschenkt",
+  h1: ["Wir stellen die KI auf,", "du *gewinnst* die Zeit."],
+  text: "Wir bauen digitale Helfer für deinen Betrieb. Die Helfer schreiben Angebote, beantworten E-Mails und tragen Daten ein, ganz von allein. Dein Team hat wieder Zeit für die Arbeit, die wirklich zählt.",
+  sub: "30 bis 45 Minuten · danach dein KI-Masterplan geschenkt",
   secondary: "So läuft es ab",
   proof: [
     { big: "35+", small: "umgesetzte Projekte" },
     { big: "bis zu 160 Std.", small: "pro Woche gespart" },
-    { big: "Geld-zurück-Garantie", small: "falls wir Ihnen keine Zeit sparen" },
+    { big: "Geld-zurück-Garantie", small: "falls wir dir keine Zeit sparen" },
   ],
   tasks: [
     "Angebot schreiben",
@@ -59,6 +60,14 @@ export const hero = {
     "Bericht erstellen",
     "Bewerbung sichten",
   ],
+  // ZUSATZ (30.09.2026): Platz für das Erklärvideo (VSL). Solange src leer ist, zeigt die Seite einen gestalteten Platzhalter.
+  vsl: {
+    src: "", // z. B. "/video/vsl.mp4" (selbst gehostet, damit ohne Einwilligung nichts an Dritte geht)
+    poster: "", // Standbild des Videos, z. B. "/video/vsl-poster.webp"
+    title: "Kurz erklärt: So gewinnst du Zeit mit KI",
+    play: "Video abspielen",
+    placeholder: "Video folgt",
+  },
   done: "erledigt",
   counter: "Zeit gewonnen",
   // rein illustrativ, Minuten je erledigtem Kärtchen
@@ -69,8 +78,8 @@ export const chaos = {
   beats: [
     {
       label: "Das Problem",
-      title: "Jeden Tag frisst Kleinkram Ihre Zeit.",
-      text: "E-Mails sortieren, Angebote tippen, Daten von einem Programm ins andere kopieren. Nachfassen, suchen, abheften. Das kostet Ihr Team jede Woche viele Stunden.",
+      title: "Jeden Tag frisst Kleinkram deine Zeit.",
+      text: "E-Mails sortieren, Angebote tippen, Daten von einem Programm ins andere kopieren. Nachfassen, suchen, abheften. Das kostet dein Team jede Woche viele Stunden.",
     },
     {
       label: "",
@@ -79,8 +88,8 @@ export const chaos = {
     },
     {
       label: "Die Lösung",
-      title: "Wir bauen Helfer, die das für Sie erledigen.",
-      text: "Die KI arbeitet im Hintergrund, rund um die Uhr. Ihr Team gibt die Richtung vor, die Helfer erledigen den Rest.",
+      title: "Wir bauen Helfer, die das für dich erledigen.",
+      text: "Die KI arbeitet im Hintergrund, rund um die Uhr. Dein Team gibt die Richtung vor, die Helfer erledigen den Rest.",
     },
   ],
   // ZUSATZ (Beschriftung der gezeichneten Szene „Der Posteingang, der sich selbst leert“, rein illustrativ)
@@ -90,10 +99,10 @@ export const chaos = {
     today: "Heute",
     unread: "ungelesen",
     done: "Alles erledigt",
-    doneLine: "Heute erledigt von Ihren Helfern",
+    doneLine: "Heute erledigt von deinen Helfern",
     doneShort: "erledigt",
     // Zusammenfassung am Ende (mobil als eine einzige Mitteilung)
-    helpers: "Ihre Helfer",
+    helpers: "Deine Helfer",
     now: "jetzt",
     total: 148,
     start: 12,
@@ -129,7 +138,7 @@ export const chaos = {
 
 export const schalter = {
   label: "Beispiele aus dem Alltag",
-  title: "So fühlt sich Ihr Alltag mit _KI_ an.",
+  title: "So fühlt sich dein Alltag mit _KI_ an.",
   off: "Ohne KI",
   on: "Mit KI",
   switchLabel: "Ansicht umschalten zwischen Ohne KI und Mit KI", // ZUSATZ (Screenreader)
@@ -138,7 +147,7 @@ export const schalter = {
       id: "angebote",
       title: "Angebote",
       off: "Anfrage lesen, Preise suchen, Angebot tippen. Oft geht dafür ein ganzer Tag drauf.",
-      on: "Die KI kennt Ihre Preise und Texte und baut das Angebot in 30 Minuten.",
+      on: "Die KI kennt deine Preise und Texte und baut das Angebot in 30 Minuten.",
       kpiOff: "1 Tag",
       kpiOn: "30 Min.",
     },
@@ -146,7 +155,7 @@ export const schalter = {
       id: "emails",
       title: "E-Mails",
       off: "Jede Anfrage wird von Hand gelesen, sortiert und beantwortet.",
-      on: "Die KI sortiert, schreibt die Antwort vor und legt sie Ihnen zur Freigabe hin.",
+      on: "Die KI sortiert, schreibt die Antwort vor und legt sie dir zur Freigabe hin.",
       kpiOff: "von Hand",
       kpiOn: "Entwurf sofort da",
     },
@@ -154,7 +163,7 @@ export const schalter = {
       id: "wissen",
       title: "Wissen",
       off: "Das Wissen steckt in Köpfen und Ordnern. Wer etwas sucht, fragt herum.",
-      on: "Ihr KI-Wissensspeicher beantwortet Fragen Ihres Teams in Sekunden, mit Quelle.",
+      on: "Dein KI-Wissensspeicher beantwortet Fragen deines Teams in Sekunden, mit Quelle.",
       kpiOff: "herumfragen",
       kpiOn: "Antwort in Sekunden",
     },
@@ -162,18 +171,59 @@ export const schalter = {
       id: "kunden",
       title: "Kundendaten",
       off: "Zettel, Tabellen, Postfach. Jede Anfrage wird abgetippt.",
-      on: "Jede Anfrage landet von allein in Ihrer Kundenliste, mit Erinnerung zum Nachfassen.",
+      on: "Jede Anfrage landet von allein in deiner Kundenliste, mit Erinnerung zum Nachfassen.",
       kpiOff: "abtippen",
       kpiOn: "läuft von allein",
     },
   ],
-  note: "Das sind nur Beispiele. Welche Helfer sich bei Ihnen am meisten lohnen, steht in Ihrem Masterplan.",
+  note: "Das sind nur Beispiele. Welche Helfer sich bei dir am meisten lohnen, steht in deinem Masterplan.",
   // ZUSATZ: Vormerken für das Formular (Kachelnamen exakt wie abschluss.step1.tiles)
   kenne: "Das kenne ich",
   vorgemerkt: "Vorgemerkt",
   hinweis: "Im Formular vorgemerkt",
   kachel: { angebote: "Angebote schreiben", emails: "E-Mails beantworten", wissen: "Wissen suchen", kunden: "Daten abtippen" } as Record<string, string>,
   karten: "Beispiele, zum Wischen", // ZUSATZ (Screenreader-Name der wischbaren Kartenreihe)
+};
+
+// ZUSATZ (30.09.2026, Wunsch Lukas: klarer zeigen, was wir alles anbieten).
+// Grundlage: Leistungen der alten Seite (KI-Kacheln, Corporate LLM, Automatisierungen, Voice Agents) und kontext/firma.md.
+export const loesungen = {
+  label: "Unsere Lösungen",
+  title: "Das alles kann KI in deinem Betrieb _übernehmen_.",
+  text: "Jeder Betrieb ist anders. Deshalb bauen wir genau die Helfer, die bei dir am meisten Zeit sparen. Das sind die häufigsten.",
+  groups: [
+    {
+      id: "wissen",
+      title: "Wissen",
+      items: [
+        { id: "wissensmanagement", title: "KI-Wissensmanagement", text: "Eine KI, die alles über deinen Betrieb weiß. Dein Team fragt, sie antwortet in Sekunden, mit Quelle." },
+        { id: "webchat", title: "KI-Chat auf deiner Webseite", text: "Beantwortet Fragen deiner Kunden rund um die Uhr und nimmt Anfragen direkt auf." },
+      ],
+    },
+    {
+      id: "kommunikation",
+      title: "Kommunikation",
+      items: [
+        { id: "email", title: "E-Mail-Assistent", text: "Sortiert deinen Posteingang, schreibt Antworten vor und legt sie dir zur Freigabe hin." },
+        { id: "telefon", title: "KI-Telefonassistent", text: "Nimmt Anrufe an, beantwortet einfache Fragen und trägt Termine ein, auch nach Feierabend." },
+        { id: "termine", title: "Termine und Erinnerungen", text: "Termine buchen, bestätigen und erinnern, ganz ohne Hin und Her." },
+      ],
+    },
+    {
+      id: "ablaeufe",
+      title: "Abläufe",
+      items: [
+        { id: "angebote", title: "Angebote automatisch", text: "Aus der Anfrage wird ein fertiges Angebot, in Minuten statt Stunden." },
+        { id: "rechnungen", title: "Rechnungen und Belege", text: "Belege werden erfasst, Rechnungen erstellt und offene Beträge erinnert." },
+        { id: "crm", title: "Anfragen und Kundenliste (CRM)", text: "Jede Anfrage landet sauber in deiner Kundenliste. Niemand wird vergessen." },
+        { id: "dokumente", title: "Dokumente auslesen", text: "Lieferscheine, Formulare und PDFs werden gelesen und übertragen. Nie wieder abtippen." },
+        { id: "berichte", title: "Berichte und Zahlen", text: "Deine Zahlen sammeln sich von allein zu einem fertigen Bericht." },
+      ],
+    },
+  ],
+  toolsLabel: "Verbunden mit Programmen, die du schon nutzt, zum Beispiel",
+  tools: ["n8n", "Make", "Zapier", "OpenAI", "Anthropic", "Google", "HubSpot"],
+  more: "Dein Zeitfresser ist nicht dabei? Im Workshop finden wir gemeinsam die passende Lösung.",
 };
 
 export const ergebnisse = {
@@ -230,22 +280,22 @@ export const ergebnisse = {
       alt: "",
     },
   ],
-  ctaLine: "Was ist bei Ihnen möglich? Das finden wir gemeinsam heraus.",
+  ctaLine: "Was ist bei dir möglich? Das finden wir gemeinsam heraus.",
   newWindow: "öffnet in neuem Fenster", // ZUSATZ (Screenreader)
 };
 
 export const geschenk = {
-  label: "Ihr Geschenk",
-  title: ["Bevor wir über Geld reden, bekommen Sie einen Plan.", "*Geschenkt.*"],
-  text: "Nach dem kostenlosen Workshop erarbeiten wir innerhalb von 48 Stunden Ihren persönlichen KI-Masterplan. Er gehört Ihnen, egal wie Sie sich danach entscheiden.",
+  label: "Dein Geschenk",
+  title: ["Bevor wir über Geld reden, bekommst du einen Plan.", "*Geschenkt.*"],
+  text: "Nach dem kostenlosen Workshop erarbeiten wir innerhalb von 48 Stunden deinen persönlichen KI-Masterplan. Er gehört dir, egal wie du dich danach entscheidest.",
   points: [
     {
-      title: "Ihre 5 bis 10 größten Zeitfresser",
-      text: "Schwarz auf weiß, wo in Ihrem Betrieb jede Woche Zeit verloren geht.",
+      title: "Deine 5 bis 10 größten Zeitfresser",
+      text: "Schwarz auf weiß, wo in deinem Betrieb jede Woche Zeit verloren geht.",
     },
     {
       title: "Die 3 Automatisierungen mit dem größten Hebel",
-      text: "Wo Sie mit dem wenigsten Aufwand am meisten Zeit oder Geld sparen.",
+      text: "Wo du mit dem wenigsten Aufwand am meisten Zeit oder Geld sparst.",
     },
     {
       title: "Der Lösungsweg für jede davon",
@@ -253,12 +303,12 @@ export const geschenk = {
     },
     {
       title: "Die Besprechung im zweiten Termin",
-      text: "Wir gehen alles gemeinsam durch und beantworten Ihre Fragen.",
+      text: "Wir gehen alles gemeinsam durch und beantworten deine Fragen.",
     },
   ],
   doc: {
     coverTitle: "KI-Masterplan",
-    coverSub: "für Ihren Betrieb",
+    coverSub: "für deinen Betrieb",
     coverBy: "erstellt von SvH Consulting",
     sample: "Beispiel",
     pageZeitfresser: "Zeitfresser",
@@ -269,7 +319,7 @@ export const geschenk = {
   stamp: "0 €",
   whyTitle: "Warum wir das verschenken", // geschütztes Leerzeichen: „verschenken“ nie allein in der Zeile (Safari)
   whyText:
-    "Weil KI erst dann Sinn ergibt, wenn man sieht, was sie im eigenen Betrieb bewirkt. Wir zeigen es Ihnen lieber, als es zu versprechen. Gefällt Ihnen der Plan, setzen wir ihn gern mit Ihnen um. Setzen Sie ihn lieber selbst um, ist das völlig in Ordnung. Den Plan behalten Sie so oder so.", // geschützte Leerzeichen: nie „oder so.“ allein in der letzten Zeile
+    "Weil KI erst dann Sinn ergibt, wenn man sieht, was sie im eigenen Betrieb bewirkt. Wir zeigen es dir lieber, als es zu versprechen. Gefällt dir der Plan, setzen wir ihn gern mit dir um. Setzt du ihn lieber selbst um, ist das völlig in Ordnung. Den Plan behältst du so oder so.", // geschützte Leerzeichen: nie „oder so.“ allein in der letzten Zeile
 };
 
 export const spielzug = {
@@ -278,26 +328,26 @@ export const spielzug = {
   steps: [
     {
       title: "Kostenloser KI-Workshop",
-      text: "30 bis 45 Minuten. Sie erzählen, wie Ihr Betrieb arbeitet. Gemeinsam finden wir Ihre 5 bis 10 größten Zeitfresser.", // geschützte Leerzeichen: Zahlenspannen nie getrennt
+      text: "30 bis 45 Minuten. Du erzählst, wie dein Betrieb arbeitet. Gemeinsam finden wir deine 5 bis 10 größten Zeitfresser.", // geschützte Leerzeichen: Zahlenspannen nie getrennt
       tag: "0 €",
     },
     {
-      title: "Ihr KI-Masterplan in 48 Stunden",
-      text: "Wir rechnen durch, was sich lohnt, und schreiben Ihnen die 3 besten Automatisierungen mit Lösungsweg auf.",
+      title: "Dein KI-Masterplan in 48 Stunden",
+      text: "Wir rechnen durch, was sich lohnt, und schreiben dir die 3 besten Automatisierungen mit Lösungsweg auf.",
       tag: "0 €",
     },
     {
       title: "Gemeinsam besprechen",
-      text: "Im zweiten Termin gehen wir den Plan durch. Danach entscheiden Sie in Ruhe, ob Sie selbst loslegen oder mit uns.",
+      text: "Im zweiten Termin gehen wir den Plan durch. Danach entscheidest du in Ruhe, ob du selbst loslegst oder mit uns.",
       tag: "0 €",
     },
     {
       title: "Umsetzen und Zeit gewinnen",
-      text: "Wir planen, bauen und testen die Helfer und zeigen Ihrem Team, wie alles funktioniert. Ab dann gewinnen Sie jede Woche Zeit.",
+      text: "Wir planen, bauen und testen die Helfer und zeigen deinem Team, wie alles funktioniert. Ab dann gewinnst du jede Woche Zeit.",
       tag: "mit Geld-zurück-Garantie",
     },
   ],
-  forkSelf: { title: "Selbst umsetzen", text: "Der Plan gehört Ihnen." },
+  forkSelf: { title: "Selbst umsetzen", text: "Der Plan gehört dir." },
   forkUs: "Mit uns umsetzen",
   bracket: "Bis hierhin 0 € und völlig unverbindlich",
   goal: "Tor! Zeit gewonnen.",
@@ -306,14 +356,14 @@ export const spielzug = {
 
 export const garantie = {
   label: "Unsere Garantie",
-  title: ["Keine Zeit gespart? _Geld zurück._", "Das Risiko tragen wir, nicht Sie."],
-  text: "Wir sind von unserer Arbeit überzeugt. Spart Ihnen unsere Automatisierung nicht die vereinbarte Zeit oder das vereinbarte Geld, bekommen Sie Ihr Geld zurück.",
+  title: ["Keine Zeit gespart? _Geld zurück._", "Das Risiko tragen wir, nicht du."],
+  text: "Wir sind von unserer Arbeit überzeugt. Spart dir unsere Automatisierung nicht die vereinbarte Zeit oder das vereinbarte Geld, bekommst du dein Geld zurück.",
   // Siegel: Ringschrift läuft um das SvH-Monogramm
   seal: "Geld-zurück-Garantie · schriftlich vereinbart · ",
   steps: [
     { title: "Ziel festlegen", text: "Vor dem Start schreiben wir gemeinsam auf, wie viel Zeit oder Geld die Automatisierung sparen soll." },
-    { title: "Umsetzen und messen", text: "Wir bauen die Lösung und messen das Ergebnis gemeinsam mit Ihnen." },
-    { title: "Ziel verfehlt?", text: "Dann bekommen Sie Ihr Geld zurück. So steht es in Ihrem Angebot." },
+    { title: "Umsetzen und messen", text: "Wir bauen die Lösung und messen das Ergebnis gemeinsam mit dir." },
+    { title: "Ziel verfehlt?", text: "Dann bekommst du dein Geld zurück. So steht es in deinem Angebot." },
   ],
   small: "Was „vereinbart“ genau heißt, legen wir vor dem Start gemeinsam und schriftlich fest.",
 };
@@ -321,7 +371,7 @@ export const garantie = {
 export const team = {
   label: "Wer dahintersteckt",
   title: "Zwei Gründer aus Bayern, die KI _verständlich_ machen.",
-  text: "Wir sind Lukas Sehorz und Jannik vom Hofe. Wir machen KI so greifbar, dass jeder im Betrieb sie versteht und gern damit arbeitet. Sie haben bei uns feste Ansprechpartner, die Ihren Betrieb kennen.",
+  text: "Wir sind Lukas Sehorz und Jannik vom Hofe. Wir machen KI so greifbar, dass jeder im Betrieb sie versteht und gern damit arbeitet. Du hast bei uns feste Ansprechpartner, die deinen Betrieb kennen.",
   people: [
     { name: "Lukas Sehorz", role: "Gründer", initials: "LS" },
     { name: "Jannik vom Hofe", role: "Gründer", initials: "JvH" },
@@ -336,48 +386,48 @@ export const fragen = {
   items: [
     {
       q: "Was kostet mich der Workshop?",
-      a: "Nichts. Der Workshop, der KI-Masterplan und die Besprechung sind kostenlos, und Sie gehen dabei keine Verpflichtung ein.",
+      a: "Nichts. Der Workshop, der KI-Masterplan und die Besprechung sind kostenlos, und du gehst dabei keine Verpflichtung ein.",
     },
     {
       q: "Wo ist der Haken?",
-      a: "Es gibt keinen. Wir verdienen erst dann Geld, wenn Sie sich entscheiden, den Plan mit uns umzusetzen. Wenn nicht, haben Sie trotzdem einen fertigen Plan in der Hand.",
+      a: "Es gibt keinen. Wir verdienen erst dann Geld, wenn du dich entscheidest, den Plan mit uns umzusetzen. Wenn nicht, hast du trotzdem einen fertigen Plan in der Hand.",
     },
     {
       q: "Wir kennen uns mit KI gar nicht aus. Ist das ein Problem?",
-      a: "Im Gegenteil, genau dafür sind wir da. Wir erklären alles in normaler Sprache und zeigen Ihrem Team Schritt für Schritt, wie die Helfer funktionieren.",
+      a: "Im Gegenteil, genau dafür sind wir da. Wir erklären alles in normaler Sprache und zeigen deinem Team Schritt für Schritt, wie die Helfer funktionieren.",
     },
     {
       q: "Lohnt sich das auch für kleinere Betriebe?",
-      a: "Ja. Gerade dort fällt jede gewonnene Stunde auf. Im Workshop sehen wir gemeinsam, ob und wo es sich für Sie rechnet.",
+      a: "Ja. Gerade dort fällt jede gewonnene Stunde auf. Im Workshop sehen wir gemeinsam, ob und wo es sich für dich rechnet.",
     },
     {
       q: "Was passiert mit unseren Daten?",
-      a: "Das besprechen wir offen im Workshop. Wir wählen Werkzeuge, die zu Ihren Anforderungen an den Datenschutz passen, und bauen nur, was Sie verstehen und freigeben.",
+      a: "Das besprechen wir offen im Workshop. Wir wählen Werkzeuge, die zu deinen Anforderungen an den Datenschutz passen, und bauen nur, was du verstehst und freigibst.",
     },
     {
       q: "Wie lange dauert die Umsetzung?",
-      a: "Das hängt davon ab, was wir bauen. Im Masterplan steht für jede Automatisierung, wie viel Aufwand sie macht. So wissen Sie vorher, woran Sie sind.",
+      a: "Das hängt davon ab, was wir bauen. Im Masterplan steht für jede Automatisierung, wie viel Aufwand sie macht. So weißt du vorher, woran du bist.",
     },
     {
       q: "Wie funktioniert die Geld-zurück-Garantie?",
-      a: "Vor dem Start legen wir gemeinsam schriftlich fest, wie viel Zeit oder Geld die Umsetzung sparen soll. Wird das Ziel verfehlt, bekommen Sie Ihr Geld zurück. Die genauen Bedingungen stehen in Ihrem Angebot.",
+      a: "Vor dem Start legen wir gemeinsam schriftlich fest, wie viel Zeit oder Geld die Umsetzung sparen soll. Wird das Ziel verfehlt, bekommst du dein Geld zurück. Die genauen Bedingungen stehen in deinem Angebot.",
     },
     {
-      q: "Sind wir danach von Ihnen abhängig?",
-      a: "Alles, was wir bauen, schreiben wir auf und übergeben es an Ihr Team. Sie können jederzeit selbst weitermachen.",
+      q: "Sind wir danach von euch abhängig?",
+      a: "Alles, was wir bauen, schreiben wir auf und übergeben es an dein Team. Du kannst jederzeit selbst weitermachen.",
     },
   ],
 };
 
 export const abschluss = {
-  label: "Ihr nächster Schritt",
-  title: "Holen Sie sich Ihre Zeit *zurück*.",
-  text: "Sichern Sie sich Ihren kostenlosen KI-Workshop. 48 Stunden danach halten Sie Ihren KI-Masterplan in der Hand.",
+  label: "Dein nächster Schritt",
+  title: "Hol dir deine Zeit *zurück*.",
+  text: "Sichere dir deinen kostenlosen KI-Workshop. 48 Stunden danach hältst du deinen KI-Masterplan in der Hand.",
   // ZUSATZ (Zeile neben dem Masterplan-Deckblatt am Formular)
-  gift: { title: "Ihr KI-Masterplan", when: "48 Stunden nach dem Workshop", price: "0 €" },
+  gift: { title: "Dein KI-Masterplan", when: "48 Stunden nach dem Workshop", price: "0 €" },
   stepOf: (n: number) => `Schritt ${n} von 3`,
   step1: {
-    title: "Was frisst bei Ihnen am meisten Zeit?",
+    title: "Was frisst bei dir am meisten Zeit?",
     hint: "Mehrfachauswahl",
     vorgemerkt: "Aus dem Schalter vorgemerkt", // ZUSATZ (Hinweis, wenn Kacheln im Schalter vorgemerkt wurden)
     tiles: [
@@ -392,7 +442,7 @@ export const abschluss = {
       "Bewerbungen sichten",
       "Etwas anderes",
     ],
-    slider: "Wie viele Stunden pro Woche kostet das Ihr Team ungefähr?",
+    slider: "Wie viele Stunden pro Woche kostet das dein Team ungefähr?",
     calc: (h: number) => {
       const year = h * 52;
       const weeks = Math.round(year / 40);
@@ -404,18 +454,18 @@ export const abschluss = {
     unit: "Std. pro Woche", // ZUSATZ (Einheit am Regler)
   },
   step2: {
-    title: "Erzählen Sie kurz von Ihrem Betrieb",
-    question: "Wie viele Mitarbeiter hat Ihr Betrieb?",
+    title: "Erzähl kurz von deinem Betrieb",
+    question: "Wie viele Mitarbeiter hat dein Betrieb?",
     sizes: ["1 bis 9", "10 bis 29", "30 bis 80", "mehr als 80"],
     industry: "Branche",
   },
   step3: {
     title: "Wohin dürfen wir uns melden?",
-    name: "Ihr Name",
+    name: "Dein Name",
     company: "Firma",
     email: "E-Mail",
     phone: "Telefon",
-    message: "Möchten Sie uns noch etwas sagen?",
+    message: "Möchtest du uns noch etwas sagen?",
     consentBefore: "Ich bin einverstanden, dass SvH Consulting meine Angaben zur Bearbeitung der Anfrage verwendet. Mehr dazu in der ",
     consentLink: "Datenschutzerklärung",
     consentAfter: ".",
@@ -425,35 +475,35 @@ export const abschluss = {
   back: "Zurück",
   submit: "Kostenlosen KI-Workshop sichern",
   sending: "Wird gesendet", // ZUSATZ (alte Seite)
-  below: "Kostenlos · unverbindlich · Ihre Angaben bleiben bei uns",
-  success: (first: string) => (first ? `Danke, ${first}! Ihre Anfrage ist bei uns.` : "Danke! Ihre Anfrage ist bei uns."),
+  below: "Kostenlos · unverbindlich · deine Angaben bleiben bei uns",
+  success: (first: string) => (first ? `Danke, ${first}! Deine Anfrage ist bei uns.` : "Danke! Deine Anfrage ist bei uns."),
   // Seit Runde 5 nicht mehr angezeigt: Schritt 1 von „danach“ sagt dasselbe (sonst doppelt)
-  successText: "Wir melden uns persönlich bei Ihnen, um einen Termin für Ihren KI-Workshop zu finden.",
+  successText: "Wir melden uns persönlich bei dir, um einen Termin für deinen KI-Workshop zu finden.",
   // ZUSATZ: nächste Schritte unter der Erfolgsmeldung
   danach: {
     title: "So geht es weiter",
     steps: [
       "Wir melden uns persönlich, um einen Termin zu finden.",
-      "Im kostenlosen Workshop finden wir Ihre größten Zeitfresser.",
-      "48 Stunden danach halten Sie Ihren KI-Masterplan in der Hand.",
+      "Im kostenlosen Workshop finden wir deine größten Zeitfresser.",
+      "48 Stunden danach hältst du deinen KI-Masterplan in der Hand.",
     ],
   },
-  errorBefore: "Das hat leider nicht geklappt. Rufen Sie uns gern direkt an unter ",
-  errorMid: " oder schreiben Sie an ",
+  errorBefore: "Das hat leider nicht geklappt. Ruf uns gern direkt an unter ",
+  errorMid: " oder schreib an ",
   errorAfter: ".",
   // ZUSATZ: Hinweis ohne JavaScript (danach Telefon, errorMid, E-Mail, errorAfter)
-  noscriptBefore: "Das Formular lässt sich ohne JavaScript nicht absenden. Rufen Sie uns gern direkt an unter ",
+  noscriptBefore: "Das Formular lässt sich ohne JavaScript nicht absenden. Ruf uns gern direkt an unter ",
   // ZUSATZ (alte Seite): erscheint, wenn der Versand über die Seite noch nicht eingerichtet ist
-  fallback: "Ihr E-Mail-Programm öffnet sich mit Ihrer Nachricht an uns. Sie müssen sie nur noch abschicken.",
+  fallback: "Dein E-Mail-Programm öffnet sich mit deiner Nachricht an uns. Du musst sie nur noch abschicken.",
   errors: {
     // ZUSATZ: freundliche Hinweise der Formularprüfung
-    tasks: "Bitte wählen Sie mindestens eine Aufgabe aus.",
-    size: "Bitte wählen Sie die Größe Ihres Betriebs.",
-    name: "Bitte geben Sie Ihren Namen an.",
-    company: "Bitte geben Sie Ihre Firma an.",
-    email: "Bitte geben Sie Ihre E-Mail-Adresse an.",
+    tasks: "Bitte wähle mindestens eine Aufgabe aus.",
+    size: "Bitte wähle die Größe deines Betriebs.",
+    name: "Bitte gib deinen Namen an.",
+    company: "Bitte gib deine Firma an.",
+    email: "Bitte gib deine E-Mail-Adresse an.",
     emailInvalid: "Diese E-Mail-Adresse sieht unvollständig aus.",
-    consent: "Bitte bestätigen Sie kurz Ihr Einverständnis.",
+    consent: "Bitte bestätige kurz dein Einverständnis.",
   },
   direct: {
     title: "Lieber direkt sprechen?",
@@ -464,7 +514,7 @@ export const abschluss = {
     title: "Neue Anfrage für den KI-Workshop",
     subject: "KI-Workshop-Anfrage von",
     none: "keine Angabe",
-    replyNote: "Antworten Sie einfach auf diese E-Mail, die Antwort geht an",
+    replyNote: "Antworte einfach auf diese E-Mail, die Antwort geht an",
     // ZUSATZ (nur in der Mail an uns): Hochrechnung und Nachweis der Einwilligung
     yearValue: (year: string, weeks: string) => `${year} Stunden, so viel wie ${weeks} volle Arbeitswochen`,
     consentLine: "Einwilligung zur Bearbeitung der Anfrage erteilt am",
@@ -484,7 +534,7 @@ export const abschluss = {
 };
 
 export const footer = {
-  claim: "Wir stellen die KI auf. Sie gewinnen die Zeit.",
+  claim: "Wir stellen die KI auf, du gewinnst die Zeit.",
   contactTitle: "Kontakt", // ZUSATZ (Spaltentitel)
   linksTitle: "Seiten", // ZUSATZ (Spaltentitel)
   links: [
@@ -560,7 +610,7 @@ export const aktuelles = {
 export const einwilligung = {
   titel: "Dürfen wir mitzählen?",
   // gekürzt gegenüber der alten Seite, damit das Feld Knopf und Überschrift nicht verdeckt
-  body: "Mit Ihrer Zustimmung zählen wir über Google, welche Seiten gelesen werden. Dabei wird etwas auf Ihrem Gerät gespeichert. Ohne Zustimmung passiert davon nichts.",
+  body: "Mit deiner Zustimmung zählen wir über Google, welche Seiten gelesen werden. Dabei wird etwas auf deinem Gerät gespeichert. Ohne Zustimmung passiert davon nichts.",
   mehr: "Einzelheiten stehen in der Datenschutzerklärung.",
   // Kurzfassung für niedrige Bildschirme (kompakte Leiste)
   kurz: "Dürfen wir mit Google messen, welche Seiten gelesen werden?",
@@ -574,7 +624,7 @@ export const einwilligung = {
 export const notFound = {
   label: "404",
   title: "Diese Adresse führt ins _Leere._",
-  lead: "Vielleicht ist die Adresse falsch geschrieben, oder die Seite ist umgezogen. Von hier aus finden Sie zurück.",
+  lead: "Vielleicht ist die Adresse falsch geschrieben, oder die Seite ist umgezogen. Von hier aus findest du zurück.",
   home: "Zur Startseite",
   metaTitle: "Seite nicht gefunden", // ZUSATZ (Seitentitel, alte Seite)
 };

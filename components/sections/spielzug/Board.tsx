@@ -9,6 +9,7 @@ import { Arrow } from "@/components/system/Icons";
 import Rich from "@/components/system/Rich";
 import { ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { useIsoLayoutEffect, useMotionMode } from "@/lib/hooks";
+import { MOTION as M } from "@/lib/motion";
 import { requestRefresh } from "@/lib/refresh";
 import { axisEase, measure, type Geo } from "./geometry";
 
@@ -74,7 +75,7 @@ function GoalText({ text }: { text: string }) {
 /** Tor-Schrift und Knopf: „Tor! Zeit gewonnen.“ führt direkt in die Handlung */
 function Finish({ where }: { where: "board" | "head" }) {
   return (
-    <div className={`sz-finish sz-finish--${where}`}>
+    <div className={`sz-finish sz-finish--${where}`} data-reveal="">
       <p className="sz-goaltext" data-sz-goaltext="">
         <GoalText text={spielzug.goal} />
       </p>
@@ -134,13 +135,14 @@ function Lines({ geo, still, uid }: { geo: Geo; still: boolean; uid: string }) {
       <path className="sz-bracket" data-l="bracket" d={geo.bracket} />
 
       <path className="sz-pass" d={geo.main} />
-      <path className="sz-pass" d={geo.branch} />
+      <path className="sz-pass sz-pass--side" d={geo.branch} />
 
       <path className="sz-trail-soft" data-l="trail" d={geo.main} stroke={`url(#${grad})`} />
       <path className="sz-trail" data-l="trail" data-main="" d={geo.main} stroke={`url(#${grad})`} />
-      <path className="sz-trail-soft" data-l="branch" d={geo.branch} stroke={`url(#${grad})`} />
-      <path className="sz-trail" data-l="branch" d={geo.branch} stroke={`url(#${grad})`} />
-      <path className="sz-tip" data-l="tip" d={geo.tip} />
+      {/* Nebenweg „Selbst umsetzen“: ruhiges Grau statt Markenverlauf */}
+      <path className="sz-trail-soft sz-side" data-l="branch" d={geo.branch} />
+      <path className="sz-trail sz-side" data-l="branch" d={geo.branch} />
+      <path className="sz-tip sz-side-tip" data-l="tip" d={geo.tip} />
 
       <path className="sz-net" data-l="net" d={geo.goalNet} />
       <path className="sz-goal-base" d={geo.goalFrame} />
@@ -170,6 +172,8 @@ export default function Board() {
   /** Fortschritt des Stellvertreters, überdauert jeden Neuaufbau der Zeitleiste */
   const prog = useRef({ p: 0, dir: 1 });
   const inner = useRef<gsap.core.Timeline | null>(null);
+  /** Schritte in echter Zeit (Karten, Gabelung, Tor), vom Stellvertreter angestoßen */
+  const live = useRef<((time: number) => void) | null>(null);
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const layout = geo?.layout ?? null;
 
@@ -270,7 +274,9 @@ export default function Board() {
           start: () => `top ${navClear()}`,
           end: () => `+=${Math.round(window.innerHeight * PIN_LEN)}`,
           scrub: 0.6,
-          anticipatePin: 1,
+          // kein anticipatePin: Lenis scrollt im selben Bild, in dem ScrollTrigger rechnet.
+          // Mit Vorgriff rastete die Tafel 19 bis 28 px zu früh ein (sichtbarer Sprung, auch
+          // zurück über das Pin-Ende).
           refreshPriority: 0,
         };
       } else {
@@ -287,7 +293,11 @@ export default function Board() {
             const r = prog.current;
             if (proxy.p !== r.p) r.dir = proxy.p > r.p ? 1 : -1;
             r.p = proxy.p;
-            inner.current?.progress(proxy.p);
+            const tl = inner.current;
+            if (tl) {
+              tl.progress(proxy.p);
+              live.current?.(tl.time());
+            }
           },
         },
       );
@@ -346,24 +356,9 @@ export default function Board() {
       tl.to(ball, { motionPath: { path: main, align: main, alignOrigin: [0.5, 0.5] }, duration: 1, ease, immediateRender: true }, 0);
       tl.to(trail, { strokeDashoffset: 0, duration: 1, ease }, 0);
 
-      T.nodes.forEach((t, k) => {
-        tl.fromTo(on[k], { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.035, ease: "power2.out" }, at(t - 0.018));
-        tl.fromTo(cards[k], { opacity: DIM, y: 10 }, { opacity: 1, y: 0, duration: 0.06, ease: "power1.out" }, at(t - 0.025));
-      });
-
-      if (free) tl.fromTo(free, { opacity: 0.55 }, { opacity: 1, duration: 0.05 }, at(T.bracketFrom - 0.02));
+      // Klammer „0 €“ folgt dem Ball (durchgehende Linie, bleibt an den Scroll gekoppelt)
       tl.to(bracket, { strokeDashoffset: 0, duration: Math.max(0.05, T.bracketTo - T.bracketFrom) }, T.bracketFrom);
 
-      tl.to(branch, { strokeDashoffset: 0, duration: 0.06, ease: "power1.inOut" }, T.fork);
-      if (tip) tl.fromTo(tip, { opacity: 0 }, { opacity: 1, duration: 0.015 }, T.fork + 0.05);
-      if (fork) tl.fromTo(fork, { opacity: DIM, y: 10 }, { opacity: 1, y: 0, duration: 0.06, ease: "power1.out" }, T.fork + 0.012);
-      if (withEl) tl.fromTo(withEl, { opacity: 0.55 }, { opacity: 1, duration: 0.04 }, at(T.with - 0.02));
-
-      // Tor: Rahmen zeichnet sich fertig, Netz hellt auf, weicher Lichtschein, Schrift blendet ein
-      tl.to(frame, { strokeDashoffset: 0, duration: 0.1, ease: "power1.inOut" }, 0.9);
-      if (net) tl.fromTo(net, { opacity: 0.25 }, { opacity: 1, duration: 0.05 }, 0.96);
-      if (glow) tl.fromTo(glow, { opacity: 0 }, { opacity: 0.6, duration: 0.06, ease: "power1.out" }, 0.99);
-      if (goalText) tl.fromTo(goalText, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.05, ease: "power1.out" }, 0.92);
       if (ring && contextSafe) {
         gsap.set(ring, { opacity: 0 });
         // Lichtring einmal in echter Zeit, nur beim Vorwärtsscrollen
@@ -379,11 +374,57 @@ export default function Board() {
       }
       tl.to({}, { duration: tail }, 1);
 
+      /* Schritte: Der Scroll entscheidet, WANN eine Station erreicht ist, die Dauer
+         läuft in echter Zeit (vorher 0,035 bis 0,06 der Strecke, also 20 bis 40 px
+         Scrollweg: bei normalem Lesetempo 65 bis 80 ms). Rückwärts wieder zurück. */
+      type Step = { at: number; el: Element; hide: gsap.TweenVars; show: gsap.TweenVars; move?: [gsap.TweenVars, gsap.TweenVars]; dur: number; delay: number; ease: string; on?: boolean };
+      const steps: Step[] = [];
+      const add = (at: number, el: Element | null, hide: gsap.TweenVars, show: gsap.TweenVars, o: Partial<Pick<Step, "move" | "dur" | "delay" | "ease">> = {}) => {
+        if (el) steps.push({ at, el, hide, show, move: o.move, dur: o.dur ?? M.step.in, delay: o.delay ?? 0, ease: o.ease ?? M.fade });
+      };
+      const rise: [gsap.TweenVars, gsap.TweenVars] = [{ y: M.step.y }, { y: 0 }];
+      T.nodes.forEach((t, k) => {
+        add(at(t - 0.012), on[k], { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1 }, { dur: 0.6, ease: M.ease });
+        add(at(t - 0.02), cards[k], { opacity: DIM }, { opacity: 1 }, { move: rise });
+      });
+      add(at(T.bracketFrom - 0.02), free, { opacity: 0.55 }, { opacity: 1 });
+      branch.forEach((b) => add(T.fork, b, { strokeDashoffset: b.getTotalLength() }, { strokeDashoffset: 0 }, { dur: M.line * 0.9, ease: M.draw }));
+      add(T.fork, tip, { opacity: 0 }, { opacity: 1 }, { dur: 0.5, delay: 0.7 });
+      add(T.fork + 0.012, fork, { opacity: DIM }, { opacity: 1 }, { move: rise, delay: 0.25 });
+      add(at(T.with - 0.02), withEl, { opacity: 0.55 }, { opacity: 1 });
+      // Tor: Rahmen zeichnet sich, Netz hellt auf, weicher Lichtschein, Schrift blendet ein
+      add(0.9, frame, { strokeDashoffset: frame.getTotalLength() }, { strokeDashoffset: 0 }, { dur: M.line, ease: M.draw });
+      add(0.93, goalText, { opacity: 0 }, { opacity: 1 }, { move: [{ y: 10 }, { y: 0 }], dur: 0.9, delay: 0.1 });
+      add(0.96, net, { opacity: 0.25 }, { opacity: 1 });
+      add(0.99, glow, { opacity: 0 }, { opacity: 0.6 }, { dur: 1.0 });
+
+      const apply = (time: number, instant: boolean) => {
+        steps.forEach((st) => {
+          const reached = time >= st.at;
+          if (st.on === reached) return;
+          st.on = reached;
+          const [mHide, mShow] = st.move ?? [null, null];
+          if (instant) {
+            gsap.set(st.el, { ...(reached ? st.show : st.hide), ...((reached ? mShow : mHide) ?? {}), overwrite: true });
+            return;
+          }
+          if (reached) {
+            gsap.to(st.el, { ...st.show, duration: st.dur, delay: st.delay, ease: st.ease, overwrite: "auto" });
+            if (mShow) gsap.to(st.el, { ...mShow, duration: st.dur + 0.1, delay: st.delay, ease: M.ease, overwrite: "auto" });
+          } else {
+            gsap.to(st.el, { ...st.hide, ...(mHide ?? {}), duration: M.step.out, ease: M.out, overwrite: "auto" });
+          }
+        });
+      };
+
       // Fortschritt übernehmen, ohne Rückrufe auszulösen (kein Lichtring beim Neuaufbau)
       tl.progress(prog.current.p, true);
+      apply(tl.time(), true);
       inner.current = tl;
+      live.current = contextSafe ? contextSafe((t: number) => apply(t, false)) : (t: number) => apply(t, false);
       return () => {
         if (inner.current === tl) inner.current = null;
+        live.current = null;
       };
     },
     { scope: stage, dependencies: [mode, geo], revertOnUpdate: true },
@@ -398,11 +439,11 @@ export default function Board() {
           <p className="label" data-reveal="">
             {spielzug.label}
           </p>
-          <h2 className="h2 sz-title" id="sz-title" data-reveal="">
+          <h2 className="h2 sz-title" id="sz-title">
             {spielzug.title.map((l, i) => (
               <Fragment key={l}>
                 {i > 0 ? " " : null}
-                <span className="line">
+                <span className="line" data-split="">
                   <Rich text={l} />
                 </span>
               </Fragment>
@@ -412,7 +453,7 @@ export default function Board() {
         <Finish where="head" />
       </header>
 
-      <div className="sz-board" ref={board} data-geo={geo ? geo.layout : undefined}>
+      <div className="sz-board" ref={board} data-geo={geo ? geo.layout : undefined} data-reveal="fade">
         <div className="sz-dots" aria-hidden="true" />
         {geo ? <Lines geo={geo} still={still} uid={uid} /> : null}
 

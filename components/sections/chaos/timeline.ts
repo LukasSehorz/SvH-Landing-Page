@@ -1,4 +1,5 @@
 import { gsap } from "@/lib/gsap";
+import { MOTION as M } from "@/lib/motion";
 import { fmtClock, GROUPS, ITEMS, S } from "./parts";
 import type { Variant } from "./LiveScene";
 
@@ -32,7 +33,9 @@ export function fitScene(root: HTMLElement, variant: Variant) {
   fit.style.setProperty("--k", String(Math.max(0.55, Math.round(k * 1000) / 1000)));
 }
 
-export function buildTimeline(root: HTMLElement, variant: Variant, E: number, SS: number) {
+type Wrap = <F extends (...args: never[]) => unknown>(fn: F) => F;
+
+export function buildTimeline(root: HTMLElement, variant: Variant, E: number, SS: number, wrap: Wrap = (fn) => fn) {
   const win = variant === "win";
   const scene = root.querySelector<HTMLElement>(".cs--live")!;
   const all = (sel: string, r: ParentNode = scene) => Array.from(r.querySelectorAll<HTMLElement>(sel));
@@ -162,11 +165,35 @@ export function buildTimeline(root: HTMLElement, variant: Variant, E: number, SS
     const each = (b - a) / (ws.length + 1.5);
     tl.to(ws, { opacity: 1, duration: each * 2.5, stagger: each, ease: "power1.inOut" }, a);
   };
-  // Takt wechseln: erst aus, dann ein; die Szene rückt dabei in den frei gewordenen Platz
-  const swap = (from: number, to: number, at: number) => {
-    tl.to(beats[from], { opacity: 0, y: -18, duration: D(0.03), ease: "power2.in" }, at);
-    tl.to(beats[to], { opacity: 1, y: 0, duration: D(0.04), ease: "power2.out" }, at + D(0.03));
-    if (visual && shift[to] !== shift[from]) tl.to(visual, { y: -shift[to], duration: D(0.06), ease: "power2.inOut" }, at + D(0.005));
+  /* Takt wechseln: Der Scroll entscheidet, WANN, die Dauer läuft in echter Zeit
+     (vorher hing der Wechsel an 12 bis 40 px Scrollweg und lief in 30 bis 50 ms,
+     auf dem Telefon in einem einzigen Bild durch). Erst aus, dann ein; die Szene
+     rückt dabei ruhig in den frei gewordenen Platz. Rückwärts genauso zurück. */
+  const beatAt = [0, 0, 0];
+  const swap = (_from: number, to: number, at: number) => {
+    beatAt[to] = at + D(0.03);
+  };
+  let beat = -1;
+  const showBeat = (next: number, instant: boolean) => {
+    if (next === beat) return;
+    const dir = beat < 0 || next > beat ? 1 : -1;
+    beat = next;
+    if (instant) {
+      gsap.set(beats, { opacity: (i: number) => (i === next ? 1 : 0), y: (i: number) => (i === next ? 0 : 22), overwrite: true });
+      if (visual) gsap.set(visual, { y: -shift[next], overwrite: true });
+      return;
+    }
+    beats.forEach((b, i) => {
+      if (i === next) return;
+      if (Number(gsap.getProperty(b, "opacity")) > 0.01) gsap.to(b, { opacity: 0, y: -14 * dir, duration: M.step.out, ease: M.out, overwrite: true });
+    });
+    // erst ganz aus, dann ein (nie Text über Text)
+    const b = beats[next];
+    const hidden = Number(gsap.getProperty(b, "opacity")) < 0.05;
+    const delay = hidden ? M.step.out + M.step.gap : 0;
+    gsap.fromTo(b, { y: hidden ? 18 * dir : Number(gsap.getProperty(b, "y")) }, { y: 0, duration: M.step.in + 0.1, delay, ease: M.ease, overwrite: true });
+    gsap.to(b, { opacity: 1, duration: M.step.in, delay, ease: M.fade });
+    if (visual) gsap.to(visual, { y: -shift[next], duration: 0.9, ease: "power2.inOut", overwrite: true });
   };
 
   /* Takt 1 · Chaos: Einträge kommen immer schneller, Zähler klettert, Uhr läuft */
@@ -291,5 +318,12 @@ export function buildTimeline(root: HTMLElement, variant: Variant, E: number, SS
   if (chips.length) tl.to(chips, { opacity: 1, y: 0, duration: D(0.03), stagger: D(0.006), ease: "power2.out" }, F0 + D(0.065));
 
   tl.set({}, {}, E + SS); // Gesamtlänge = gesamter Scrollweg
+
+  const syncBeat = (instant: boolean) => {
+    const t = tl.time();
+    showBeat(t >= beatAt[2] ? 2 : t >= beatAt[1] ? 1 : 0, instant);
+  };
+  syncBeat(true);
+  tl.eventCallback("onUpdate", wrap(() => syncBeat(false)));
   return tl;
 }

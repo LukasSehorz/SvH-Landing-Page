@@ -16,11 +16,11 @@ export default function Garantie() {
           <p className="label" data-reveal="">
             {garantie.label}
           </p>
-          <h2 className="h2 gar-title" id="gar-title" data-reveal="">
+          <h2 className="h2 gar-title" id="gar-title">
             {garantie.title.map((l, i) => (
               <Fragment key={l}>
                 {i > 0 ? " " : null}
-                <span className="line">
+                <span className="line" data-split="">
                   <Rich text={l} />
                 </span>
               </Fragment>

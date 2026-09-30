@@ -26,7 +26,7 @@ export default function Footer() {
               </li>
               <li>
                 <span>
-                  {company.street}, {company.zipCity}
+                  {company.street ? `${company.street}, ` : ""}{company.zipCity}
                 </span>
               </li>
             </ul>

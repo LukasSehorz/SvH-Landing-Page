@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { garantie } from "@/app/copy";
 import { gsap, useGSAP } from "@/lib/gsap";
+import { enterStart, MOTION as M } from "@/lib/motion";
 
 /* ====================================================================
    Garantie-Siegel wie eine Prägung: feine Verlaufs-Haarlinien, innen das
@@ -28,15 +29,16 @@ export default function GarantieSeal() {
       const text = el.querySelector(".seal-text");
       const disc = el.querySelector(".seal-disc");
       const glow = el.querySelector(".seal-glow");
+      // nur opacity/transform (nie visibility), Maß aus lib/motion.ts
       gsap.set(rings, { strokeDasharray: 1, strokeDashoffset: 1 });
       gsap.set(seal, { scale: 1.05, rotate: -4, transformOrigin: "50% 50%" });
-      gsap.set([mono, text, disc, glow], { autoAlpha: 0 });
-      const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: "top 78%", once: true } });
-      tl.to([disc, glow], { autoAlpha: 1, duration: 1.6, ease: "power1.out" }, 0)
-        .to(rings, { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut", stagger: 0.12 }, 0)
-        .to(text, { autoAlpha: 1, duration: 0.9, ease: "power1.out" }, 0.7)
-        .to(mono, { autoAlpha: 1, duration: 0.7, ease: "power1.out" }, 0.9)
-        .to(seal, { scale: 1, rotate: 0, duration: 1.8, ease: "expo.out" }, 0.8);
+      gsap.set([mono, text, disc, glow], { opacity: 0 });
+      const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: enterStart, once: true } });
+      tl.to([disc, glow], { opacity: 1, duration: 1.6, ease: M.fade }, 0)
+        .to(rings, { strokeDashoffset: 0, duration: 1.4, ease: M.draw, stagger: 0.12 }, 0)
+        .to(text, { opacity: 1, duration: 1.0, ease: M.fade }, 0.7)
+        .to(mono, { opacity: 1, duration: 0.9, ease: M.fade }, 0.9)
+        .to(seal, { scale: 1, rotate: 0, duration: 1.6, ease: M.ease }, 0.8);
       return () => io.disconnect();
     },
     { scope: root },

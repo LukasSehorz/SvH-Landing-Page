@@ -20,6 +20,10 @@
   --glass-2: rgba(255, 255, 255, 0.055);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Bewegungssystem (lib/motion.ts): Einblendungen mit Quart-Auslauf, Deckkraft sanfter */
+  --ease-reveal: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-fade: cubic-bezier(0.5, 1, 0.89, 1);
+  --dur-reveal: 1s;
 
   --gutter: clamp(20px, 4vw, 88px);
   /* bis 1920 maximal 1440 breit, auf sehr großen Schirmen moderat mehr (die alte
