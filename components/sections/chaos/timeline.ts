@@ -47,7 +47,7 @@ export function buildTimeline(root: HTMLElement, variant: Variant, E: number, SS
   const chips = all("li", sum);
   const toasts = all(".ct");
   const fade = scene.querySelector<HTMLElement>(".c-fade");
-  const counts = all("[data-count]");
+  const counts = all("[data-chaos-count]");
   const countBg = all(".c-count-bg");
   const clocks = all("[data-clock]");
   const glow = root.querySelector<HTMLElement>(".chaos-glow");
@@ -86,17 +86,21 @@ export function buildTimeline(root: HTMLElement, variant: Variant, E: number, SS
   // So viele Gruppen, wie in Takt 2 und 3 wirklich Platz haben; der Rest als Kanten.
   let V = 4;
   let gapM = 10;
+  let offM = 0;
   const needM = (v: number, gap: number) => v * cardH + (v - 1) * gap + 2 * SL + (4 - v) * SL;
   if (!win) {
     const room = Math.min(avail[1], avail[2]);
     while (V > 2 && needM(V, 10) > room) V--;
-    gapM = Math.max(10, Math.min(16, (room - needM(V, 0)) / (V - 1)));
+    // hohe Telefone: Gruppen luftiger verteilen und den Rest nicht nur unten lassen
+    // (gut ein Drittel über, der Rest unter den Gruppen), damit die untere Bildhälfte nicht leer steht
+    gapM = Math.max(10, Math.min(24, (room - needM(V, 0)) / (V - 1)));
+    offM = Math.max(0, Math.min(48, (room - needM(V, gapM)) * 0.35));
   }
   scene.dataset.groups = String(V); // zur Kontrolle im Test
   const gapG = win ? 10 : gapM;
   const pitchG = win ? groupH + gapG : cardH + gapM;
   const total = win ? 4 * groupH + 3 * gapG : needM(V, gapM);
-  const top0 = win ? Math.max(0, (LIST_H - total) / 2) : 0;
+  const top0 = win ? Math.max(0, (LIST_H - total) / 2) : offM;
   const gTop = (g: number) => top0 + Math.min(g, V - 1) * pitchG;
   const gFront = (g: number) => gTop(g) + headH;
   // eingeklappte Gruppen (nur Telefon, wenn es eng ist) liegen als Kanten hinter der letzten

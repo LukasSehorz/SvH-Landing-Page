@@ -19,6 +19,8 @@ export default function MobileCta() {
   const [inline, setInline] = useState(false);
   const [form, setForm] = useState(false);
   const [foot, setFoot] = useState(false);
+  // erst entscheiden, wenn der Beobachter einmal gemeldet hat (sonst blitzt der Leisten-Knopf beim Laden kurz auf: CLS)
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setPast(window.scrollY > window.innerHeight * 0.85);
@@ -40,8 +42,11 @@ export default function MobileCta() {
         setInline(any(seenInline));
         setForm(any(seenForm));
         setFoot(any(seenFoot));
+        setReady(true);
       },
-      { rootMargin: "0px 0px -8% 0px" },
+      // Nach unten erweitert: die Leiste weicht schon aus, bevor ein Inline-Knopf den
+      // unteren Rand erreicht (nie zwei gleiche Knöpfe gleichzeitig im Bild)
+      { rootMargin: "0px 0px 22% 0px" },
     );
     const watched = new Set<Element>();
     const scan = () => {
@@ -63,7 +68,7 @@ export default function MobileCta() {
 
   const show = past && !inline && !form && !foot;
   // Knopf der oberen Leiste nur, wenn sonst gar keiner sichtbar ist (z. B. über der Fußzeile)
-  const navCta = !show && !inline && !form;
+  const navCta = ready && !show && !inline && !form;
 
   useEffect(() => {
     const html = document.documentElement;

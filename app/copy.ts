@@ -41,7 +41,7 @@ export const nav = {
 export const hero = {
   eyebrow: "KI-Automatisierung für den Mittelstand",
   h1: ["Wir stellen die KI auf.", "Sie *gewinnen* die Zeit."],
-  text: "Wir bauen digitale Helfer für Ihren Betrieb. Sie schreiben Angebote, beantworten E-Mails und tragen Daten ein, ganz von allein. Ihr Team hat wieder Zeit für die Arbeit, die wirklich zählt.",
+  text: "Wir bauen digitale Helfer für Ihren Betrieb. Die Helfer schreiben Angebote, beantworten E-Mails und tragen Daten ein, ganz von allein. Ihr Team hat wieder Zeit für die Arbeit, die wirklich zählt.",
   sub: "30 bis 45 Minuten · danach Ihr KI-Masterplan geschenkt",
   secondary: "So läuft es ab",
   proof: [
@@ -162,7 +162,7 @@ export const schalter = {
       id: "kunden",
       title: "Kundendaten",
       off: "Zettel, Tabellen, Postfach. Jede Anfrage wird abgetippt.",
-      on: "Jede Anfrage landet von allein im CRM, mit Erinnerung zum Nachfassen.",
+      on: "Jede Anfrage landet von allein in Ihrer Kundenliste, mit Erinnerung zum Nachfassen.",
       kpiOff: "abtippen",
       kpiOn: "läuft von allein",
     },
@@ -187,7 +187,7 @@ export const ergebnisse = {
       id: "estera",
       name: "Estera GmbH",
       branche: "Kapitalanlageimmobilien, München",
-      built: "Eine neue Webseite, ein CRM und smarte Automatisierungen dahinter.",
+      built: "Eine neue Webseite, eine digitale Kundenverwaltung (CRM) und smarte Automatisierungen dahinter.",
       resultPrefix: "bis zu ",
       resultNumber: 160,
       resultSuffix: " Std.",
@@ -218,7 +218,7 @@ export const ergebnisse = {
       id: "platzhalter",
       name: "Referenz folgt",
       branche: "",
-      built: "Automatische Angebotserstellung mit KI-Wissensmanagement.",
+      built: "Automatische Angebotserstellung mit einem KI-Wissensspeicher.",
       resultPrefix: "",
       resultNumber: 0,
       resultSuffix: "",
@@ -269,7 +269,7 @@ export const geschenk = {
   stamp: "0 €",
   whyTitle: "Warum wir das verschenken", // geschütztes Leerzeichen: „verschenken“ nie allein in der Zeile (Safari)
   whyText:
-    "Weil KI erst dann Sinn ergibt, wenn man sieht, was sie im eigenen Betrieb bewirkt. Wir zeigen es Ihnen lieber, als es zu versprechen. Gefällt Ihnen der Plan, setzen wir ihn gern mit Ihnen um. Setzen Sie ihn lieber selbst um, ist das völlig in Ordnung. Den Plan behalten Sie so oder so.",
+    "Weil KI erst dann Sinn ergibt, wenn man sieht, was sie im eigenen Betrieb bewirkt. Wir zeigen es Ihnen lieber, als es zu versprechen. Gefällt Ihnen der Plan, setzen wir ihn gern mit Ihnen um. Setzen Sie ihn lieber selbst um, ist das völlig in Ordnung. Den Plan behalten Sie so oder so.", // geschützte Leerzeichen: nie „oder so.“ allein in der letzten Zeile
 };
 
 export const spielzug = {

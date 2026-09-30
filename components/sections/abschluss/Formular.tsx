@@ -56,9 +56,49 @@ function insBild(el: Element | null, reduced: boolean, oben = 104) {
   const r = el.getBoundingClientRect();
   const vh = window.innerHeight;
   if (r.top >= oben && r.top <= vh * 0.6) return;
+  scrollAuf(window.scrollY + r.top - oben, reduced);
+}
+
+function scrollAuf(y: number, reduced: boolean) {
   const lenis = window.__lenis;
-  if (lenis) lenis.scrollTo(el as HTMLElement, { offset: -oben, duration: reduced ? 0 : 0.9 });
-  else window.scrollTo({ top: window.scrollY + r.top - oben, behavior: reduced ? "auto" : "smooth" });
+  if (lenis) lenis.scrollTo(y, { duration: reduced ? 0 : 0.9 });
+  else window.scrollTo({ top: y, behavior: reduced ? "auto" : "smooth" });
+}
+
+/** Platz, den die Leiste oben belegt (CSS-Variable --nav-clear: Handy 72 px, sonst 92 px). */
+function navClear(): number {
+  return parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--nav-clear")) || 92;
+}
+
+/**
+ * Karte nach Schrittwechsel oder Ergebnis ausrichten.
+ * Zweispaltig (ab 1.000 px) steht die Karte neben dem Text: nur scrollen, wenn sie nicht gut im Bild ist.
+ * Einspaltig (Handy, Tablet) liegt der Lead direkt über der Karte. Damit oben keine angeschnittene
+ * Zeile stehen bleibt, beginnt die Karte entweder mit ruhigem Abstand unter der sichtbaren Leiste
+ * oder, wenn die Leiste beim Runterscrollen ausblendet, knapp unter dem Rand. Die Leiste (< 900 px)
+ * blendet aus, sobald die Seite mehr als 6 px nach unten läuft, und ein, sobald sie mehr als 6 px
+ * nach oben läuft. Gewählt wird das nähere der beiden Ziele, das zum Zustand der Leiste passt.
+ */
+function karteAusrichten(el: Element | null, reduced: boolean) {
+  if (!el) return;
+  const top = el.getBoundingClientRect().top;
+  const unterLeiste = navClear() + 12;
+  if (window.matchMedia("(min-width: 1000px)").matches) {
+    // gut im Bild: unter der Leiste und nicht zu tief (kein 4-px-Nachruckeln nach dem Knopf-Sprung)
+    if (top >= navClear() && top <= window.innerHeight * 0.6) return;
+    scrollAuf(window.scrollY + top - unterLeiste, reduced);
+    return;
+  }
+  const versteckbar = !window.matchMedia("(min-width: 900px)").matches;
+  const leisteDa = !document.documentElement.hasAttribute("data-nav-hidden");
+  // Ziel A: Leiste sichtbar, Karte darunter. Ziel B: Leiste ausgeblendet, Karte oben am Rand.
+  const dA = top - unterLeiste; // > 0 heißt: Seite läuft nach unten
+  const dB = top - 16;
+  const aPasst = !versteckbar || dA < -6 || (Math.abs(dA) <= 6 && leisteDa);
+  const bPasst = versteckbar && (dB > 6 || (Math.abs(dB) <= 6 && !leisteDa));
+  const d = aPasst && (!bPasst || Math.abs(dA) <= Math.abs(dB)) ? dA : dB;
+  if (Math.abs(d) <= 3) return;
+  scrollAuf(window.scrollY + d, reduced);
 }
 
 /** Schickt die Anfrage an /api/anfrage und übersetzt die Antwort in einen Zustand. */
@@ -189,7 +229,7 @@ export default function Formular() {
     if (!el || focusNext.current !== "step" || stepRef.current !== s) return;
     focusNext.current = null;
     requestAnimationFrame(() => {
-      insBild(el.closest(".frm-card"), reduced);
+      karteAusrichten(el.closest(".frm-card"), reduced);
       const fein = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
       const ziel = s === 2 && fein ? document.getElementById("frm-name") : el;
       ziel?.focus({ preventScroll: true });
@@ -199,11 +239,11 @@ export default function Formular() {
     if (!el || focusNext.current !== "result") return;
     focusNext.current = null;
     requestAnimationFrame(() => {
-      insBild(el.closest(".frm-card"), reduced);
+      karteAusrichten(el.closest(".frm-card"), reduced);
       el.focus({ preventScroll: true });
     });
     // nach dem Höhenwechsel der Karte noch einmal nachsehen
-    window.setTimeout(() => insBild(el.closest(".frm-card"), reduced), reduced ? 120 : 950);
+    window.setTimeout(() => karteAusrichten(el.closest(".frm-card"), reduced), reduced ? 120 : 950);
   };
 
   const werte = { tasks, employees, consent, ...t };

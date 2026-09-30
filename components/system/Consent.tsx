@@ -68,7 +68,7 @@ let defaultGesetzt = false;
 export default function Consent() {
   const stand = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const offen = stand === "offen";
-  const first = useRef<HTMLButtonElement>(null);
+  const box = useRef<HTMLDivElement>(null);
 
   // Grundzustand des Consent Mode einmal setzen, bevor irgendetwas von Google lädt
   useEffect(() => {
@@ -107,13 +107,14 @@ export default function Consent() {
     };
   }, []);
 
-  // Feste CTA-Leiste mobil weicht dem Feld aus; beim Öffnen Fokus auf den ersten Knopf
-  // (nicht modal, ohne zu scrollen), damit Tastatur-Nutzer das Feld sofort erreichen
+  // Feste CTA-Leiste mobil weicht dem Feld aus. Beim Öffnen Fokus auf das Fenster selbst
+  // (nicht modal, ohne zu scrollen): Tastatur-Nutzer sind mit dem nächsten Tab bei den
+  // Knöpfen, und keiner der beiden gleichwertigen Knöpfe steht hervorgehoben da.
   useEffect(() => {
     const html = document.documentElement;
     if (offen) {
       html.setAttribute("data-consent-open", "");
-      requestAnimationFrame(() => first.current?.focus({ preventScroll: true }));
+      requestAnimationFrame(() => box.current?.focus({ preventScroll: true }));
     } else html.removeAttribute("data-consent-open");
   }, [offen]);
 
@@ -132,7 +133,15 @@ export default function Consent() {
   return (
     <>
       {offen ? (
-        <div className="cons" role="dialog" aria-modal="false" aria-labelledby="cons-titel" aria-describedby="cons-text">
+        <div
+          ref={box}
+          className="cons"
+          role="dialog"
+          aria-modal="false"
+          aria-labelledby="cons-titel"
+          aria-describedby="cons-text"
+          tabIndex={-1}
+        >
           <div className="cons-card">
             <p className="cons-title" id="cons-titel">
               {einwilligung.titel}
@@ -144,7 +153,7 @@ export default function Consent() {
               {einwilligung.kurz} <Link href={einwilligung.mehrHref}>{einwilligung.kurzLink}</Link>
             </p>
             <div className="cons-buttons">
-              <button ref={first} type="button" className="cons-btn" onClick={() => entscheide("alle")}>
+              <button type="button" className="cons-btn" onClick={() => entscheide("alle")}>
                 {einwilligung.alle}
               </button>
               <button type="button" className="cons-btn" onClick={() => entscheide("notwendig")}>

@@ -12,6 +12,8 @@ import { ArrowOut, Play } from "@/components/system/Icons";
 
 // Namen nie über zwei Zeilen trennen
 const teamText = team.people.reduce((t, p) => t.replace(p.name, p.name.replace(/ /g, " ")), team.text);
+// In der Kapsel: Namenszusatz am Nachnamen halten („Jannik / vom Hofe“, nie „Hofe“ allein)
+const kapselName = (name: string) => name.replace(/ (vom|von|van|zu|de) /g, " $1 ");
 const neuestes = [...aktuelles.videos].sort((a, b) => b.datumIso.localeCompare(a.datumIso))[0];
 
 function Monogramm({ initials }: Readonly<{ initials: string }>) {
@@ -46,7 +48,7 @@ export default function Team() {
               <li key={p.name} className="team-person">
                 <Monogramm initials={p.initials} />
                 <span className="team-meta">
-                  <h3 className="team-name">{p.name}</h3>
+                  <h3 className="team-name">{kapselName(p.name)}</h3>
                   <span className="team-role">{p.role}</span>
                 </span>
               </li>

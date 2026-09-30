@@ -4,16 +4,20 @@
   display: grid;
   gap: 20px;
 }
+/* Rasterkinder dürfen schmaler werden als ihr längstes Wort (sonst drückt die H2 die Seite breiter) */
+.res-head > * {
+  min-width: 0;
+}
 /* Kennzahl „35+ umgesetzte Projekte“: Zahl und Etikett in einer Zeile, gleiche Größe.
-   Handy: über der Überschrift, abgesetzt durch eine Haarlinie. */
+   Handy und Tablet: nach Label und Überschrift als erste Zeile über den Karten,
+   abgesetzt durch eine Haarlinie (gehört so klar zu den Ergebnissen, nicht zum Schalter). */
 .res-stat {
-  order: -1;
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
   gap: 0 0.3em;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--line-2);
+  padding-top: 18px;
+  border-top: 1px solid var(--line-2);
   font-family: var(--font-display);
   font-size: 24px;
   font-weight: 500;
@@ -36,6 +40,7 @@
 .res-title {
   margin-top: 14px;
   max-width: 24ch;
+  overflow-wrap: break-word; /* nur Notfall, wenn ein Wort allein nicht in die Zeile passt */
 }
 
 /* Handy: wischbare Kartenreihe mit Einrasten, Kennzahl zuerst */
@@ -422,12 +427,11 @@
     gap: 64px;
   }
   .res-stat {
-    order: 0;
     flex-wrap: nowrap;
     white-space: nowrap;
     margin-bottom: 0.35em;
     padding: 6px 0 6px 32px;
-    border-bottom: 0;
+    border-top: 0;
     border-left: 1px solid var(--line);
     font-size: clamp(26px, 2.2vw, 34px);
   }

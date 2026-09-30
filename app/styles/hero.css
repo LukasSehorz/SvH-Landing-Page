@@ -80,8 +80,11 @@
   display: block;
   white-space: nowrap;
 }
+/* ab 700 px nie umbrechen: „text-wrap: balance“ würde das geerbte nowrap aufheben, und solange
+   die Schreibschrift noch lädt, ist die Ersatzschrift breiter; dann sprang die Zeile auf zwei
+   Zeilen und der Start rutschte beim Schriftwechsel um 64–75 px (CLS 0,25–0,32) */
 .hero-line-in {
-  text-wrap: balance;
+  white-space: nowrap;
 }
 .hero-title .script-text {
   font-size: 1.32em;
@@ -659,7 +662,12 @@
   .hero-line {
     white-space: normal;
   }
-  /* Handy: Überschrift ohne Zeilenversatz in ≈ 0,5 s (größtes Element, früher LCP) */
+  .hero-line-in {
+    white-space: normal;
+    text-wrap: balance;
+  }
+  /* Handy: erste Zeile steht sofort (größtes Element, früher LCP), nur die zweite Zeile
+     mit „gewinnen“ steigt in 0,5 s ohne Verzögerung aus der Maske */
   .hero-line {
     animation-duration: 0.55s;
     animation-delay: 0s;
@@ -667,6 +675,16 @@
   .hero-line-in {
     animation-duration: 0.5s;
     animation-delay: 0s;
+  }
+  .hero-line:first-child,
+  .hero-line:first-child .hero-line-in {
+    animation: none;
+  }
+  /* Kennzeile und Einleitungstext stehen ebenfalls sofort: der Text ist mobil das größte
+     Element und würde sonst als spätes LCP gemessen (erst unsichtbar, dann eingeblendet) */
+  .hero-eyebrow[data-hero-in],
+  .hero-text[data-hero-in] {
+    animation: none;
   }
   .hero-title .script-text {
     animation-delay: 0.4s;

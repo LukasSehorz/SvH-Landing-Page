@@ -522,8 +522,10 @@
     max-width: none;
     margin-bottom: 18px;
   }
+  /* gleiche Größe wie alle H2 (4,4vw); die Höhenbremse greift erst bei ungewöhnlich
+     flachen, breiten Fenstern (unter 8vh), damit Kopf und Tafel gemeinsam ins Bild passen */
   .sz-title {
-    font-size: clamp(34px, min(4.4vw, 7.2vh), 72px);
+    font-size: clamp(34px, min(4.4vw, 8vh), 72px);
   }
   .sz-finish--board {
     display: none;
@@ -557,7 +559,7 @@
     --goal-col: clamp(96px, 7.5vw, 140px);
     --pad-x: clamp(24px, 2.4vw, 36px);
     margin-inline: 0;
-    padding: 22px var(--pad-x) 24px;
+    padding: 18px var(--pad-x) 20px;
     border-radius: 30px;
   }
   .sz-dots {
@@ -618,7 +620,7 @@
     grid-row: 2;
     grid-column: var(--c);
     justify-content: center;
-    padding: 20px 0 44px;
+    padding: 20px 0 40px;
   }
   .sz-card {
     grid-row: 3;

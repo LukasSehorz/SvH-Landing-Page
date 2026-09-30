@@ -50,6 +50,11 @@
     --mobile-cta-h: calc(70px + max(12px, env(safe-area-inset-bottom)));
   }
 }
+@media (max-width: 899px) and (max-height: 500px) {
+  :root {
+    --mobile-cta-h: calc(58px + max(12px, env(safe-area-inset-bottom)));
+  }
+}
 
 /* ------------------------------------------------------------ Basis */
 
@@ -262,6 +267,13 @@ section[id] {
 @media (max-width: 699px) {
   .h2 {
     font-size: clamp(29px, 8.2vw, 34px);
+  }
+}
+/* sehr schmale Telefone (iPhone SE 1. Gen., 320 px): Überschriften wachsen mit der Breite,
+   damit lange Wörter („zurückbekommen haben.“) nie über den Rand ragen */
+@media (max-width: 359px) {
+  .h2 {
+    font-size: max(24px, 8.1vw);
   }
 }
 
@@ -512,6 +524,17 @@ section[id] {
     gap: 10px;
   }
 }
+/* 320 px (iPhone SE 1. Gen.): „Kostenlosen KI-Workshop sichern“ passt nur ohne Pfeil
+   vollständig in jede Knopfbreite (auch in die Spielzug-Tafel) */
+@media (max-width: 359px) {
+  .btn {
+    font-size: 14px;
+    padding-inline: 14px;
+  }
+  .btn .btn-arrow {
+    display: none;
+  }
+}
 @media (max-width: 699px) {
   .btn-sm {
     height: 44px;
@@ -676,6 +699,13 @@ section[id] {
   overflow: hidden;
   pointer-events: none;
   opacity: 0.7;
+}
+/* Telefon: die Trennlinie bringt keine Extrahöhe mit (Garantie → Team und Schalter →
+   Ergebnisse stehen im selben Abstand wie alle anderen Übergänge, ≈ 106 px) */
+@media (max-width: 699px) {
+  .divider {
+    margin-block: calc(var(--section-y) * -0.5 - 4px);
+  }
 }
 .divider svg {
   position: absolute;

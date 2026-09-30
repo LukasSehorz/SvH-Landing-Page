@@ -207,6 +207,28 @@
   text-decoration-color: var(--lav);
 }
 
+/* 320 px (iPhone SE 1. Gen.): Kapseln und Videokarte etwas dichter, damit „vom Hofe“,
+   das Datum und „Video ansehen“ jeweils in ihre Spalte passen */
+@media (max-width: 359px) {
+  .team-person {
+    gap: 8px;
+    padding: 10px;
+  }
+  .team-mono {
+    --s: 36px;
+  }
+  .team-video {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .team-video-meta {
+    letter-spacing: 0.08em;
+  }
+  .team-video-cta {
+    white-space: nowrap;
+  }
+}
+
 /* Hover (nur mit Maus): Abspielzeichen wird etwas größer und violett */
 @media (hover: hover) and (pointer: fine) {
   .team-video:hover .team-play {

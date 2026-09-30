@@ -170,16 +170,18 @@ function setup(el: HTMLElement): () => void {
     if (c.boxes.length) gsap.set(c.boxes, { "--f": 0 });
     if (c.checks.length) gsap.set(c.checks, { strokeDashoffset: 1 });
   };
+  // Aufbau straff (Runde 4): nach rund 0,5 s ab Seitenwechsel steht die Seite fast fertig da,
+  // damit auch ein kurzer Blick nie eine halb aufgebaute, blasse Seite erwischt
   const build = (i: number) => {
     if (i === 0) return;
     const c = parts(i);
-    if (c.bars.length) gsap.to(c.bars, { scaleX: 1, duration: 1.1, ease: "expo.out", stagger: 0.07 });
-    if (c.items.length) gsap.to(c.items, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.1 });
-    if (c.heads.length) gsap.to(c.heads, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", stagger: 0.1 });
-    if (c.lines.length) gsap.to(c.lines, { scaleX: 1, duration: 0.9, ease: "expo.out", stagger: 0.035, delay: 0.12 });
-    if (c.gauges.length) gsap.to(c.gauges, { scaleX: 1, duration: 1, ease: "expo.out", stagger: 0.1, delay: 0.25 });
-    if (c.boxes.length) gsap.to(c.boxes, { "--f": 1, duration: 0.3, ease: "power2.out", stagger: 0.06, delay: 0.2 });
-    if (c.checks.length) gsap.to(c.checks, { strokeDashoffset: 0, duration: 0.4, ease: "power2.out", stagger: 0.06, delay: 0.27 });
+    if (c.bars.length) gsap.to(c.bars, { scaleX: 1, duration: 0.5, ease: "expo.out", stagger: 0.035 });
+    if (c.items.length) gsap.to(c.items, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.06 });
+    if (c.heads.length) gsap.to(c.heads, { opacity: 1, y: 0, duration: 0.36, ease: "power3.out", stagger: 0.06 });
+    if (c.lines.length) gsap.to(c.lines, { scaleX: 1, duration: 0.5, ease: "expo.out", stagger: 0.018, delay: 0.05 });
+    if (c.gauges.length) gsap.to(c.gauges, { scaleX: 1, duration: 0.5, ease: "expo.out", stagger: 0.05, delay: 0.1 });
+    if (c.boxes.length) gsap.to(c.boxes, { "--f": 1, duration: 0.2, ease: "power2.out", stagger: 0.025, delay: 0.08 });
+    if (c.checks.length) gsap.to(c.checks, { strokeDashoffset: 0, duration: 0.26, ease: "power2.out", stagger: 0.025, delay: 0.12 });
   };
 
   // Startzustand: Stapel mit Deckblatt vorn (entspricht dem CSS-Startzustand)
@@ -200,8 +202,9 @@ function setup(el: HTMLElement): () => void {
     if (want !== cur) go(want);
   };
 
-  const OUT = 0.16; // Inhalt der alten Seite blendet aus
-  const IN = 0.3; // Inhalt der neuen Seite blendet ein
+  const OUT = 0.12; // Inhalt der alten Seite blendet aus
+  const IN = 0.2; // Inhalt der neuen Seite blendet ein
+  const MOVE = 0.45; // neue Seite steigt auf, die übrigen gleiten an ihren Stapelplatz
 
   const go = (next: number) => {
     if (next === cur) return;
@@ -238,16 +241,16 @@ function setup(el: HTMLElement): () => void {
       gsap.set(shades[fNext], { opacity: 0 });
     }, OUT);
     // die alte Seite bekommt ihren Inhalt zurück, sobald sie ganz verdeckt hinten liegt
-    tl.set(oldContent, { opacity: 1 }, OUT + 0.62);
-    // 3) dann ein: Seite steigt auf, Inhalt blendet ein und baut sich auf
-    tl.to(pages[fNext], { y: 0, duration: 0.6, ease: "power3.out" }, OUT);
-    tl.to(newContent, { opacity: 1, duration: IN, ease: "power1.out" }, OUT + 0.04);
-    tl.add(() => build(fNext), OUT + 0.08);
+    tl.set(oldContent, { opacity: 1 }, OUT + MOVE + 0.02);
+    // 3) dann ein: Seite steigt auf, Inhalt blendet ein und baut sich parallel auf
+    tl.to(pages[fNext], { y: 0, duration: MOVE, ease: "power3.out" }, OUT);
+    tl.to(newContent, { opacity: 1, duration: IN, ease: "power1.out" }, OUT + 0.02);
+    tl.add(() => build(fNext), OUT + 0.04);
     // die übrigen Seiten gleiten unsichtbar an ihren Stapelplatz
     pages.forEach((p, i) => {
       if (i === fNext) return;
-      tl!.to(p, { ...posFor(i, next), duration: 0.6, ease: "power3.inOut" }, OUT);
-      tl!.to(shades[i], { opacity: shadeFor(i, next), duration: 0.5, ease: "power2.out" }, OUT);
+      tl!.to(p, { ...posFor(i, next), duration: MOVE, ease: "power3.inOut" }, OUT);
+      tl!.to(shades[i], { opacity: shadeFor(i, next), duration: 0.4, ease: "power2.out" }, OUT);
     });
   };
 

@@ -239,7 +239,7 @@ export function WindowHead({ count, time }: { count: number; time: string }) {
         </div>
         <p className="c-count" data-zero={count === 0 ? "" : undefined}>
           <span className="c-count-bg" />
-          <b data-count="">{count}</b> {S.unread}
+          <b data-chaos-count="">{count}</b> {S.unread}
         </p>
       </div>
     </>
@@ -255,7 +255,7 @@ export function StackHead({ count, time }: { count: number; time: string }) {
       </p>
       <p className="c-count" data-zero={count === 0 ? "" : undefined}>
         <span className="c-count-bg" />
-        <b data-count="">{count}</b> {S.unread}
+        <b data-chaos-count="">{count}</b> {S.unread}
       </p>
     </div>
   );

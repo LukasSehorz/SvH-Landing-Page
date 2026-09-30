@@ -15,7 +15,7 @@ export default function Ergebnisse() {
     <section className="section res" id="ergebnisse" aria-labelledby="res-title">
       <div className="shell">
         {/* Überschrift steht für sich; die Projektzahl ist eine eigene, klar beschriftete Kennzahl
-            (Handy und Tablet darüber, ab 1024 px rechts neben der Überschrift), damit niemand „35+ Stunden“ liest */}
+            (Handy und Tablet darunter als erste Zeile über den Karten, ab 1024 px rechts neben der Überschrift) */}
         <div className="res-head">
           <div className="res-head-copy">
             <p className="label" data-reveal="">

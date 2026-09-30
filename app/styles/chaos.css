@@ -71,8 +71,22 @@
 .chaos--live {
   height: 225vh;
   height: calc(100svh + 125svh);
-  /* der untere Rand der Bühne liegt unter der festen CTA-Leiste: dem Schalter Platz lassen, statt Leere zu zeigen */
+  /* Der untere Rand der Bühne liegt unter der festen CTA-Leiste und bleibt am Ende leer
+     (die Zusammenfassung steht mittig). Der Schalter rückt deshalb unter die Bühne, und zwar
+     mit der Höhe wachsend: von „148 erledigt“ bis zum nächsten Label bleiben auf jedem
+     Telefon rund 100 px (gemessen 659–932 px Höhe), statt bis zu 260 px Schwarz. */
   margin-bottom: -56px;
+}
+@media (max-width: 699px) {
+  .chaos--live {
+    margin-bottom: min(-56px, calc(290px - 53.5svh));
+  }
+}
+/* Tablet hochkant: dasselbe mit dem Tablet-Rhythmus (≈ 125 px, gemessen 1024–1180 px Höhe) */
+@media (min-width: 700px) and (max-width: 959px) {
+  .chaos--live {
+    margin-bottom: min(-56px, calc(219px - 45svh));
+  }
 }
 .chaos-stage {
   position: sticky;
@@ -905,6 +919,19 @@
   }
   .cs--static .cs-toasts .ct:nth-child(-n + 2) > * {
     opacity: 0;
+  }
+}
+/* hohe Desktop-Schirme (ab 950 px, z. B. 1920 × 1080): Szene etwas über die Mitte setzen
+   (optische Mitte) und den Schalter unter den leeren unteren Bühnenrand rücken. So bleiben
+   am Ein- und Ausgang keine Streifen von 40 % der Bildhöhe leer. */
+@media (min-width: 960px) and (min-height: 950px) {
+  .chaos--live {
+    margin-bottom: -20vh;
+    margin-bottom: -20svh;
+  }
+  .chaos-frame {
+    padding-bottom: 20vh;
+    padding-bottom: 20svh;
   }
 }
 @media (min-width: 960px) and (max-width: 1180px) {

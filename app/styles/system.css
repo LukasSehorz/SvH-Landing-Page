@@ -29,15 +29,24 @@
 .nav[data-hidden="true"]:focus-within .nav-bar {
   pointer-events: auto;
 }
-/* weicher Verlauf unter der Leiste, damit Text nie angeschnitten an der Kapsel steht */
+/* Handy/Tablet: deckender Grund hinter der ganzen Kapsel (auch neben den runden Enden),
+   darunter ein weicher Auslauf. So schaut keine große Überschrift über oder unter der
+   Leiste hervor, sobald gescrollt ist. */
 .nav::before {
   content: "";
   position: absolute;
   left: 0;
   right: 0;
   top: -14px;
-  height: 118px;
-  background: linear-gradient(180deg, var(--bg) 0%, rgba(5, 5, 7, 0.85) 45%, rgba(5, 5, 7, 0) 100%);
+  height: 124px; /* 14 Rand + 64 Leiste + 46 Auslauf */
+  background: linear-gradient(
+    180deg,
+    var(--bg) 0px,
+    var(--bg) 82px,
+    rgba(5, 5, 7, 0.82) 94px,
+    rgba(5, 5, 7, 0.4) 108px,
+    rgba(5, 5, 7, 0) 100%
+  );
   opacity: 0;
   transition: opacity 0.4s var(--ease);
   pointer-events: none;
@@ -45,16 +54,39 @@
 .nav[data-scrolled="true"]::before {
   opacity: 1;
 }
-/* ab 900 px: beim Runterscrollen kompakte Pille (Marke + Knopf), der Knopf verschwindet nie */
+@media (max-width: 699px) {
+  .nav::before {
+    top: -8px;
+    height: 104px; /* 8 Rand + 56 Leiste + 40 Auslauf */
+    background: linear-gradient(
+      180deg,
+      var(--bg) 0px,
+      var(--bg) 66px,
+      rgba(5, 5, 7, 0.82) 78px,
+      rgba(5, 5, 7, 0.4) 90px,
+      rgba(5, 5, 7, 0) 100%
+    );
+  }
+}
+/* ab 900 px: beim Runterscrollen kompakte Pille (Marke + Knopf), der Knopf verschwindet nie.
+   Die Leiste verwandelt sich weich: erst gehen die Links (schnell, ohne Verzögerung),
+   dann zieht sich die Kapsel zur Mitte zusammen. Zurück umgekehrt. */
 .nav[data-compact="true"] .nav-bar {
   max-width: 540px;
+  transition:
+    max-width 0.6s var(--ease) 0.08s,
+    gap 0.6s var(--ease) 0.08s,
+    padding 0.6s var(--ease) 0.08s,
+    background-color 0.4s var(--ease),
+    border-color 0.4s var(--ease);
 }
 .nav[data-compact="true"] .nav-links {
   opacity: 0;
   pointer-events: none;
+  transition: opacity 0.12s linear;
 }
 .nav[data-compact="true"]:focus-within .nav-bar {
-  max-width: var(--shell);
+  max-width: min(var(--shell), 100%);
 }
 .nav[data-compact="true"]:focus-within .nav-links {
   opacity: 1;
@@ -73,7 +105,7 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 16px;
-  max-width: var(--shell);
+  max-width: min(var(--shell), 100%);
   margin-inline: auto;
   height: 64px;
   padding-inline: 10px 8px;
@@ -85,15 +117,52 @@
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
     0 20px 50px -20px rgba(0, 0, 0, 0.7);
-  transition: background-color 0.4s var(--ease), border-color 0.4s var(--ease);
+  transition:
+    max-width 0.6s var(--ease),
+    gap 0.6s var(--ease),
+    padding 0.6s var(--ease),
+    background-color 0.4s var(--ease),
+    border-color 0.4s var(--ease);
 }
 /* über Inhalt: vollständig deckend, darunterliegende Überschriften scheinen nie durch */
 .nav[data-scrolled="true"] .nav-bar {
   background: #08080c;
 }
-/* Formular im Bild: kein Knopf, der zum Formular führt; die Pille schrumpft auf die Marke */
-.nav[data-at-form="true"] .nav-end .btn-sm {
-  display: none !important;
+/* Formular im Bild: kein Knopf, der zum Formular führt; die Pille schrumpft auf die Marke.
+   Handy: Knopf einfach aus. Ab 900 px faltet er sich weich zusammen (erst ausblenden,
+   dann Breite), zurück umgekehrt (erst Breite, dann einblenden). */
+@media (max-width: 899px) {
+  .nav[data-at-form="true"] .nav-end .btn-sm {
+    display: none !important;
+  }
+}
+@media (min-width: 900px) {
+  .nav-end .btn-sm {
+    max-width: 300px;
+    transition:
+      transform 0.5s var(--ease),
+      box-shadow 0.5s var(--ease),
+      max-width 0.6s var(--ease),
+      padding 0.6s var(--ease),
+      opacity 0.3s var(--ease) 0.3s,
+      visibility 0s;
+  }
+  .nav[data-at-form="true"] .nav-end .btn-sm {
+    max-width: 0;
+    padding-inline: 0;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.12s linear,
+      max-width 0.6s var(--ease) 0.08s,
+      padding 0.6s var(--ease) 0.08s,
+      visibility 0s 0.7s;
+  }
+  .nav[data-at-form="true"] .nav-end {
+    gap: 0;
+  }
 }
 .nav[data-compact="true"][data-at-form="true"] .nav-bar {
   max-width: 300px;
@@ -133,7 +202,8 @@
   gap: 2px;
   min-width: 0;
   overflow: hidden;
-  transition: opacity 0.35s var(--ease);
+  /* beim Aufziehen erst einblenden, wenn die Kapsel fast ihre volle Breite hat */
+  transition: opacity 0.35s var(--ease) 0.28s;
 }
 
 .nav-link {
@@ -184,6 +254,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: gap 0.6s var(--ease);
 }
 
 .nav-burger {
@@ -492,6 +563,22 @@
     display: block;
   }
 }
+/* Querformat und Tablet: schmale Pille mittig statt über die volle Breite */
+@media (min-width: 600px) {
+  .mcta {
+    max-width: 480px;
+    margin-inline: auto;
+  }
+}
+/* flache Fenster (Handy quer): Knopf 44 px, die Leiste belegt weniger Höhe */
+@media (max-height: 500px) {
+  .mcta {
+    padding: 6px;
+  }
+  .mcta .btn {
+    height: 44px;
+  }
+}
 html[data-consent-open] .mcta,
 html[data-menu-open] .mcta {
   transform: translateY(140%);
@@ -685,6 +772,11 @@ html[data-menu-open] .mcta {
   width: min(360px, calc(100vw - 32px));
   animation: cons-in 0.6s var(--ease) both;
 }
+/* Anfangsfokus liegt auf dem Fenster selbst: ohne Ring (kein Knopf wirkt vorgewählt) */
+.cons:focus,
+.cons:focus-visible {
+  outline: none;
+}
 @keyframes cons-in {
   from {
     opacity: 0;
@@ -815,7 +907,7 @@ html[data-consent-open] {
     margin-top: 8px;
   }
   .cons-btn {
-    height: 40px;
+    height: 44px;
     font-size: 14px;
   }
 }

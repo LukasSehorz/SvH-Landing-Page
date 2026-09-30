@@ -316,9 +316,18 @@ export default function HeroMachine() {
       if (l) l.textContent = text;
     };
 
+    // Inhalt einer Karte (Punkt/Haken, Text). Im senkrechten Stapel zeigen die hinteren Karten
+    // nur ihre Kante, nie Text: so liegt beim Nachrücken nie Text über Text.
+    const inner = (c: HTMLElement) => Array.from(c.children) as HTMLElement[];
     const place = () => {
-      queue.forEach((c, k) => gsap.set(c, slotVars(g.inSlot(k))));
-      done.forEach((c, k) => gsap.set(c, slotVars(g.outSlot(k))));
+      queue.forEach((c, k) => {
+        gsap.set(c, slotVars(g.inSlot(k)));
+        gsap.set(inner(c), { opacity: g.mobile && k > 0 ? 0 : 1 });
+      });
+      done.forEach((c, k) => {
+        gsap.set(c, slotVars(g.outSlot(k)));
+        gsap.set(inner(c), { opacity: g.mobile && k > 0 ? 0 : 1 });
+      });
     };
     place();
 
@@ -339,6 +348,7 @@ export default function HeroMachine() {
           // Karten weiterreichen
           label(flyer, TASKS[next % TASKS.length]);
           gsap.set(flyer, slotVars(g.inSlot(3)));
+          if (g.mobile) gsap.set(inner(flyer), { opacity: 0 });
           queue = [queue[1], queue[2], queue[3], flyer];
           done = [out, done[0], done[1], done[2]];
           current = (current + 1) % TASKS.length;
@@ -367,10 +377,16 @@ export default function HeroMachine() {
         .to(queue[1], { ...slotVars(g.inSlot(0)), duration: 0.8, ease: "expo.out" }, 0.75)
         .to(queue[2], { ...slotVars(g.inSlot(1)), duration: 0.8, ease: "expo.out" }, 0.85)
         .fromTo(queue[3], slotVars(g.inSlot(3)), { ...slotVars(g.inSlot(2)), duration: 0.8, ease: "expo.out" }, 1.25);
+      // senkrechter Stapel: die nachrückende Karte zeigt ihren Text erst, wenn sie vorne liegt
+      if (g.mobile) tl.to(inner(queue[1]), { opacity: 1, duration: 0.3, ease: "power1.out" }, 0.85);
       done.slice(0, 3).forEach((d, k) => {
         const last = k === 2;
         tl!.to(d, { ...slotVars(g.outSlot(k + 1)), duration: last ? 0.35 : 0.7, ease: last ? "power1.out" : "expo.out" }, 1.35 + (2 - k) * 0.05);
       });
+      // senkrechter Stapel: erst geht der Text der bisherigen Karte (sie rückt nach hinten),
+      // dann fährt die neue ein; die neue trägt ihren Text von Anfang an
+      tl.set(inner(out), { opacity: 1 }, 0);
+      if (g.mobile) tl.to(inner(done[0]), { opacity: 0, duration: 0.22, ease: "power1.out" }, 1.3);
       tl.fromTo(
         out,
         { x: c.x, y: c.y, scale: 0.3, autoAlpha: 0, zIndex: o0.z + 1 },
