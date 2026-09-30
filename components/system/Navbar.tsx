@@ -91,6 +91,27 @@ export default function Navbar() {
     return () => io.disconnect();
   }, [onHome]);
 
+  // Formular im Bild: der Leisten-Knopf führt dorthin, wo man schon ist, also blendet er aus
+  const [atForm, setAtForm] = useState(false);
+  useEffect(() => {
+    if (!onHome) return;
+    let io: IntersectionObserver | null = null;
+    const watch = () => {
+      const el = document.getElementById("termin");
+      if (!el) return false;
+      io = new IntersectionObserver(([e]) => setAtForm(e.isIntersecting), { rootMargin: "-30% 0px -30% 0px" });
+      io.observe(el);
+      return true;
+    };
+    // Abschluss kann später hydrieren: kurz nachfassen
+    const late = watch() ? 0 : window.setTimeout(watch, 1500);
+    return () => {
+      window.clearTimeout(late);
+      io?.disconnect();
+      setAtForm(false);
+    };
+  }, [onHome]);
+
   // Aufklapper schließen: Escape, Klick daneben
   useEffect(() => {
     if (!dropOpen) return;
@@ -203,6 +224,7 @@ export default function Navbar() {
         data-hidden={hidden ? "true" : "false"}
         data-compact={compact ? "true" : "false"}
         data-scrolled={scrolled ? "true" : "false"}
+        data-at-form={atForm && !sheetOpen ? "true" : "false"}
       >
         <nav className="nav-bar" aria-label="Hauptmenü">
           <Link href="/" className="nav-mark" aria-label={nav.home}>

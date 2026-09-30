@@ -87,9 +87,24 @@
     0 20px 50px -20px rgba(0, 0, 0, 0.7);
   transition: background-color 0.4s var(--ease), border-color 0.4s var(--ease);
 }
-/* über Inhalt: nahezu deckend, darunterliegende Überschriften sind nie lesbar */
+/* über Inhalt: vollständig deckend, darunterliegende Überschriften scheinen nie durch */
 .nav[data-scrolled="true"] .nav-bar {
-  background: rgba(8, 8, 12, 0.96);
+  background: #08080c;
+}
+/* Formular im Bild: kein Knopf, der zum Formular führt; die Pille schrumpft auf die Marke */
+.nav[data-at-form="true"] .nav-end .btn-sm {
+  display: none !important;
+}
+.nav[data-compact="true"][data-at-form="true"] .nav-bar {
+  max-width: 300px;
+}
+@media (min-width: 1180px) {
+  /* nur noch die Marke: Pille umschließt sie gleichmäßig */
+  .nav[data-compact="true"][data-at-form="true"] .nav-bar {
+    max-width: 218px;
+    gap: 0;
+    padding-inline: 10px;
+  }
 }
 
 .nav-mark {
@@ -489,7 +504,7 @@ html[data-menu-open] .mcta {
 .footer {
   position: relative;
   overflow: hidden;
-  padding-top: clamp(72px, 8vw, 120px);
+  padding-top: clamp(56px, 5vw, 72px);
   border-top: 1px solid var(--line-2);
 }
 .footer-veil {
@@ -514,7 +529,7 @@ html[data-menu-open] .mcta {
   height: 28px;
 }
 .footer-claim {
-  margin-top: 22px;
+  margin-top: 18px;
   font-family: var(--font-display);
   font-size: clamp(24px, 2.2vw, 34px);
   font-weight: 500;
@@ -552,7 +567,7 @@ html[data-menu-open] .mcta {
 }
 .footer-mark {
   position: relative;
-  margin-top: clamp(56px, 7vw, 110px);
+  margin-top: clamp(32px, 3.6vw, 56px);
 }
 .footer-mark-img {
   --reveal: 100%;
@@ -583,8 +598,8 @@ html[data-menu-open] .mcta {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 10px 28px;
-  margin-top: clamp(28px, 3vw, 44px);
-  padding-block: 22px 28px;
+  margin-top: clamp(20px, 2vw, 28px);
+  padding-block: 18px 22px;
   border-top: 1px solid var(--line-2);
   font-size: 14px;
   color: var(--ink-3);
@@ -593,6 +608,21 @@ html[data-menu-open] .mcta {
 .footer-list a,
 .footer-list button {
   min-width: 44px;
+}
+/* ab 900 px: Seitenliste zweispaltig (fünf Einträge in drei Zeilen), Fußzeile flacher */
+@media (min-width: 900px) {
+  .footer-pages .footer-list {
+    grid-template-columns: repeat(2, max-content);
+    column-gap: 32px;
+  }
+}
+/* Desktop mit Maus: Listen dichter (Tippflächen bleiben mobil 44 px) */
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) {
+  .footer-list a,
+  .footer-list button,
+  .footer-list span {
+    min-height: 34px;
+  }
 }
 @media (max-width: 899px) {
   .footer-grid {
@@ -606,19 +636,24 @@ html[data-menu-open] .mcta {
    im Abschluss darüber, deshalb dort keine zweite Kontaktliste */
 @media (max-width: 699px) {
   .footer {
-    padding-top: 48px;
+    padding-top: 40px;
   }
   .footer-grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: 26px;
+    gap: 22px;
   }
   .footer-claim {
     margin-top: 14px;
     font-size: 22px;
   }
+  /* Seiten als fließende Zeile statt zweispaltiger Liste (Tippflächen bleiben 44 px hoch) */
   .footer-pages .footer-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 22px;
+  }
+  .footer-pages .footer-title {
+    margin-bottom: 4px;
   }
   .footer-list {
     gap: 0;

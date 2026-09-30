@@ -21,7 +21,7 @@
   --node: 38px;
   position: relative;
   margin-inline: calc(12px - var(--gutter));
-  padding: 24px 14px 26px 8px;
+  padding: 20px 14px 22px 8px;
   border-radius: 24px;
   overflow: hidden;
   isolation: isolate;
@@ -137,7 +137,7 @@
   display: grid;
   grid-template-columns: var(--rail) minmax(0, 1fr);
   column-gap: 12px;
-  row-gap: 14px;
+  row-gap: 12px;
 }
 
 .sz-step {
@@ -162,7 +162,7 @@
 .sz-free {
   grid-column: 2;
   grid-row: 1;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   font-size: 16px;
   font-weight: 500;
   line-height: 22px;
@@ -266,7 +266,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 16px 16px 18px;
+  padding: 14px 16px 16px;
 }
 .sz-step-no {
   font-size: 12.5px;
@@ -287,15 +287,16 @@
   text-wrap: balance;
 }
 .sz-card-text {
-  margin-top: 8px;
-  font-size: 16.5px;
+  margin-top: 6px;
+  font-size: 16px;
   line-height: 1.5;
   color: rgba(244, 244, 246, 0.74);
-  text-wrap: pretty;
+  /* keine kurzen Schlusszeilen („Zeitfresser.“, „mit uns.“): Zeilen gleichmäßig verteilen */
+  text-wrap: balance;
 }
 .sz-tag {
   margin-top: auto;
-  padding-top: 14px;
+  padding-top: 12px;
 }
 .sz-tag .chip {
   white-space: nowrap;
@@ -311,7 +312,7 @@
   grid-column: 2;
   grid-row: 5;
   margin-left: 34px;
-  padding: 14px 16px 16px;
+  padding: 12px 16px 14px;
   background: linear-gradient(162deg, rgba(30, 28, 58, 0.82) 0%, rgba(17, 16, 34, 0.9) 100%);
   border-color: rgba(244, 244, 246, 0.14);
 }
@@ -342,8 +343,8 @@
   height: 18px;
 }
 .sz-fork-text {
-  margin-top: 8px;
-  font-size: 16.5px;
+  margin-top: 6px;
+  font-size: 16px;
   line-height: 1.45;
   color: rgba(244, 244, 246, 0.74);
 }
@@ -378,7 +379,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 88px;
+  margin-top: 72px;
 }
 .sz-goalmouth {
   display: block;
@@ -397,11 +398,11 @@
   display: none;
 }
 .sz-finish--board {
-  margin-top: 18px;
+  margin-top: 14px;
   padding-inline: 6px;
 }
 .sz-finish .btn {
-  margin-top: 18px;
+  margin-top: 16px;
 }
 .sz-goaltext {
   text-align: center;
@@ -411,7 +412,7 @@
 }
 .sz-goal-big {
   display: inline-block;
-  font-size: 44px;
+  font-size: 40px;
   font-weight: 600;
   background: var(--grad);
   -webkit-background-clip: text;
@@ -420,12 +421,38 @@
   -webkit-text-fill-color: transparent;
   padding-bottom: 0.06em;
 }
+/* „Tor! Zeit gewonnen.“ in einer Zeile (wie am Desktop), spart eine Zeile */
 .sz-goal-sub {
-  display: block;
-  margin-top: 2px;
-  font-size: 26px;
+  display: inline;
+  margin-left: 0.2em;
+  font-size: 24px;
   font-weight: 500;
   color: var(--ink);
+}
+
+/* ------------------------------------------------ Telefon: dichter
+   Die Nummer steht schon im Spielerkreis daneben, „Schritt 1“ bleibt nur für
+   Screenreader. Der Kreis sitzt auf Höhe der ersten Titelzeile. */
+
+@media (max-width: 699px) {
+  .sz-step-no {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+  .sz-card-title {
+    margin-top: 0;
+  }
+  .sz-nodecell {
+    padding-top: 7px;
+  }
+  .sz-head {
+    margin-bottom: 24px;
+  }
 }
 
 /* ------------------------------------------------ ab 700 px: mehr Luft */
@@ -449,11 +476,16 @@
     font-size: 22px;
   }
   .sz-card-text {
+    margin-top: 8px;
     font-size: 17px;
   }
   .sz-fork {
     margin-left: 44px;
     padding: 18px 20px;
+  }
+  .sz-fork-text {
+    margin-top: 8px;
+    font-size: 16.5px;
   }
   .sz-free {
     font-size: 16px;

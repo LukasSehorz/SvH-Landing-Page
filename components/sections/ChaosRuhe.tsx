@@ -21,7 +21,7 @@ import { buildTimeline, fitScene } from "./chaos/timeline";
 
 const B = chaos.beats;
 // Scrollweg im gepinnten Zustand in Bildschirmhöhen (muss zum CSS passen: .chaos--live)
-const RUN = { win: 1.8, stack: 1.5 } as const;
+const RUN = { win: 1.2, stack: 1.25 } as const;
 // Einlauf: Zeitstrahl beginnt, wenn die Sektionsoberkante bei 70 % der Höhe steht
 const ENTRY = 0.7;
 

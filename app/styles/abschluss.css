@@ -12,7 +12,7 @@
   --abs-top: 28px;
   padding-top: var(--abs-top);
 }
-@media (min-width: 1100px) {
+@media (min-width: 1000px) {
   .abs {
     --abs-top: 64px;
   }
@@ -55,7 +55,8 @@
 }
 .abs-side {
   grid-area: direct;
-  padding-top: 26px;
+  min-width: 0;
+  padding-top: 20px;
   border-top: 1px solid var(--line);
 }
 .abs-title {
@@ -821,44 +822,42 @@
 }
 
 /* ----------------------------------------------------------- Direktkontakt */
+/* Verdichtet: Titel, darunter Telefon · E-Mail · Zeiten als schlanke Zeilen
+   (mobil untereinander mit 44 px Tippfläche, ab Tablet nebeneinander). */
 
-.abs-direct {
-  min-width: 0;
-}
 .abs-direct-title {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 19px;
   font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
   color: var(--ink);
 }
 .abs-direct-list {
-  display: grid;
-  gap: 4px;
-  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 4px;
 }
 .abs-direct-row {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 14px;
-  min-height: 56px;
-  font-size: 17px;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--ink);
   -webkit-tap-highlight-color: transparent;
 }
-.abs-direct-ic {
-  display: grid;
-  place-items: center;
-  flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.025);
+.abs-direct-row svg {
+  flex: 0 0 16px;
   color: var(--lav);
-  transition: border-color 0.3s var(--ease);
+}
+.abs-direct-row--static {
+  min-height: 34px;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink-2);
 }
 .abs-direct-val {
   min-width: 0;
@@ -867,14 +866,19 @@
 a.abs-direct-row:hover .abs-direct-val {
   color: var(--lav);
 }
-a.abs-direct-row:hover .abs-direct-ic {
-  border-color: rgba(185, 165, 255, 0.45);
+a.abs-direct-row:focus-visible {
+  outline-offset: 3px;
+  border-radius: 8px;
 }
-.abs-direct-val--sm {
-  font-size: 16px;
-  font-weight: 400;
-  color: var(--ink-2);
-  text-wrap: balance;
+@media (min-width: 700px) {
+  .abs-direct-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 26px;
+  }
+  .abs-direct-row--static {
+    min-height: 44px;
+  }
 }
 
 /* Hinweis ohne JavaScript */
@@ -895,182 +899,114 @@ a.abs-direct-row:hover .abs-direct-ic {
   overflow-wrap: anywhere;
 }
 
-/* ----------------------------------------------------------- Deckblatt (Desktop) */
+/* ----------------------------------------------------------- Deckblatt (ab 1.000 px) */
+/* Das Deckblatt aus dem Geschenk (CoverPage, Stile in geschenk.css) im Hochformat,
+   hier nur Größe, Neigung und Papierfarben (die Variablen gelten sonst nur in .gs). */
 
-.deck {
+.abs-deck,
+.abs-gift-cap {
   display: none;
 }
-@media (min-width: 1100px) {
-  .abs-side {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 28px;
-  }
-  .deck {
-    display: block;
-    flex: 0 0 auto;
-    width: clamp(180px, 15vw, 224px);
-    margin-top: 4px;
-  }
-}
-.deck-sheet {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  aspect-ratio: 297 / 210;
-  overflow: hidden;
-  border-radius: 3px;
-  color: #17151f;
-  background:
-    radial-gradient(130% 90% at 8% 0%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 60%),
-    linear-gradient(168deg, #f8f6f1 0%, #f0ede6 58%, #e9e5dd 100%);
-  box-shadow:
-    0 0 0 0.5px rgba(0, 0, 0, 0.3),
-    0 1px 1.5px rgba(0, 0, 0, 0.22),
-    0 8px 18px -10px rgba(0, 0, 0, 0.5),
-    0 30px 60px -26px rgba(0, 0, 0, 0.8);
-}
-.deck-band {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex: 0 0 36%;
-  padding: 9px 11px;
-  background:
-    radial-gradient(90% 140% at 50% 120%, rgba(124, 106, 255, 0.55), rgba(124, 106, 255, 0) 60%),
-    linear-gradient(160deg, #0b0c1c 0%, #15143a 58%, #1f1a52 100%);
-}
-.deck-band::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #5b8cff 0%, #6f6bff 55%, #8f7cff 100%);
-}
-.deck-mono {
-  width: 11px;
-  height: 18px;
-  background: #f4f4f6;
-  -webkit-mask: url(/logo/svh-bild-160.webp) center / contain no-repeat;
-  mask: url(/logo/svh-bild-160.webp) center / contain no-repeat;
-}
-.deck-sample {
-  padding: 3px 7px;
-  border-radius: 99px;
-  border: 1px solid rgba(244, 244, 246, 0.28);
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: 0.04em;
-  color: rgba(244, 244, 246, 0.82);
-}
-.deck-main {
-  display: flex;
-  flex-direction: column;
-  padding: 10px 11px 0;
-}
-.deck-title {
-  font-family: var(--font-display);
-  font-size: 19px;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.035em;
-}
-.deck-sub {
-  margin-top: 3px;
-  font-family: var(--font-display);
-  font-size: 12.5px;
-  letter-spacing: -0.01em;
-  color: #4d4a57;
-}
-.deck-foot {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: auto;
-  padding: 0 11px 9px;
-}
-.deck-rule {
-  width: 16px;
-  height: 2px;
-  border-radius: 9px;
-  background: linear-gradient(90deg, #5b8cff 0%, #6f6bff 55%, #8f7cff 100%);
-}
-.deck-by {
-  min-width: 0;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: #4d4a57;
-  white-space: nowrap;
-  overflow: hidden;
-}
-/* „0 €“-Stempel: erscheint im Erfolgszustand (#termin[data-gesendet]) */
-.deck-stamp {
-  position: absolute;
-  right: 12px;
-  bottom: 31px;
-  display: grid;
-  place-items: center;
-  width: 58px;
-  aspect-ratio: 1;
-  color: #5b49e6;
-  mix-blend-mode: multiply;
-  opacity: 0;
-  transform: rotate(-12deg) scale(1.35);
-  transition:
-    opacity 0.35s var(--ease) 0.2s,
-    transform 0.6s var(--ease) 0.2s;
-}
-.deck-stamp svg {
-  position: absolute;
-  inset: 0;
+.abs-deck {
+  --paper-ink: #17151f;
+  --paper-ink-2: #4d4a57;
+  --paper-ink-3: #66636e;
+  --paper-rule: rgba(23, 21, 31, 0.12);
+  --paper-skel: rgba(23, 21, 31, 0.11);
+  --paper-violet: #5b49e6;
+  --paper-grad: linear-gradient(90deg, #5b8cff 0%, #6f6bff 55%, #8f7cff 100%);
   width: 100%;
-  height: 100%;
-  overflow: visible;
+  rotate: -3deg;
 }
-.deck-stamp circle {
-  fill: none;
-  stroke: currentColor;
+.abs-deck .md {
+  width: 100%;
 }
-.deck-stamp .o {
-  stroke-width: 2.2;
+.abs .abs-deck .md-box {
+  width: 100%;
+  aspect-ratio: 210 / 297;
+  margin: 0;
 }
-.deck-stamp .i {
-  stroke-width: 1;
+/* Kleines Blatt: Untertitel nie unter 11 px; Absender unter dem Strich,
+   ohne Sperrung, damit er in einer (höchstens zwei) Zeile(n) steht */
+.abs-deck .md-cover-sub {
+  font-size: max(11px, 5.4cqw);
 }
-.deck-stamp-v {
-  font-family: var(--font-display);
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+.abs-deck .md-cover-foot {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3.4cqw;
 }
-.abs[data-gesendet] .deck-stamp {
+.abs-deck .md-cover-by {
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  text-transform: none;
+}
+/* „0 €“-Stempel: erst im Erfolgszustand (#termin[data-gesendet]) */
+.abs-deck .md-stamp {
+  opacity: 0;
+  scale: 1.3;
+  transition:
+    opacity 0.35s var(--ease) 0.25s,
+    scale 0.6s var(--ease) 0.25s;
+}
+.abs[data-gesendet] .abs-deck .md-stamp {
   opacity: 1;
-  transform: rotate(-12deg) scale(1);
+  scale: 1;
+}
+.abs-gift-cap {
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+.abs-gift-rule {
+  width: 28px;
+  height: 2px;
+  margin-bottom: 14px;
+  border-radius: 2px;
+  background: var(--grad);
+}
+.abs-gift-t {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.abs-gift-m {
+  margin-top: 6px;
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.abs-gift-p {
+  font-weight: 600;
+  color: var(--lav);
+}
+@media (prefers-reduced-motion: reduce) {
+  .abs-deck .md-stamp {
+    transition: opacity 0.2s linear;
+  }
 }
 
 /* ----------------------------------------------------------- größere Karte */
 
-@container (min-width: 480px) {
-  .frm-tile-ic {
-    display: block;
-  }
+/* Ab 440 px Kartenbreite (Tablet, Desktop): Schritt 1 dichter, damit „Weiter“ auch
+   nach der ersten Kachel (Regler + Rechnung klappen auf) bei 768 px Höhe gut im Bild
+   bleibt. Regler kompakt (Frage links, Zahl rechts), Rechnung als eine ruhige Zeile. */
+@container (min-width: 440px) {
   .frm-tile {
-    min-height: 48px;
-    padding-block: 6px;
-    font-size: 16px;
-    padding-right: 44px;
+    min-height: 44px;
+    padding: 5px 34px 5px 12px;
+    font-size: 15px;
   }
   .frm-tile .frm-tick {
     position: absolute;
     float: none;
     top: 50%;
-    right: 14px;
+    right: 12px;
     width: 18px;
     height: 18px;
     margin: -9px 0 0;
@@ -1081,21 +1017,18 @@ a.abs-direct-row:hover .abs-direct-ic {
   .frm-field--wide {
     grid-column: 1 / -1;
   }
-  .frm-title {
-    font-size: 24px;
-  }
-  /* Titel und Hinweis in einer Zeile */
+  /* Titel und Hinweis in einer Zeile, wenn Platz ist */
   .frm-legend {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
     column-gap: 16px;
+    margin-bottom: 10px;
   }
   .frm-legend .frm-hint {
     margin-top: 2px;
   }
-  /* Regler kompakt: Frage links, Zahl rechts */
   .frm-slider-head {
     display: flex;
     align-items: flex-end;
@@ -1104,23 +1037,66 @@ a.abs-direct-row:hover .abs-direct-ic {
   }
   .frm-slider-head .frm-q {
     max-width: 24em;
+    font-size: 16px;
   }
   .frm-hours {
     flex: 0 0 auto;
+    gap: 8px;
   }
   .frm-hours-num {
-    font-size: 44px;
+    font-size: 40px;
+  }
+  .frm-hours-unit {
+    font-size: 15px;
   }
   .frm-slider {
     margin-top: 12px;
-    padding-top: 14px;
+    padding-top: 12px;
   }
-  /* Grenzwerte 1 und 80 stehen am Desktop nicht extra da, die große Zahl zeigt den Wert */
+  .frm-range {
+    height: 36px;
+    margin-top: 4px;
+  }
+  /* Grenzwerte 1 und 80 stehen hier nicht extra da, die große Zahl zeigt den Wert */
   .frm-scale {
     display: none;
   }
   .frm-calc {
-    margin-top: 10px;
+    margin-top: 4px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .autoh.frm-viewport {
+    margin-top: 6px;
+  }
+  .frm-foot {
+    margin-top: 14px;
+  }
+}
+/* breite Karte: Symbole in den Kacheln, größerer Titel */
+@container (min-width: 520px) {
+  .frm-tile-ic {
+    display: block;
+  }
+  .frm-tile {
+    gap: 10px;
+    font-size: 15.5px;
+    padding-inline: 14px 40px;
+  }
+  .frm-tile .frm-tick {
+    right: 13px;
+  }
+  .frm-title {
+    font-size: 24px;
+  }
+}
+@container (min-width: 600px) {
+  .frm-tile {
+    font-size: 16px;
   }
 }
 @container (min-width: 560px) {
@@ -1160,21 +1136,152 @@ a.abs-direct-row:hover .abs-direct-ic {
   }
 }
 
-@media (min-width: 1100px) {
+/* Mit Maus: Kopfzeile der Karte schlanker (Zurück-Knopf 36 statt 44 px) */
+@media (hover: hover) and (pointer: fine) {
+  .frm-top {
+    min-height: 36px;
+  }
+  .frm-back {
+    height: 36px;
+  }
+}
+
+/* Ab 1.000 px: Überschrift und Formular nebeneinander, damit „Weiter“ schon bei
+   1024 × 768 ohne Scrollen erreichbar ist. Links unter dem Lead das Deckblatt,
+   rechts daneben oben die Geschenk-Zeile, unten der Direktkontakt. Dafür wird
+   .abs-head durchlässig (display: contents) und seine Teile liegen im Raster. */
+@media (min-width: 1000px) {
   .abs-grid {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6.4fr);
-    grid-template-rows: auto 1fr;
+    --deck-w: clamp(142px, 12vw, 176px);
+    --deck-gap: clamp(20px, 2.5vw, 36px);
+    --form-gap: clamp(44px, 4.4vw, 56px);
+    grid-template-columns: var(--deck-w) minmax(0, 1fr) 60%;
+    grid-template-rows: auto auto auto auto auto 1fr;
     grid-template-areas:
-      "head form"
-      "direct form";
-    column-gap: clamp(56px, 6vw, 112px);
-    row-gap: 48px;
+      "label label form"
+      "title title form"
+      "text  text  form"
+      "deck  cap   form"
+      "deck  direct form"
+      ".     .     form";
+    gap: 0;
     align-items: start;
   }
   .abs-head {
-    padding-top: 12px;
+    display: contents;
+  }
+  .abs-head > .label {
+    grid-area: label;
+    justify-self: start;
+    margin-top: 12px;
+  }
+  .abs-title {
+    grid-area: title;
+    font-size: clamp(46px, 5.2vw, 84px);
+  }
+  .abs-text {
+    grid-area: text;
+  }
+  .abs-form {
+    grid-area: form;
+    padding-left: var(--form-gap);
+  }
+  .abs-deck {
+    grid-area: deck;
+    display: block;
+    width: calc(100% - 4px);
+    margin: clamp(28px, 3.6vh, 40px) 0 0 4px;
+  }
+  .abs-gift-cap {
+    grid-area: cap;
+    display: flex;
+    margin: clamp(28px, 3.6vh, 40px) 0 0 var(--deck-gap);
+    padding-top: 18px;
+  }
+  .abs-side {
+    grid-area: direct;
+    align-self: end;
+    margin: 22px 0 0 var(--deck-gap);
+    padding-top: 16px;
   }
   .frm-card {
-    padding: 26px 36px 36px;
+    padding: 16px 28px 28px;
+  }
+  .abs-direct-title {
+    font-size: 17px;
+  }
+  .abs-direct-list {
+    flex-direction: column;
+    margin-top: 6px;
+  }
+  .abs-direct-row,
+  .abs-direct-row--static {
+    align-items: flex-start;
+    min-height: 30px;
+    padding-block: 5px;
+    font-size: 15px;
+    line-height: 1.35;
+  }
+  .abs-direct-row svg {
+    margin-top: 2px;
+  }
+  .abs-direct-row--static {
+    font-size: 14.5px;
+  }
+  .abs-direct-row--static .abs-direct-val {
+    text-wrap: balance;
   }
 }
+/* Niedrige Laptop-Fenster (z. B. 1366 × 657, 1280 × 720): Schritt 1 noch etwas dichter */
+@media (min-width: 1000px) and (max-height: 760px) {
+  .frm-card {
+    padding-top: 12px;
+  }
+  .frm-tiles {
+    gap: 5px;
+  }
+  .frm-tile {
+    min-height: 40px;
+    padding-block: 4px;
+  }
+  .frm-legend {
+    margin-bottom: 8px;
+  }
+  .frm-slider {
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+  .frm-range {
+    height: 32px;
+    margin-top: 2px;
+  }
+  .frm-hours-num {
+    font-size: 36px;
+  }
+  .frm-foot {
+    margin-top: 12px;
+  }
+}
+
+/* 1.000–1.279: E-Mail-Adresse bleibt einzeilig */
+@media (min-width: 1000px) and (max-width: 1279px) {
+  .abs-direct-row {
+    font-size: 14.5px;
+  }
+  .abs-direct-row svg {
+    display: none;
+  }
+  .abs-direct-row {
+    gap: 0;
+  }
+}
+@media (min-width: 1280px) {
+  .abs-grid {
+    --form-gap: clamp(56px, 6vw, 112px);
+    grid-template-columns: var(--deck-w) minmax(0, 1fr) 59%;
+  }
+  .frm-card {
+    padding: 16px 36px 34px;
+  }
+}
+

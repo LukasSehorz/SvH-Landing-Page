@@ -14,14 +14,10 @@ export default function Ergebnisse() {
   return (
     <section className="section res" id="ergebnisse" aria-labelledby="res-title">
       <div className="shell">
+        {/* Überschrift steht für sich; die Projektzahl ist eine eigene, klar beschriftete Kennzahl
+            (Handy und Tablet darüber, ab 1024 px rechts neben der Überschrift), damit niemand „35+ Stunden“ liest */}
         <div className="res-head">
-          <div className="res-big" data-reveal="">
-            <span className="res-big-num" data-count="35" data-suffix="+">
-              {ergebnisse.big}
-            </span>
-            <span className="res-big-label">{ergebnisse.bigLabel}</span>
-          </div>
-          <div>
+          <div className="res-head-copy">
             <p className="label" data-reveal="">
               {ergebnisse.label}
             </p>
@@ -29,6 +25,12 @@ export default function Ergebnisse() {
               <Rich text={ergebnisse.title} />
             </h2>
           </div>
+          <p className="res-stat" data-reveal="">
+            <span className="res-stat-num" data-count="35" data-suffix="+">
+              {ergebnisse.big}
+            </span>
+            <span className="res-stat-label">{ergebnisse.bigLabel}</span>
+          </p>
         </div>
 
         <ul className="res-grid" id="res-track">

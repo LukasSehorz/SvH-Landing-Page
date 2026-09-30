@@ -214,25 +214,33 @@ class Core {
 
 type Slot = { x: number; y: number; s: number; a: number; z: number };
 
-function geo(W: number, H: number) {
-  // Mobil nach Bildschirmbreite (wie im CSS), nicht nach Bühnenbreite
-  const mobile = window.matchMedia("(max-width: 699px)").matches;
+/* Senkrechter Fluss auf dem Handy und bei 1024–1179 px quer (Maschine in der schmalen rechten Spalte).
+   Muss zur gleichlautenden Abfrage in app/styles/hero.css passen. */
+const VERTICAL = "(max-width: 699px), (min-width: 1024px) and (max-width: 1179px) and (orientation: landscape)";
+
+function geo(W: number, H: number, counterTop: number) {
+  // nach Bildschirmbreite (wie im CSS), nicht nach Bühnenbreite
+  const mobile = window.matchMedia(VERTICAL).matches;
   if (mobile) {
-    // Senkrechter Fluss: oben ein Stapel Arbeit, mitten der Kern, unten der Stapel „erledigt“
+    // Senkrechter Fluss: oben ein Stapel Arbeit, mitten der Kern, unten der Stapel „erledigt“,
+    // darunter der Zähler. Dicht gepackt: der Kern füllt genau den Raum zwischen den Stapeln.
     const cardW = Math.min(240, W * 0.8);
     const cardH = 48;
     const x = (W - cardW) / 2;
-    const top = 14;
-    const outY = H - 56 - 14 - cardH - 18;
-    const cy = (top + cardH + outY) / 2;
+    const inY = 22; // vorderste Karte oben (zwei weitere lugen je 7 px darüber hervor)
+    const outY = (counterTop > 0 ? counterTop : H - 44) - 12 - 14 - cardH;
+    const gap = Math.max(60, outY - inY - cardH);
+    const cy = inY + cardH + gap / 2;
     return {
       mobile,
       cardW,
       cardH,
       cx: W / 2,
       cy,
-      R: Math.min(W * 0.2, (outY - top - cardH) * 0.36),
-      inSlot: (k: number): Slot => ({ x, y: top + 14 - k * 7, s: 1 - k * 0.05, a: [1, 0.55, 0.28, 0][k] ?? 0, z: 10 - k }),
+      R: Math.min(W * 0.2, gap * 0.5),
+      // Mittelkreis umschließt den Kern und berührt die Stapel (Kreis = 71,3 % der Grafik)
+      pitch: Math.min(W * 0.92, (gap + 28) / 0.713),
+      inSlot: (k: number): Slot => ({ x, y: inY - k * 7, s: 1 - k * 0.05, a: [1, 0.55, 0.28, 0][k] ?? 0, z: 10 - k }),
       outSlot: (k: number): Slot => ({ x, y: outY + k * 7, s: 1 - k * 0.05, a: [1, 0.55, 0.28, 0][k] ?? 0, z: 10 - k }),
     };
   }
@@ -249,6 +257,7 @@ function geo(W: number, H: number) {
     cx,
     cy,
     R: Math.min(W * 0.27, H * 0.29),
+    pitch: 0,
     inSlot: (k: number): Slot => ({ x: 0, y: slotY(k), s: 1, a: k < 3 ? 1 : 0, z: 1 }),
     outSlot: (k: number): Slot => ({ x: W - cardW, y: slotY(k), s: 1, a: k < 3 ? 1 : 0, z: 1 }),
   };
@@ -269,10 +278,16 @@ export default function HeroMachine() {
     if (!el || !cv) return;
     const core = new Core(cv);
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let g = geo(el.clientWidth, el.clientHeight);
+    const counterEl = el.querySelector<HTMLElement>(".machine-counter");
+    const measure = () => geo(el.clientWidth, el.clientHeight, counterEl?.offsetTop ?? 0);
+    let g = measure();
     const fit = () => {
-      g = geo(el.clientWidth, el.clientHeight);
+      g = measure();
       core.resize(el.clientWidth, el.clientHeight, g.cx, g.cy, g.R);
+      // Mittelkreis und Schein folgen dem Kern (senkrechter Fluss)
+      el.style.setProperty("--cy", `${Math.round(g.cy)}px`);
+      if (g.pitch) el.style.setProperty("--pd", `${Math.round(g.pitch)}px`);
+      else el.style.removeProperty("--pd");
     };
     fit();
     if (reduced) {
@@ -403,6 +418,13 @@ export default function HeroMachine() {
     );
     io.observe(el);
 
+    // Zähler-Kapsel blendet aus, bevor sie beim Weiterscrollen unter die Leiste gerät
+    const away = new IntersectionObserver(
+      ([e]) => counterEl?.toggleAttribute("data-away", !e.isIntersecting && e.boundingClientRect.top < 140),
+      { rootMargin: "-100px 0px 0px 0px", threshold: 1 },
+    );
+    if (counterEl) away.observe(counterEl);
+
     let rt = 0;
     const ro = new ResizeObserver(() => {
       window.clearTimeout(rt);
@@ -424,6 +446,7 @@ export default function HeroMachine() {
       window.clearTimeout(startTimer);
       window.clearTimeout(rt);
       io.disconnect();
+      away.disconnect();
       ro.disconnect();
       tl?.kill();
       core.stop();

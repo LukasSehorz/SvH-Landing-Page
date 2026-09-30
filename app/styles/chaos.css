@@ -69,8 +69,8 @@
 /* ======================================================= Gepinnte Fassung */
 
 .chaos--live {
-  height: 250vh;
-  height: calc(100svh + 150svh);
+  height: 225vh;
+  height: calc(100svh + 125svh);
   /* der untere Rand der Bühne liegt unter der festen CTA-Leiste: dem Schalter Platz lassen, statt Leere zu zeigen */
   margin-bottom: -56px;
 }
@@ -801,8 +801,8 @@
 
 @media (min-width: 960px) {
   .chaos--live {
-    height: 280vh;
-    height: calc(100svh + 180svh);
+    height: 220vh;
+    height: calc(100svh + 120svh);
     margin-bottom: 0;
   }
   .chaos-frame {

@@ -5,8 +5,10 @@ import GeschenkStage from "./geschenk/GeschenkStage";
 
 /* ====================================================================
    „Das Geschenk“: der kostenlose KI-Masterplan als Produkt, das man in
-   der Hand hält. Kopf und Kasten „Warum wir das verschenken“ sind
+   der Hand hält. Kopf und Absatz „Warum wir das verschenken“ sind
    Server-HTML, die Bühne mit Dokument und Punkten ist GeschenkStage.
+   Der Absatz steht als kompakter Nachsatz unter den Punkten (keine
+   eigene Karte); am Desktop klebt das Dokument daneben bis zum Knopf.
    ==================================================================== */
 
 function Gift() {
@@ -51,11 +53,11 @@ export default function Geschenk() {
         <GeschenkStage />
 
         <div className="gs-foot">
-          <div className="gs-why glass" data-reveal="">
+          <div className="gs-why" data-reveal="">
             <span className="gs-why-icon">
               <Gift />
             </span>
-            <h3 className="h3 gs-why-t">{geschenk.whyTitle}</h3>
+            <h3 className="gs-why-t">{geschenk.whyTitle}</h3>
             <p className="body gs-why-x">
               <Rich text={geschenk.whyText} />
             </p>

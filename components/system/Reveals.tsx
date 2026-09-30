@@ -150,12 +150,13 @@ export default function Reveals() {
         keep(el, tw.scrollTrigger);
       });
 
-      // 6) Wortmarke am Fuß (bis ganz unten: sie steht nah am Seitenende)
+      // 6) Wortmarke am Fuß: vollständig aufgedeckt, sobald sie ganz im Bild ist
+      //    (ohne Nachlauf, damit nie ein halber Schriftzug wie „CONSULTINC“ stehen bleibt)
       gsap.utils.toArray<HTMLElement>("[data-wordmark]").forEach((el) => {
         gsap.fromTo(
           el,
           { "--reveal": "0%", "--shine": "150%" },
-          { "--reveal": "100%", "--shine": "-50%", ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "max", scrub: 0.8 } },
+          { "--reveal": "100%", "--shine": "-50%", ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom bottom", scrub: true } },
         );
       });
 

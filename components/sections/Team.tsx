@@ -4,9 +4,11 @@ import Rich from "@/components/system/Rich";
 import { ArrowOut, Play } from "@/components/system/Icons";
 
 /* „Wer dahintersteckt“: kompakt. Links Text und die zwei Gründer als ruhige
-   Kapseln mit Monogramm (bis Fotos da sind), rechts als Hauptbild das neueste
-   Video von Jannik. Das Vorschaubild liegt lokal, erst der Klick öffnet YouTube
-   in einem neuen Fenster (nichts wird eingebettet). */
+   Kapseln mit Monogramm (bis Fotos da sind), daneben bzw. darunter das neueste
+   Video von Jannik als ruhige Karte: Vom Vorschaubild zeigt ein Hochformat-
+   Ausschnitt nur Jannik (die laute YouTube-Schrift rechts liegt außerhalb).
+   Das Bild liegt lokal, erst der Klick öffnet YouTube in einem neuen Fenster
+   (nichts wird eingebettet). */
 
 // Namen nie über zwei Zeilen trennen
 const teamText = team.people.reduce((t, p) => t.replace(p.name, p.name.replace(/ /g, " ")), team.text);
@@ -61,15 +63,17 @@ export default function Team() {
                 width={1280}
                 height={720}
                 quality={85}
-                sizes="(max-width: 999px) calc(100vw - 40px), 640px"
+                /* gezeigt wird ein Hochformat-Ausschnitt; das Bild selbst ist 16/9 × Kartenhöhe breit */
+                sizes="(min-width: 1000px) 620px, 320px"
               />
               <span className="team-play" aria-hidden="true">
-                <Play size={22} />
+                <Play size={18} />
               </span>
             </span>
             <span className="team-video-body">
               <span className="team-video-meta">
-                {aktuelles.latest} ·{" "}
+                {aktuelles.latest}
+                <span className="team-video-sep"> · </span>
                 <time className="nb" dateTime={neuestes.datumIso}>
                   {neuestes.datum}
                 </time>

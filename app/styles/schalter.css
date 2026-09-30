@@ -583,11 +583,38 @@ html[data-nav-hidden] .sw-bar[data-stuck] {
   }
 }
 @media (min-width: 1100px) {
+  /* Schalter direkt rechts neben der zweiten Überschriftzeile statt am rechten Rand (kurzer Blickweg) */
   .sw-head {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: auto auto;
+    justify-content: start;
     align-items: end;
-    gap: 40px;
+    gap: clamp(40px, 4vw, 72px);
+  }
+  .sw-head .sw-bar {
+    margin-bottom: 2px;
+  }
+  /* Kasten so breit wie die längere Zeile („So fühlt sich Ihr“ ≈ 10,2 ch), sonst bleibt Luft vor dem Schalter */
+  .sw-title {
+    max-width: 10.6ch;
+  }
+  /* Hinweis und Knopf in einer Zeile unter den Karten (spart eine Knopfhöhe) */
+  .sw > .shell {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: start;
+    align-items: center;
+    column-gap: 48px;
+  }
+  .sw > .shell > :not(.sw-note, .sw-cta) {
+    grid-column: 1 / -1;
+  }
+  .sw-note {
+    margin-top: 32px;
+    max-width: 420px;
+  }
+  .sw-cta {
+    margin-top: 32px;
   }
   .sw-bar {
     position: static;

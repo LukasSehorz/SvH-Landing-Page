@@ -210,8 +210,11 @@ function setup(el: HTMLElement): () => void {
     tl = gsap.timeline({ onComplete: settle });
 
     if (desktop() && (next === 4 || prev === 4)) {
-      // Stapel ↔ Übersicht: alle Seiten gleiten gleichzeitig an ihren Platz (nichts überlagert sich)
-      applyZ(next === 4 ? 0 : next);
+      // Stapel ↔ Übersicht: alle Seiten gleiten gleichzeitig an ihren Platz. Zur Übersicht
+      // bleibt die Reihenfolge des Stapels (die vordere Seite bleibt vorn und gleitet an
+      // ihren Platz, kein Deckblatt springt nach vorn, keine Fußzeilen schauen darunter
+      // heraus); zurück zum Stapel wird sie sofort gesetzt (im Raster überlappt nichts).
+      if (next !== 4) applyZ(next);
       pages.forEach((p, i) => {
         tl!.to(p, { ...posFor(i, next), duration: 0.95, ease: "power3.inOut" }, i * 0.035);
         tl!.to(shades[i], { opacity: shadeFor(i, next), duration: 0.6, ease: "power2.out" }, 0);

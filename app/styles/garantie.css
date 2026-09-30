@@ -5,7 +5,7 @@
 }
 .gar-grid {
   display: grid;
-  gap: 28px;
+  gap: 18px;
 }
 
 .gar-seal-wrap {
@@ -14,7 +14,7 @@
 }
 .seal {
   position: relative;
-  width: min(200px, 56vw);
+  width: min(156px, 42vw);
   aspect-ratio: 1;
 }
 .seal-glow {
@@ -83,9 +83,14 @@
 .gar-title .line {
   display: block;
 }
+/* dritte Zeile „Das Risiko tragen wir, nicht Sie.“ kleiner: H2 bleibt dreizeilig */
 .gar-title .line + .line {
-  margin-top: 0.1em;
+  margin-top: 0.4em;
+  font-size: 0.64em;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
   color: var(--ink-2);
+  text-wrap: balance;
 }
 .gar-title {
   margin-top: 16px;
@@ -100,8 +105,8 @@
   position: relative;
   display: grid;
   align-items: start;
-  gap: 22px;
-  margin-top: 30px;
+  gap: 18px;
+  margin-top: 26px;
   counter-reset: step;
 }
 .gar-step:not(:last-child)::after {
@@ -109,7 +114,7 @@
   position: absolute;
   left: 19.5px;
   top: 48px;
-  bottom: -14px;
+  bottom: -10px;
   width: 1px;
   background: linear-gradient(180deg, rgba(124, 106, 255, 0.55), rgba(185, 165, 255, 0.25));
 }
@@ -146,11 +151,11 @@
   margin-top: 4px;
 }
 .gar-cta {
-  margin-top: 28px;
+  margin-top: 22px;
 }
 .gar-capsule {
   display: inline-flex;
-  margin-top: 30px;
+  margin-top: 24px;
   padding: 12px 20px;
   border-radius: 24px;
   border: 1px solid rgba(185, 165, 255, 0.35);
@@ -171,7 +176,10 @@
 
 @media (min-width: 700px) {
   .seal {
-    width: 300px;
+    width: 240px;
+  }
+  .gar-title .line + .line {
+    font-size: 0.5em;
   }
   .gar-capsule {
     border-radius: 999px;
@@ -180,13 +188,14 @@
 }
 
 @media (min-width: 1100px) {
+  /* Siegel kleiner, Textspalte breiter (Schritte ohne harte Umbrüche); Siegel mittig zur Textspalte */
   .gar-grid {
-    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr);
     align-items: center;
     gap: clamp(48px, 6vw, 110px);
   }
   .seal {
-    width: min(440px, 100%);
+    width: min(360px, 100%);
   }
   .gar-steps {
     grid-template-columns: repeat(3, minmax(0, 1fr));

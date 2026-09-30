@@ -32,6 +32,8 @@ export default function Abschluss() {
           <p className="lead abs-text">
             <Rich text={abschluss.text} />
           </p>
+          {/* ab 1.000 px: das Geschenk in der Blicklinie zum Formular; mobil ausgeblendet */}
+          <Deckblatt />
         </div>
 
         <div className="abs-form">
@@ -55,44 +57,32 @@ export default function Abschluss() {
           </ul>
         </div>
 
-        <div className="abs-side">
-        <aside className="abs-direct" aria-labelledby="abs-direct-title">
+        <aside className="abs-side abs-direct" aria-labelledby="abs-direct-title">
           <p className="abs-direct-title" id="abs-direct-title">
             {abschluss.direct.title}
           </p>
           <ul className="abs-direct-list">
             <li>
               <a className="abs-direct-row" href={`tel:${company.phoneHref}`}>
-                <span className="abs-direct-ic">
-                  <Phone />
-                </span>
+                <Phone size={16} />
                 <span className="abs-direct-val nb">{company.phone}</span>
               </a>
             </li>
             <li>
               <a className="abs-direct-row" href={`mailto:${company.email}`}>
-                <span className="abs-direct-ic">
-                  <Mail />
-                </span>
+                <Mail size={16} />
                 <span className="abs-direct-val">
                   {mailUser}
                   <wbr />@{mailDomain}
                 </span>
               </a>
             </li>
-            <li>
-              <p className="abs-direct-row abs-direct-row--static">
-                <span className="abs-direct-ic">
-                  <Clock />
-                </span>
-                <span className="abs-direct-val abs-direct-val--sm">{abschluss.direct.hours.replace(/(\d+) Uhr/, "$1\u00a0Uhr")}</span>
-              </p>
+            <li className="abs-direct-row abs-direct-row--static">
+              <Clock size={16} />
+              <span className="abs-direct-val">{abschluss.direct.hours.replace(/(\d+) Uhr/, "$1\u00a0Uhr")}</span>
             </li>
           </ul>
         </aside>
-          {/* Desktop: das Geschenk am Entscheidungsort; mobil ausgeblendet */}
-          <Deckblatt />
-        </div>
       </div>
     </section>
   );

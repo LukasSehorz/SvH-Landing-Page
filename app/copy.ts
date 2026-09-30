@@ -278,7 +278,7 @@ export const spielzug = {
   steps: [
     {
       title: "Kostenloser KI-Workshop",
-      text: "30 bis 45 Minuten. Sie erzählen, wie Ihr Betrieb arbeitet. Gemeinsam finden wir Ihre 5 bis 10 größten Zeitfresser.",
+      text: "30 bis 45 Minuten. Sie erzählen, wie Ihr Betrieb arbeitet. Gemeinsam finden wir Ihre 5 bis 10 größten Zeitfresser.", // geschützte Leerzeichen: Zahlenspannen nie getrennt
       tag: "0 €",
     },
     {
@@ -373,6 +373,8 @@ export const abschluss = {
   label: "Ihr nächster Schritt",
   title: "Holen Sie sich Ihre Zeit *zurück*.",
   text: "Sichern Sie sich Ihren kostenlosen KI-Workshop. 48 Stunden danach halten Sie Ihren KI-Masterplan in der Hand.",
+  // ZUSATZ (Zeile neben dem Masterplan-Deckblatt am Formular)
+  gift: { title: "Ihr KI-Masterplan", when: "48 Stunden nach dem Workshop", price: "0 €" },
   stepOf: (n: number) => `Schritt ${n} von 3`,
   step1: {
     title: "Was frisst bei Ihnen am meisten Zeit?",

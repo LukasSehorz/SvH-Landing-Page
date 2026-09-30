@@ -46,7 +46,7 @@
   font-size: 1.08em;
 }
 .gs-lead {
-  margin-top: 24px;
+  margin-top: 20px;
 }
 
 /* ------------------------------------------------------------ Bühne */
@@ -94,7 +94,7 @@
 .gs-stage[data-mode="motion"] .gs-sticky {
   position: relative;
   padding-top: calc(var(--nav-offset) - 6px);
-  padding-bottom: 26px;
+  padding-bottom: 22px;
 }
 .gs-stage[data-mode="motion"] .gs-sticky::before {
   /* deckt die vorbeiziehenden Punkte ab, oben und unten weich auslaufend (deckend, nichts scheint durch) */
@@ -106,7 +106,7 @@
     rgba(5, 5, 7, 0) 0,
     rgba(5, 5, 7, 0) 36px,
     var(--bg) 66px,
-    var(--bg) calc(100% - 26px),
+    var(--bg) calc(100% - 22px),
     rgba(5, 5, 7, 0) 100%
   );
   pointer-events: none;
@@ -136,6 +136,9 @@
 }
 .gs-stage[data-mode="motion"] .gs-points {
   margin-top: -2svh;
+  /* am Ende liegt der letzte Punkt ganz hinter dem deckenden Teil des Dokuments,
+     nicht im weichen Auslauf darunter (sonst Geisterschrift unter dem Stapel) */
+  padding-bottom: 14px;
 }
 .gs-list {
   position: relative;
@@ -151,7 +154,7 @@
   padding-block: var(--py);
 }
 .gs-stage[data-mode="motion"] .gs-point {
-  --py: 15px;
+  --py: 10px;
 }
 /* Verbindungslinie von Punkt zu Punkt, füllt sich, sobald der Punkt erledigt ist */
 .gs-point:not(:last-child)::before,
@@ -244,46 +247,64 @@
   opacity: 1;
 }
 
-/* ------------------------------------------------------------ Fuß */
+/* ------------------------------------------------------------ Fuß
+   „Warum wir das verschenken“ als kompakter Nachsatz unter den Punkten:
+   Geschenk-Symbol in der Spalte der Nummern, Titel daneben, Text darunter.
+   Eine Haarlinie trennt ihn von der Liste (er ist kein fünfter Punkt). */
 
 .gs-foot {
   position: relative;
-  margin-top: 28px;
+  margin-top: 16px;
+  padding-top: 20px;
+}
+.gs-foot::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line), rgba(244, 244, 246, 0.04));
 }
 .gs-why {
   display: grid;
-  grid-template-columns: 36px minmax(0, 1fr);
-  column-gap: 12px;
-  padding: 18px 18px 20px;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 10px;
+  align-items: center;
 }
+/* Telefon: kleines Symbol vor dem Titel in derselben Zeile */
 .gs-why-icon {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   border-radius: 999px;
   color: var(--lav);
   border: 1px solid rgba(185, 165, 255, 0.28);
   background: rgba(124, 106, 255, 0.08);
 }
 .gs-why-icon svg {
-  width: 19px;
-  height: 19px;
+  width: 16px;
+  height: 16px;
 }
 .gs-why-t {
-  align-self: center;
-  font-size: 19.5px;
+  font-family: var(--font-display);
+  font-size: 17.5px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--ink);
   text-wrap: balance;
 }
 .gs-why-x {
   grid-column: 1 / -1;
-  margin-top: 12px;
-  max-width: 62ch;
+  margin-top: 8px;
+  max-width: 34em;
   font-size: 16px;
-  line-height: 1.52;
+  line-height: 1.5;
 }
 .gs-cta {
-  margin-top: 16px;
+  margin-top: 18px;
 }
 
 /* =========================================================== Dokument */
@@ -299,8 +320,8 @@
   margin-inline: auto;
 }
 .gs-stage[data-mode="motion"] .md-box {
-  /* Platz für die Kanten der Seiten dahinter */
-  margin-bottom: 6.6%;
+  /* Platz für die Kanten der Seiten dahinter (tiefste Seite ragt 6,9 % der Höhe = 4,9 % der Breite heraus) */
+  margin-bottom: 5.6%;
 }
 .md-page {
   position: absolute;
@@ -845,21 +866,32 @@
   .gs-stage {
     --gs-shift: 82px;
   }
+  /* ab 700: Symbol in der Spalte der Nummern (40 px), Titel und Text bündig mit den Punkten */
   .gs-why {
-    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-columns: 40px minmax(0, 1fr);
     column-gap: 16px;
-    padding: 26px 28px 28px;
   }
   .gs-why-icon {
-    width: 44px;
-    height: 44px;
+    grid-row: 1 / span 2;
+    align-self: start;
+    width: 40px;
+    height: 40px;
+    margin-top: -7px;
   }
   .gs-why-icon svg {
-    width: 22px;
-    height: 22px;
+    width: 19px;
+    height: 19px;
   }
   .gs-why-t {
-    font-size: 22px;
+    font-size: 19.5px;
+  }
+  .gs-why-x {
+    grid-column: 2;
+    margin-top: 6px;
+    font-size: 17px;
+  }
+  .gs-cta {
+    padding-left: 56px;
   }
   .gs-pt-t {
     font-size: 22px;
@@ -890,73 +922,34 @@
     max-width: 17ch;
   }
   .gs-lead {
-    margin-top: 32px;
+    margin-top: 28px;
   }
   .gs-points,
   .gs-stage[data-mode="motion"] .gs-points {
     grid-column: 1;
     grid-row: 2;
-    margin-top: clamp(40px, 5vw, 72px);
+    margin-top: clamp(32px, 3vw, 48px);
     padding-bottom: 0;
   }
-  /* Dokument bleibt nach dem letzten Punkt noch kurz stehen (Übersicht) */
-  .gs-stage[data-mode="motion"] .gs-points {
-    padding-bottom: 12svh;
-  }
+  /* Das Dokument klebt über alle drei Zeilen: Nach dem letzten Punkt bleibt die
+     Übersicht neben „Warum wir das verschenken“ und dem Knopf stehen */
   .gs-docwrap,
   .gs-stage[data-mode="motion"] .gs-docwrap {
     grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-row: 1 / span 3;
     position: relative;
     top: auto;
   }
 
-  /* Abschluss über die volle Breite: Begründung in großer Schrift links, Knopf rechts */
+  /* Nachsatz in der linken Spalte, Text bündig mit den Punkten */
   .gs-foot {
-    grid-column: 1 / -1;
+    grid-column: 1;
     grid-row: 3;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
-    gap: clamp(40px, 5vw, 96px);
-    margin-top: clamp(40px, 4vw, 72px);
-    padding: clamp(40px, 4vw, 64px) clamp(40px, 4.6vw, 76px);
-    border-radius: 28px;
-    border: 1px solid var(--line);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.034), rgba(255, 255, 255, 0.012));
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    margin-top: clamp(20px, 2vw, 32px);
+    padding-top: clamp(22px, 2.2vw, 34px);
   }
-  .gs-foot::after {
-    content: "";
-    position: absolute;
-    left: 14%;
-    right: 14%;
-    top: -1px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(185, 165, 255, 0.5), transparent);
-  }
-  .gs-why,
-  .gs-why.glass {
-    grid-template-columns: 44px minmax(0, 1fr);
-    column-gap: 16px;
-    padding: 0;
-    background: none;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-  }
-  .gs-why::before,
-  .gs-why::after {
-    display: none;
-  }
-  .gs-why-x {
-    margin-top: 22px;
-    max-width: 62ch;
-    font-family: var(--font-display);
-    font-size: clamp(21px, 1.7vw, 27px);
-    line-height: 1.42;
-    letter-spacing: -0.014em;
-    color: rgba(244, 244, 246, 0.86);
+  .gs-why {
+    column-gap: 22px;
   }
   .gs-stage[data-mode="motion"] .gs-sticky {
     position: sticky;
@@ -992,11 +985,13 @@
   .gs-point {
     gap: 22px;
   }
+  /* Schritte enger (Runde 3: 188 → ca. 132 px je Punkt bei 800 px Höhe) */
   .gs-stage[data-mode="motion"] .gs-point {
-    --py: 6svh;
+    --py: clamp(14px, 2.2svh, 26px);
   }
   .gs-cta {
-    margin-top: 0;
+    margin-top: 24px;
+    padding-left: 62px;
   }
 }
 

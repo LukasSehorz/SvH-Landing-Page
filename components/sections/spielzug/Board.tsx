@@ -32,8 +32,8 @@ const STEPS = spielzug.steps;
 const ROW = [2, 3, 4, 7];
 /** Auslauf nach dem Tor (Anteil der Laufstrecke) */
 const TAIL = { v: 0.06, h: 0.1 };
-/** Scrollweg des Pins in Bildschirmhöhen */
-const PIN_LEN = 1.2;
+/** Scrollweg des Pins in Bildschirmhöhen (Runde 3: 1,2 → 0,8, der Ablauf bleibt gut lesbar) */
+const PIN_LEN = 0.8;
 /** Mobil: Höhe im Bild, auf der der Ball mitläuft */
 const FOCUS_V = "66%";
 /** Deckkraft noch nicht erreichter Karten */

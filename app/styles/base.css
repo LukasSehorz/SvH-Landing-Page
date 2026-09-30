@@ -25,8 +25,8 @@
   /* bis 1920 maximal 1440 breit, auf sehr großen Schirmen moderat mehr (die alte
      Seite wurde für zu viel leeren Rand bei 2560 beanstandet) */
   --shell: clamp(1440px, 70vw, 1760px);
-  /* einheitlicher Sektionsabstand: Desktop ≈ 240 px zwischen zwei Inhalten */
-  --section-y: clamp(64px, 8.3vw, 120px);
+  /* einheitlicher Sektionsabstand: Desktop ≈ 200 px zwischen zwei Inhalten (Runde 3: vorher 260) */
+  --section-y: clamp(56px, 6.25vw, 90px);
   --nav-offset: 104px;
   --measure: 36em;
   --radius: 22px;
