@@ -780,6 +780,66 @@
   color: var(--ink-2);
   text-wrap: pretty;
 }
+/* Erfolg: drei ruhige nächste Schritte, wie die nummerierten Schritte der Seite
+   (Nummer im feinen Kreis, Haarlinie von Schritt zu Schritt), als Block mittig */
+.frm-next {
+  width: 100%;
+  max-width: 400px;
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line-2);
+  text-align: left;
+}
+.frm-next-title {
+  margin-bottom: 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  color: var(--lav);
+  text-align: center;
+}
+.frm-next-list {
+  display: grid;
+  gap: 14px;
+}
+.frm-next-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+.frm-next-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 14.5px;
+  top: 36px;
+  bottom: -10px;
+  width: 1px;
+  background: linear-gradient(180deg, rgba(124, 106, 255, 0.5), rgba(185, 165, 255, 0.18));
+}
+.frm-next-num {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(185, 165, 255, 0.45);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.frm-next-text {
+  padding-top: 4px;
+  font-size: 15.5px;
+  line-height: 1.45;
+  color: var(--ink-2);
+  text-wrap: balance;
+}
 .frm-textbtn {
   display: inline-flex;
   align-items: center;

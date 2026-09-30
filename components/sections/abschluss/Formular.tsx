@@ -471,9 +471,29 @@ export default function Formular() {
                     <h3 className="frm-result-title" tabIndex={-1} ref={fokusErgebnis}>
                       {abschluss.success(vorname(t.name))}
                     </h3>
-                    <p className="frm-result-text">
-                      <Rich text={abschluss.successText} />
-                    </p>
+                    <div className="frm-next">
+                      <p className="frm-next-title" id="frm-next-title">
+                        {abschluss.danach.title}
+                      </p>
+                      <ol className="frm-next-list" aria-labelledby="frm-next-title">
+                        {abschluss.danach.steps.map((s, i) => (
+                          <motion.li
+                            key={s}
+                            className="frm-next-step"
+                            initial={reduced ? false : { opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.55 + i * 0.12, ease: EASE }}
+                          >
+                            <span className="frm-next-num" aria-hidden="true">
+                              {i + 1}
+                            </span>
+                            <span className="frm-next-text">
+                              <Rich text={s} />
+                            </span>
+                          </motion.li>
+                        ))}
+                      </ol>
+                    </div>
                   </>
                 ) : status === "fallback" ? (
                   <>

@@ -427,7 +427,17 @@ export const abschluss = {
   sending: "Wird gesendet", // ZUSATZ (alte Seite)
   below: "Kostenlos · unverbindlich · Ihre Angaben bleiben bei uns",
   success: (first: string) => (first ? `Danke, ${first}! Ihre Anfrage ist bei uns.` : "Danke! Ihre Anfrage ist bei uns."),
+  // Seit Runde 5 nicht mehr angezeigt: Schritt 1 von „danach“ sagt dasselbe (sonst doppelt)
   successText: "Wir melden uns persönlich bei Ihnen, um einen Termin für Ihren KI-Workshop zu finden.",
+  // ZUSATZ: nächste Schritte unter der Erfolgsmeldung
+  danach: {
+    title: "So geht es weiter",
+    steps: [
+      "Wir melden uns persönlich, um einen Termin zu finden.",
+      "Im kostenlosen Workshop finden wir Ihre größten Zeitfresser.",
+      "48 Stunden danach halten Sie Ihren KI-Masterplan in der Hand.",
+    ],
+  },
   errorBefore: "Das hat leider nicht geklappt. Rufen Sie uns gern direkt an unter ",
   errorMid: " oder schreiben Sie an ",
   errorAfter: ".",

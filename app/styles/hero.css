@@ -801,3 +801,14 @@
     margin-top: 18px;
   }
 }
+
+/* 320 px (iPhone SE 1. Gen.): Dachzeile etwas kleiner und enger, damit sie vollständig in
+   einer Zeile steht; reicht der Platz trotzdem nicht, bricht sie um statt abzuschneiden */
+@media (max-width: 359px) {
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    white-space: normal;
+    text-wrap: balance;
+  }
+}

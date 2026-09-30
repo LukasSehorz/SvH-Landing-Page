@@ -112,6 +112,39 @@ export default function Navbar() {
     };
   }, [onHome]);
 
+  // Ab 900 px: Steht ein Knopf aus dem Inhalt oben im Fenster, faltet sich der Leisten-Knopf
+  // weg wie am Formular (nie zwei gleiche Knöpfe übereinander). Beobachtet werden die oberen
+  // 40 % (Vorlauf auch bei schnellem Scrollen), nach oben erweitert: beim Hochscrollen weicht
+  // der Leisten-Knopf, bevor ein Sektionsknopf von oben ins Bild kommt; beim Runterscrollen
+  // kehrt er erst zurück, wenn der Sektionsknopf oben aus dem Bild ist.
+  const [ctaOben, setCtaOben] = useState(false);
+  useEffect(() => {
+    const seen = new Map<Element, boolean>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => seen.set(e.target, e.isIntersecting));
+        setCtaOben(Array.from(seen.values()).some(Boolean));
+      },
+      { rootMargin: "25% 0px -60% 0px" },
+    );
+    const scan = () =>
+      document.querySelectorAll("main [data-cta-inline]").forEach((el) => {
+        if (seen.has(el)) return;
+        seen.set(el, false);
+        io.observe(el);
+      });
+    // später hydrierte Sektionen (Schalter, Formular) nachfassen
+    scan();
+    const t1 = window.setTimeout(scan, 1500);
+    const t2 = window.setTimeout(scan, 4000);
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+      io.disconnect();
+      setCtaOben(false);
+    };
+  }, [pathname]);
+
   // Aufklapper schließen: Escape, Klick daneben
   useEffect(() => {
     if (!dropOpen) return;
@@ -200,6 +233,8 @@ export default function Navbar() {
   const hidden = !wide && down && !menuActive;
   const compact = wide && down && !menuActive;
   const showBar = !hidden;
+  // Leisten-Knopf eingeklappt: Formular im Bild oder (ab 900 px) ein Sektionsknopf oben
+  const btnWeicht = (atForm || (wide && ctaOben)) && !sheetOpen;
 
   // Unterseiten haben keine CTA-Leiste unten: dort zeigt die Leiste ihren Knopf auch mobil.
   // (Auf der Startseite steuert MobileCta data-nav-cta.)
@@ -224,7 +259,7 @@ export default function Navbar() {
         data-hidden={hidden ? "true" : "false"}
         data-compact={compact ? "true" : "false"}
         data-scrolled={scrolled ? "true" : "false"}
-        data-at-form={atForm && !sheetOpen ? "true" : "false"}
+        data-at-form={btnWeicht ? "true" : "false"}
       >
         <nav className="nav-bar" aria-label="Hauptmenü">
           <Link href="/" className="nav-mark" aria-label={nav.home}>
@@ -294,7 +329,9 @@ export default function Navbar() {
 
           <div className="nav-end">
             <Cta href={`${pre}#termin`} size="sm" inline={false} onClick={() => closeSheet(false)}>
-              {cta.nav}
+              {/* ab 900 px derselbe Wortlaut wie in den Sektionen, darunter die kurze Fassung */}
+              <span className="nav-cta-lang">{cta.main}</span>
+              <span className="nav-cta-kurz">{cta.nav}</span>
             </Cta>
             <button
               ref={burger}
