@@ -1,0 +1,51 @@
+/* bewusst unabhängig von den Stilen beider Varianten */
+.switch {
+  position: fixed;
+  right: 16px;
+  /* über der CTA-Leiste von A auf dem Telefon (Variable ist sonst 0) */
+  bottom: calc(var(--mobile-cta-h, 0px) + 16px);
+  z-index: 80;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(20, 20, 24, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  font: 600 12px/1 system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.opt {
+  display: grid;
+  place-items: center;
+  min-width: 34px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.62);
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+a.opt:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+a.opt:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 1px;
+}
+
+.aktiv {
+  color: #0b0b0e;
+  background: #fff;
+}
+
+/* Vollbild-Menü offen (setzt die Leiste): nicht über dessen Knopf legen */
+:global(html[data-menu-open]) .switch {
+  display: none;
+}

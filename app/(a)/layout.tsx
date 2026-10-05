@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Inter_Tight, Mr_Dafoe } from "next/font/google";
-import "./globals.css";
-import { meta, nav } from "./copy";
-import { company } from "./content";
-import { GTM_ID, SEARCH_CONSOLE_ID } from "./tracking";
+import "@/app/globals.css";
+import { meta, nav } from "@/app/copy";
+import { company } from "@/app/content";
+import { GTM_ID, SEARCH_CONSOLE_ID } from "@/app/tracking";
 import Consent from "@/components/system/Consent";
 import Effects from "@/components/system/Effects";
 import Spotlight from "@/components/system/Spotlight";
@@ -11,6 +11,7 @@ import SvgDefs from "@/components/system/SvgDefs";
 import Noise from "@/components/system/Noise";
 import Navbar from "@/components/system/Navbar";
 import Footer from "@/components/system/Footer";
+import VariantSwitch from "@/components/variante/VariantSwitch";
 
 // Schriften werden von Next selbst ausgeliefert (keine Anfrage an Google)
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", weight: ["400", "500", "600"], display: "swap" });
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Noise fixed opacity={0.035} />
         <Effects />
         <Spotlight />
+        <VariantSwitch aktiv="a" />
       </body>
     </html>
   );

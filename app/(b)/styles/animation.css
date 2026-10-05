@@ -1,0 +1,430 @@
+/* =====================================================================
+   Variante B · Animationen
+   Keine Scroll-Effekte: alles läuft beim Laden, von selbst (ruhige Endlosschleifen)
+   oder beim Drüberfahren. Die Zahnräder bleiben bewusst still.
+   „Bewegung reduzieren“ im System stoppt alles (Regel in b.css).
+   ===================================================================== */
+
+@keyframes b-rein {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+@keyframes b-zeichnen {
+  from {
+    stroke-dashoffset: 30;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes b-schweben {
+  50% {
+    translate: 0 -8px;
+  }
+}
+@keyframes b-puls-ring {
+  from {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  to {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+@keyframes b-farbfluss {
+  to {
+    background-position: 200% 0;
+  }
+}
+@keyframes b-glanz {
+  0%,
+  72% {
+    background-position: 130% 0;
+  }
+  100% {
+    background-position: -40% 0;
+  }
+}
+@keyframes b-ameisen {
+  to {
+    stroke-dashoffset: -38;
+  }
+}
+@keyframes b-runter {
+  50% {
+    transform: translateY(6px);
+  }
+}
+@keyframes b-pop {
+  0%,
+  80%,
+  100% {
+    scale: 1;
+  }
+  88% {
+    scale: 1.14;
+  }
+}
+@keyframes b-wackeln {
+  0%,
+  86%,
+  100% {
+    rotate: 0deg;
+  }
+  90% {
+    rotate: -9deg;
+  }
+  94% {
+    rotate: 7deg;
+  }
+}
+@keyframes b-blinken {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes b-saeule {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+/* ------------------------------------------------------------ Hero: Auftritt beim Laden */
+
+.hb-h1,
+.hb-sub,
+.hb-video,
+.hb-punkte li,
+.hb-cta {
+  animation: b-rein 0.8s var(--ease) backwards;
+}
+.hb-sub {
+  animation-delay: 0.12s;
+}
+.hb-video {
+  animation-delay: 0.24s;
+}
+.hb-punkte li:nth-child(1) {
+  animation-delay: 0.34s;
+}
+.hb-punkte li:nth-child(2) {
+  animation-delay: 0.44s;
+}
+.hb-punkte li:nth-child(3) {
+  animation-delay: 0.54s;
+}
+.hb-punkte li:nth-child(4) {
+  animation-delay: 0.64s;
+}
+.hb-cta {
+  animation-delay: 0.78s;
+}
+/* Haken zeichnen sich nacheinander */
+.hb-punkte .b-haken path {
+  stroke-dasharray: 30;
+  animation: b-zeichnen 0.6s var(--ease) backwards;
+}
+.hb-punkte li:nth-child(1) .b-haken path {
+  animation-delay: 0.6s;
+}
+.hb-punkte li:nth-child(2) .b-haken path {
+  animation-delay: 0.72s;
+}
+.hb-punkte li:nth-child(3) .b-haken path {
+  animation-delay: 0.84s;
+}
+.hb-punkte li:nth-child(4) .b-haken path {
+  animation-delay: 0.96s;
+}
+/* Play-Knopf: Ring pulsiert nach außen */
+.hb-play {
+  position: relative;
+  transition: transform 0.35s var(--ease);
+}
+.hb-play::before,
+.hb-play::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid rgba(185, 165, 255, 0.8);
+  animation: b-puls-ring 2.4s var(--ease) infinite;
+}
+.hb-play::after {
+  animation-delay: 1.2s;
+}
+.hb-video:hover .hb-play {
+  transform: scale(1.08);
+}
+
+/* ------------------------------------------------------------ Verlaufswörter und Trust-Bar: Farbe fließt */
+
+.b-grad {
+  background-image: linear-gradient(92deg, #3f74ff 0%, #6a55ff 25%, #8c6dff 50%, #6a55ff 75%, #3f74ff 100%);
+  background-size: 200% 100%;
+  animation: b-farbfluss 7s linear infinite;
+}
+.tb {
+  background-image: linear-gradient(92deg, #3f74ff 0%, #6a55ff 22%, #8c6dff 50%, #6a55ff 78%, #3f74ff 100%);
+  background-size: 200% 100%;
+  animation: b-farbfluss 14s linear infinite;
+}
+
+/* ------------------------------------------------------------ Knöpfe: Lichtkante läuft regelmäßig durch */
+
+.btn-primary::after {
+  animation: b-glanz 5.5s var(--ease) infinite;
+}
+.btn-primary:hover::after {
+  animation: none;
+}
+
+/* ------------------------------------------------------------ Logo-Kasten */
+
+.kl-logo img {
+  transition: transform 0.35s var(--ease);
+}
+.kl-logo:hover img {
+  transform: scale(1.08);
+}
+
+/* ------------------------------------------------------------ Problem → Lösung */
+
+/* Linien und Pfeile: „Ameisenstraße“ zeigt die Richtung */
+.pv-verbinder svg path,
+.pv-pfeil svg path,
+.wm-trichter svg path {
+  stroke-dasharray: 11 8;
+  animation: b-ameisen 1.4s linear infinite;
+}
+/* Männchen wippen, das durchgestrichene wackelt ab und zu */
+.pv-figur:not(.pv-figur--weg) > svg {
+  animation: b-schweben 2.6s ease-in-out infinite;
+}
+.pv-figur:nth-child(2) > svg {
+  animation-delay: 0.3s;
+}
+.pv-figur:nth-child(3) > svg {
+  animation-delay: 0.6s;
+}
+.pv-figur--weg {
+  animation: b-wackeln 4s ease-in-out infinite;
+}
+.pv-logo img {
+  animation: b-schweben 4s ease-in-out infinite;
+}
+/* Haken bei den Vorteilen ziehen beim Drüberfahren nach */
+.pv-vorteile li:hover .b-haken path {
+  stroke-dasharray: 30;
+  animation: b-zeichnen 0.45s var(--ease);
+}
+.pv-box,
+.pv-kasten {
+  transition:
+    opacity 0.7s var(--ease),
+    transform 0.4s var(--ease),
+    box-shadow 0.35s var(--ease);
+}
+.pv-box:hover,
+.pv-kasten:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 2px 0 #0b0b0e,
+    0 26px 48px -20px rgba(11, 11, 14, 0.45);
+}
+
+/* ------------------------------------------------------------ Unendlichkeitszeichen: Lichtimpuls */
+
+.um-impuls {
+  opacity: 0.32;
+  stroke-dashoffset: calc(var(--l) * 1px);
+  animation: um-lauf 9s linear infinite;
+  filter: blur(6px);
+}
+@keyframes um-lauf {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.um-text {
+  transition:
+    opacity 0.7s var(--ease),
+    transform 0.4s var(--ease);
+}
+.um-text:hover {
+  transform: translateY(-3px);
+}
+
+/* ------------------------------------------------------------ Workshop */
+
+.wf-pfeil {
+  animation: b-runter 1.8s ease-in-out infinite;
+}
+.wf-karte {
+  transition:
+    transform 0.35s var(--ease),
+    box-shadow 0.35s var(--ease);
+}
+.wf-karte:hover {
+  transform: translateY(-3px);
+}
+.ws-preis-neu {
+  display: inline-block;
+  animation: b-pop 3.2s var(--ease) infinite;
+}
+
+/* ------------------------------------------------------------ Klickbare Beispiele: Teile erscheinen nacheinander */
+
+.lt-panel-bild .bs-fluss > *,
+.lt-panel-bild .bs-blase,
+.lt-panel-bild .bs-erledigt,
+.lt-panel-bild .bs-vergleich,
+.lt-panel-bild .bs-hinweis,
+.lt-panel-bild .bs-postfach li,
+.lt-panel-bild .bs-entwurf,
+.lt-panel-bild .bs-kpis > div,
+.lt-panel-bild .bs-sms,
+.lt-panel-bild .bs-kalender {
+  animation: b-rein 0.5s var(--ease) backwards;
+}
+.lt-panel-bild .bs-fluss > :nth-child(2),
+.lt-panel-bild .bs-blase:nth-of-type(2),
+.lt-panel-bild .bs-postfach li:nth-child(2),
+.lt-panel-bild .bs-kpis > div:nth-child(2) {
+  animation-delay: 0.25s;
+}
+.lt-panel-bild .bs-fluss > :nth-child(3),
+.lt-panel-bild .bs-blase:nth-of-type(3),
+.lt-panel-bild .bs-postfach li:nth-child(3),
+.lt-panel-bild .bs-kpis > div:nth-child(3),
+.lt-panel-bild .bs-sms {
+  animation-delay: 0.5s;
+}
+.lt-panel-bild .bs-blase:nth-of-type(4),
+.lt-panel-bild .bs-entwurf,
+.lt-panel-bild .bs-vergleich,
+.lt-panel-bild .bs-hinweis {
+  animation-delay: 0.75s;
+}
+.lt-panel-bild .bs-erledigt {
+  animation-delay: 1s;
+}
+.lt-panel-bild .bs-balken span {
+  transform-origin: bottom;
+  animation: b-saeule 0.7s var(--ease) backwards;
+}
+.lt-panel-bild .bs-balken span:nth-child(2) { animation-delay: 0.06s; }
+.lt-panel-bild .bs-balken span:nth-child(3) { animation-delay: 0.12s; }
+.lt-panel-bild .bs-balken span:nth-child(4) { animation-delay: 0.18s; }
+.lt-panel-bild .bs-balken span:nth-child(5) { animation-delay: 0.24s; }
+.lt-panel-bild .bs-balken span:nth-child(6) { animation-delay: 0.3s; }
+.lt-panel-bild .bs-balken span:nth-child(7) { animation-delay: 0.36s; }
+/* „KI“-Kästchen arbeitet: pulsierender Ring */
+.bs-ki {
+  position: relative;
+}
+.bs-ki::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid rgba(106, 85, 255, 0.7);
+  animation: b-puls-ring 2s var(--ease) infinite;
+}
+.bs-slot--neu {
+  animation: b-pop 3s var(--ease) infinite;
+}
+.lt-knopf .b-haken {
+  transition: transform 0.3s var(--ease);
+}
+.lt-knopf:hover .b-haken {
+  transform: scale(1.15);
+}
+
+/* ------------------------------------------------------------ Wissensmanagement: Laptops */
+
+/* Vorher: Zettel schweben unruhig, das Fragezeichen pulsiert */
+.sc-zettel {
+  animation: b-schweben 3.4s ease-in-out infinite;
+}
+.sc-zettel--2 { animation-delay: 0.5s; }
+.sc-zettel--3 { animation-delay: 1s; }
+.sc-zettel--4 { animation-delay: 1.5s; }
+.sc-zettel--5 { animation-delay: 2s; }
+.sc-zettel--6 { animation-delay: 2.5s; }
+.sc-fragezeichen {
+  animation: b-pop 2.4s var(--ease) infinite;
+}
+/* Nachher: blinkender Cursor im Eingabefeld */
+.sc-eingabe::after {
+  content: "";
+  display: inline-block;
+  width: 1.5px;
+  height: 1.1em;
+  margin-left: 0.2em;
+  vertical-align: -0.2em;
+  background: var(--page-ink);
+  animation: b-blinken 1s steps(1) infinite;
+}
+.wm-ort {
+  transition:
+    opacity 0.7s var(--ease),
+    transform 0.4s var(--ease);
+}
+.wm-ort:hover {
+  transform: translateY(-4px);
+}
+.lp {
+  transition: transform 0.5s var(--ease);
+}
+.wm-laptop:hover .lp {
+  transform: translateY(-6px);
+}
+
+/* ------------------------------------------------------------ Masterplan, Kunden, Gründer, Nächster Schritt */
+
+.mp-laptop {
+  animation: b-schweben 6s ease-in-out infinite;
+}
+.kd-karte,
+.ak-li-link {
+  transition:
+    opacity 0.7s var(--ease),
+    transform 0.4s var(--ease),
+    box-shadow 0.35s var(--ease);
+}
+.kd-karte:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 1px 2px rgba(11, 11, 14, 0.04),
+    0 24px 46px -24px rgba(60, 40, 180, 0.4);
+}
+.kd-logo img {
+  transition: transform 0.4s var(--ease);
+}
+.kd-karte:hover .kd-logo img {
+  transform: scale(1.06);
+}
+.uu-foto img,
+.uu-foto-initialen {
+  transition: transform 0.6s var(--ease);
+}
+.uu-gruender-eintrag:hover .uu-foto img,
+.uu-gruender-eintrag:hover .uu-foto-initialen {
+  transform: scale(1.05);
+}
+.nx-bild img {
+  animation: b-schweben 5s ease-in-out infinite;
+}
+.ak-play {
+  animation: b-pop 3.6s var(--ease) infinite;
+}
+
+/* ------------------------------------------------------------ Fragen: Antwort gleitet auf */
+
+.fr-item[open] .fr-antwort {
+  animation: b-rein 0.4s var(--ease);
+}
