@@ -21,8 +21,8 @@ import Abschluss from "@/components/b/Abschluss";
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 /* Startseite. Aufbau nach der Struktur von andreasbaulig.de (roter Faden, Erklärung in app/copy-b.ts):
-   Versprechen + Beweis → Problem → Lösungsprinzip (Zahnräder) → Leistungen 0–4 → Lösungen → Kunden →
-   Workshop → Masterplan → Gründer → nächster Schritt → Einblicke → Für wen → Fragen → Abschluss.
+   Versprechen + Beweis → Problem → Lösung mit Gewinnen (Zahnräder) → Leistungen 0–4 → Kunden (Beweis) →
+   Lösungen → Gründer → Videos → Masterplan → Ablauf mit Garantie → nächster Schritt → Für wen → Fragen → Abschluss.
    Alle Knöpfe „Kostenlosen KI-Workshop sichern“ öffnen die Anmeldung im Fenster (FormDialog im Layout). */
 export default function Home() {
   return (
@@ -57,13 +57,13 @@ export default function Home() {
       <Problem />
       <Zahnraeder />
       <Unendlich />
-      <Loesungen />
       <Kunden />
-      <Workshop />
-      <Masterplan />
+      <Loesungen />
       <UeberUns />
-      <Naechster />
       <Aktuelles />
+      <Masterplan />
+      <Workshop />
+      <Naechster />
       <FuerWen />
       <Fragen />
       <Abschluss />
