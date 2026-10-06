@@ -524,18 +524,19 @@ export const masterplanB = {
   unter: "Der Fahrplan, mit dem dein Betrieb jede Woche Zeit gewinnt.",
   intro: "48 Stunden nach dem Workshop liegt er fertig bei dir. Kostenlos.",
   punkte: [
-    { titel: "Deine Zeitfresser", text: "Schwarz auf weiß: die 5\u00a0bis\u00a010 größten Zeitfresser in deinem Betrieb." },
+    { titel: "Deine Zeitfresser", text: "Die 5\u00a0bis\u00a010 größten Zeitfresser, schwarz auf weiß." },
     { titel: "Deine Top 3 Automatisierungen", text: "Wo du mit wenig Aufwand am meisten Zeit oder Geld sparst." },
     { titel: "So setzt du es um", text: "Welche Werkzeuge es braucht und wie du vorgehst. Danach gehen wir alles gemeinsam durch." },
   ],
   beispiel: "Beispiel. Dein Plan entsteht für deinen Betrieb.",
-  preis: { label: "Wert des Masterplans", alt: "1.099\u00a0€", neu: "0\u00a0€", text: "Er gehört dir, egal wie du dich entscheidest." },
-  mikro: ["Kostenlos", "unverbindlich", "48\u00a0Std. nach dem Workshop"],
+  preis: { label: "Wert des Masterplans", alt: "1.099\u00a0€", neu: "0\u00a0€", text: "Er gehört dir. Umsetzen kannst du ihn mit uns oder mit deinem eigenen Team." },
+  mikro: ["45\u00a0Minuten", "unverbindlich", "Plan nach 48\u00a0Std."],
   doc: {
     titel: "KI-Masterplan",
     fuer: "für deinen Betrieb",
     von: "erstellt von SvH Consulting",
-    siegel: { ring: "KI-Masterplan · Wert 1.099 € · für dich", mitte: "0 €" },
+    // Siegel auf dem Deckblatt: nur der Wert, die Auflösung „0 €“ steht erst im Preisblock
+    siegel: { ring: "KI-Masterplan · für deinen Betrieb", wert: "Wert", betrag: "1.099 €" },
     fuss: "SvH Consulting",
     beispiel: "Beispiel",
     zeitfresser: {

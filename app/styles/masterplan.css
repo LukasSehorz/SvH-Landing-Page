@@ -105,6 +105,7 @@
   margin-top: 20px;
   font-size: 13px;
   line-height: 1.4;
+  text-wrap: balance;
   letter-spacing: 0.01em;
   text-align: center;
   color: rgba(226, 230, 255, 0.6);
@@ -280,7 +281,7 @@
   pointer-events: none;
 }
 
-/* ---------- Siegel „Wert 1.099 € · für dich 0 €“ */
+/* ---------- Siegel „Wert 1.099 €“ (geprägte Medaille; „0 €“ erst im Preisblock) */
 
 .mpd-siegel {
   position: absolute;
@@ -290,7 +291,8 @@
   width: var(--sg-b);
   aspect-ratio: 1;
   rotate: var(--sg-r);
-  filter: drop-shadow(0 0.6cqi 1.2cqi rgba(4, 5, 18, 0.45));
+  border-radius: 50%;
+  filter: drop-shadow(0 0.5cqi 1cqi rgba(4, 5, 18, 0.5));
   transition:
     scale 0.75s cubic-bezier(0.34, 1.45, 0.5, 1) 0.8s,
     rotate 0.75s var(--ease) 0.8s,
@@ -303,16 +305,29 @@
 }
 .mpd-siegel-ring {
   font-family: var(--font-sans);
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  fill: #fff;
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  fill: #dfe2ff;
 }
-.mpd-siegel-mitte {
-  font-family: var(--font-display);
-  font-size: 50px;
+.mpd-siegel-striche {
+  fill: none;
+  stroke: rgba(185, 165, 255, 0.45);
+  stroke-width: 3;
+  stroke-dasharray: 0.14 0.86;
+}
+.mpd-siegel-wert {
+  font-family: var(--font-sans);
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: 0.24em;
+  fill: #aab5ff;
+}
+.mpd-siegel-betrag {
+  font-family: var(--font-display);
+  font-size: 29px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   fill: #fff;
 }
 
@@ -648,7 +663,7 @@
 
 /* Desktop: Anmerkungen links und rechts ums Dokument, feine Linie bis kurz vor die Nummer im Dokument.
    Jede Anmerkung spannt vom Text bis zum Ziel (Ziel in % des Dokuments, aus der Lage der Blätter oben gerechnet). */
-@media (min-width: 1180px) {
+@media (min-width: 1320px) {
   .mp-buehne {
     container-type: inline-size;
     --luft: 28px;
@@ -760,7 +775,7 @@
 }
 
 /* Tablet: Liste in drei Spalten unter dem Dokument */
-@media (min-width: 700px) and (max-width: 1179px) {
+@media (min-width: 700px) and (max-width: 1319px) {
   .mp-punkte {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -804,24 +819,25 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: baseline;
-  gap: 4px 22px;
-  margin-top: 10px;
+  gap: 4px 18px;
+  margin-top: 12px;
   font-family: var(--font-display);
   line-height: 1;
 }
+/* Durchstreichung gedämpft hell (kein Rot, keine Rabatt-Anmutung); „0 €“ bleibt deutlich kleiner als die Überschrift */
 .mp-wert-alt {
-  font-size: clamp(26px, 2.4vw, 34px);
+  font-size: clamp(22px, 1.9vw, 28px);
   font-weight: 500;
   letter-spacing: -0.02em;
-  color: rgba(226, 230, 255, 0.55);
+  color: rgba(226, 230, 255, 0.5);
   text-decoration: line-through;
-  text-decoration-thickness: 2px;
-  text-decoration-color: rgba(255, 122, 133, 0.9);
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: rgba(226, 230, 255, 0.55);
 }
 .mp-wert-neu {
-  font-size: clamp(64px, 5.8vw, 86px);
-  font-weight: 700;
-  letter-spacing: -0.05em;
+  font-size: clamp(48px, 4.4vw, 64px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
   background: linear-gradient(180deg, #ffffff 30%, #c9bcff 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -829,7 +845,9 @@
   padding-bottom: 0.04em;
 }
 .mp-wert-text {
-  margin-top: 12px;
+  margin-top: 14px;
+  max-width: 460px;
+  text-wrap: balance;
   font-size: clamp(17px, 1.3vw, 19px);
   line-height: 1.5;
   color: rgba(226, 230, 255, 0.82);
@@ -877,33 +895,96 @@
   .mp-buehne {
     margin-top: 36px;
   }
-  /* Blätter zwei mal zwei, wie auf dem Tisch ausgebreitet: groß genug, dass man die Seiten erkennt */
+  /* Deckblatt groß oben links, die drei Innenseiten kleiner daneben und darunter: liest sich als ein Dokument
+     mit Seiten. Das Dokument nutzt fast die ganze Bildschirmbreite (8 px Rand statt Seitenrand). */
   .mpd {
-    --deck-x: 1.5cqi;
-    --deck-y: 3cqi;
-    --deck-b: 47cqi;
+    --deck-x: 1cqi;
+    --deck-y: 1.5cqi;
+    --deck-b: 55cqi;
     --deck-r: -3deg;
-    --s1-x: 51.5cqi;
-    --s1-y: 8cqi;
-    --s1-r: 2.5deg;
-    --s2-x: 1cqi;
-    --s2-y: 66cqi;
+    --s1-x: 54.5cqi;
+    --s1-y: 9cqi;
+    --s1-r: 3deg;
+    --s2-x: 3cqi;
+    --s2-y: 74cqi;
     --s2-r: 2.5deg;
     --s3-x: 52cqi;
-    --s3-y: 71.5cqi;
+    --s3-y: 72.5cqi;
     --s3-r: -2.5deg;
-    --seite-b: 47cqi;
-    --sg-x: 14cqi;
-    --sg-y: 40cqi;
-    --sg-b: 25cqi;
-    --sg-r: -10deg;
-    --stapel-x: 26.5cqi;
-    --stapel-y: 40cqi;
-    max-width: 440px;
-    aspect-ratio: 100 / 141;
+    --seite-b: 44cqi;
+    --sg-x: 16cqi;
+    --sg-y: 39cqi;
+    --sg-b: 26cqi;
+    --sg-r: -8deg;
+    --stapel-x: 22cqi;
+    --stapel-y: 30cqi;
+    width: calc(100% + 2 * var(--gutter) - 16px);
+    max-width: 480px;
+    margin-inline: auto;
+    position: relative;
+    left: 50%;
+    translate: -50% 0;
+    aspect-ratio: 100 / 139;
+  }
+  /* Innenseiten: größere Schrift, Krümel (Schildchen, Meta-Zeilen, Fußzeilen) ausgeblendet */
+  .mpd-blatt {
+    font-size: calc(var(--b) / 19);
+    padding: 1.6em;
+  }
+  .mpd-blatt--deck {
+    font-size: calc(var(--b) / 22);
+  }
+  .mpd-kicker,
+  .mpd-einheit,
+  .mpd-fuss,
+  .mpd-top-meta,
+  .mpd-chips,
+  .mpd-weg-wie,
+  .mpd-werkzeuge {
+    display: none;
+  }
+  .mpd-deck-von {
+    font-size: 0.7em;
+  }
+  .mpd-kopf {
+    padding-bottom: 0.9em;
+  }
+  .mpd-balken {
+    gap: 0.75em;
+    margin-top: 1.1em;
+  }
+  .mpd-summe {
+    margin-top: 1.1em !important;
+  }
+  .mpd-top {
+    margin-top: 1.2em;
+    gap: 0.85em;
+  }
+  .mpd-top li {
+    padding: 0.95em 0.85em;
+  }
+  .mpd-top-titel {
+    font-size: 0.86em;
+  }
+  .mpd-top-spart {
+    margin-top: 0.55em !important;
+    font-size: 0.74em;
+  }
+  .mpd-weg {
+    gap: 1.9em;
+    margin-top: 1.6em;
+  }
+  .mpd-weg::before {
+    bottom: 1.2em;
+  }
+  .mpd-weg-wann {
+    font-size: 0.68em;
+  }
+  .mpd-weg-was {
+    font-size: 0.88em;
   }
   .mpd::before {
-    inset: -4% -18% -6%;
+    inset: -4% -14% -6%;
   }
   .mpd-blatt--1 {
     --z: 2;
@@ -940,6 +1021,16 @@
   }
   .mp-wert {
     margin-top: 28px;
+  }
+  .mp-wert-alt {
+    font-size: 20px;
+  }
+  /* kleiner als die Überschrift (H2 am Handy 37–45 px) */
+  .mp-wert-neu {
+    font-size: clamp(30px, 9vw, 36px);
+  }
+  .mp-wert-text {
+    font-size: 16.5px;
   }
   .mp-wert::before {
     margin-bottom: 28px;

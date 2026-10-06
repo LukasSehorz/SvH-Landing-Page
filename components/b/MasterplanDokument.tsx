@@ -10,48 +10,40 @@ import { masterplanB } from "@/app/copy-b";
 const d = masterplanB.doc;
 const v = (werte: Record<string, string | number>) => werte as CSSProperties;
 
-/* Gezackter Rand des Siegels (Rosette): 40 weiche Bögen zwischen Innen- und Außenradius */
-const ROSETTE = (() => {
-  const n = 40;
-  const innen = 95;
-  const aussen = 103;
-  const p = (r: number, a: number) => `${(104 + r * Math.cos(a)).toFixed(2)} ${(104 + r * Math.sin(a)).toFixed(2)}`;
-  let pfad = `M ${p(innen, 0)}`;
-  for (let i = 0; i < n; i++) {
-    const a0 = (i / n) * Math.PI * 2;
-    const a1 = ((i + 1) / n) * Math.PI * 2;
-    pfad += ` Q ${p(aussen, (a0 + a1) / 2)} ${p(innen, a1)}`;
-  }
-  return `${pfad} Z`;
-})();
-
+/* Siegel wie eine geprägte Medaille (kein Aufkleber): Navy-Grund, Rand im Markenverlauf, Ringschrift,
+   in der Mitte nur der Wert. Die Auflösung „0 €“ steht bewusst erst im Preisblock unter dem Dokument. */
 function Siegel() {
   return (
     <div className="mpd-siegel">
       <svg viewBox="0 0 208 208" focusable="false">
         <defs>
-          <linearGradient id="mpd-siegel-verlauf" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#3f74ff" />
-            <stop offset="0.55" stopColor="#6a55ff" />
-            <stop offset="1" stopColor="#8c6dff" />
+          <linearGradient id="mpd-siegel-rand" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#5b86ff" />
+            <stop offset="0.55" stopColor="#7a62ff" />
+            <stop offset="1" stopColor="#a58bff" />
           </linearGradient>
-          <radialGradient id="mpd-siegel-glanz" cx="0.32" cy="0.22" r="0.8">
-            <stop offset="0" stopColor="#fff" stopOpacity="0.32" />
-            <stop offset="0.5" stopColor="#fff" stopOpacity="0" />
+          <radialGradient id="mpd-siegel-grund" cx="0.36" cy="0.26" r="0.86">
+            <stop offset="0" stopColor="#2b3478" />
+            <stop offset="0.55" stopColor="#141a48" />
+            <stop offset="1" stopColor="#0a0d2b" />
           </radialGradient>
-          <path id="mpd-siegel-pfad" d="M104 104 m -72 0 a 72 72 0 1 1 144 0 a 72 72 0 1 1 -144 0" />
+          <path id="mpd-siegel-pfad" d="M104 104 m -77 0 a 77 77 0 1 1 154 0 a 77 77 0 1 1 -154 0" />
         </defs>
-        <path d={ROSETTE} fill="url(#mpd-siegel-verlauf)" />
-        <path d={ROSETTE} fill="url(#mpd-siegel-glanz)" />
-        <circle cx="104" cy="104" r="88" fill="none" stroke="#fff" strokeOpacity="0.55" strokeWidth="1.2" />
-        <circle cx="104" cy="104" r="56" fill="none" stroke="#fff" strokeOpacity="0.55" strokeWidth="1.2" />
+        <circle cx="104" cy="104" r="101" fill="url(#mpd-siegel-grund)" />
+        <circle cx="104" cy="104" r="100" fill="none" stroke="url(#mpd-siegel-rand)" strokeWidth="3.2" />
+        <circle cx="104" cy="104" r="92" fill="none" stroke="#b9a5ff" strokeOpacity="0.4" strokeWidth="1" />
+        <circle cx="104" cy="104" r="61" fill="none" stroke="url(#mpd-siegel-rand)" strokeWidth="1.6" />
+        <circle className="mpd-siegel-striche" cx="104" cy="104" r="65.5" pathLength={120} />
         <text className="mpd-siegel-ring">
-          <textPath href="#mpd-siegel-pfad" startOffset="0" textLength={448} lengthAdjust="spacing">
+          <textPath href="#mpd-siegel-pfad" startOffset="0" textLength={472} lengthAdjust="spacing">
             {`${d.siegel.ring.toUpperCase()} · `}
           </textPath>
         </text>
-        <text className="mpd-siegel-mitte" x="104" y="104" textAnchor="middle" dominantBaseline="central">
-          {d.siegel.mitte}
+        <text className="mpd-siegel-wert" x="104" y="88" textAnchor="middle">
+          {d.siegel.wert.toUpperCase()}
+        </text>
+        <text className="mpd-siegel-betrag" x="104" y="121" textAnchor="middle">
+          {d.siegel.betrag}
         </text>
       </svg>
     </div>

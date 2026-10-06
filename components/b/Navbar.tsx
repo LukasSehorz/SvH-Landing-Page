@@ -27,7 +27,7 @@ navB.links.forEach((l) => {
   l.sub?.forEach((s) => ABSCHNITT_ZU_PUNKT.set(s.href.slice(1), l.id));
 });
 // Dunkle Bühnen über die volle Breite: liegt eine davon unter der Leiste, ist der Auslauf Navy statt Weiß
-const DUNKLE_BUEHNEN = "#leistungen, footer.fb";
+const DUNKLE_BUEHNEN = "#leistungen, #masterplan, footer.fb";
 
 // Abschnitte ohne Menüpunkt nach „Ablauf“ (Überzeuge dich selbst, Für wen, Fragen, Abschluss):
 // beenden die Markierung. Vor „Leistungen“ (Hero, Problem, Lösung) ist ohnehin nichts markiert.
