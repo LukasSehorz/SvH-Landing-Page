@@ -96,7 +96,7 @@ export const trustB = [
 
 // Kunden-Logos (Dateien in public/kunden/). Anzahl weiterer Projekte = 35 − Logos.
 export const logosB = {
-  label: "Diese Unternehmen arbeiten schon mit uns",
+  label: "Für diese Unternehmen haben wir schon gearbeitet",
   gesamt: 35,
   weitere: (n: number) => `+${n} weitere Projekte`,
   neuesFenster: "öffnet in neuem Fenster",
@@ -115,7 +115,7 @@ export const logosB = {
 export const problemB = {
   label: "Das Problem",
   titel: "Es ist nicht deine _Schuld_.",
-  text: "Fast jeder Betrieb probiert KI aus, aber kaum einer bekommt sie richtig zum Laufen. Hier ein Tool, dort ein Abo, und nichts greift ineinander. Was fehlt, ist ein klarer Plan.",
+  text: "Jeder Anbieter verkauft dir sein eigenes Tool, aber keiner sorgt dafür, dass alles mit deinen Abläufen zusammenspielt. Deshalb probiert fast jeder Betrieb KI aus, aber kaum einer spart damit wirklich Zeit. Was fehlt, ist ein klarer Plan.",
   studie1: {
     balken: [
       { wert: 88, label: "nutzen KI", farbe: "rot" },
@@ -213,7 +213,7 @@ export const workshopB = {
   schritte: [
     {
       titel: "KI-Workshop",
-      wann: "Heute",
+      wann: "Dein Termin",
       tag: "45 Minuten",
       text: "Das passiert im Workshop:",
       punkte: [
@@ -227,7 +227,7 @@ export const workshopB = {
       titel: "KI-Masterplan",
       wann: "Nach 48 Std.",
       tag: "", // die Zeitmarke steht schon im Badge (wann)
-      text: "Wir schreiben dir die 3 Automatisierungen auf, die dir am meisten Zeit sparen, und wie man sie umsetzt. Dann besprechen wir den Plan gemeinsam.",
+      text: "Deine 3 besten Automatisierungen, schwarz auf weiß. Dann besprechen wir den Plan gemeinsam.",
       punkte: [] as string[],
       preis: "0 €",
     },
@@ -268,6 +268,7 @@ export const loesungenB = {
   label: "Was wir bauen",
   titel: "Intelligente _Automatisierungen_. Gebaut für deinen Betrieb.",
   text: "Aus den fünf Stufen entstehen konkrete Helfer, verbunden mit den Programmen, die du schon hast.",
+  ctaZeile: "Welche davon lohnt sich bei dir? Das finden wir im Workshop heraus.",
   // Schild je Karte: „Stufe 1 · Wissen“ (Kurzname wie im Unendlichkeitszeichen darüber)
   stufe: (nr: number) => `Stufe ${nr} · ${leistungenB.teile.find((t) => t.nr === nr)?.kurz ?? ""}`,
   karten: [
@@ -358,8 +359,8 @@ export const kundenB = {
   text: "Klingt gut? Hier siehst du, was es anderen Betrieben gebracht hat. Darunter echte Bewertungen von Google.",
   // Ergebnisse mit Zahl über dem Karussell (OFFEN: Estera Monat oder Woche, siehe trustB; dritter Kunde ohne Namen)
   ergebnisse: [
-    { firma: "Estera GmbH", logo: "estera", zahl: "bis zu 160 Std.", einheit: "im Monat gespart", gebaut: "Webseite, Kundenverwaltung (CRM) und Automatisierungen" },
-    { firma: "Fuchs Pools", logo: "fuchspools", zahl: "+15 Std.", einheit: "pro Woche gespart", gebaut: "Webseite, automatische Angebote und automatisiertes Marketing" },
+    { firma: "Estera GmbH", logo: "estera", zahl: "bis zu 160 Std.", einheit: "im Monat gespart", gebaut: "Kundenverwaltung (CRM), Automatisierungen und neue Webseite" },
+    { firma: "Fuchs Pools", logo: "fuchspools", zahl: "15 Std.", einheit: "pro Woche gespart", gebaut: "Automatische Angebote, automatisiertes Marketing und neue Webseite" },
     { firma: "Kundenprojekt", logo: "", zahl: "1 Tag → 30 Min.", einheit: "pro Angebot", gebaut: "Automatische Angebote mit einem KI-Wissensspeicher" },
   ],
   gebaut: "Was wir gebaut haben",
@@ -389,7 +390,7 @@ export const kundenB = {
       sterne: 5,
       datum: "September 2026",
       text: "Wir waren mega zufrieden mit der Zusammenarbeit! Die Jungs waren immer zuverlässig, haben sehr gute Qualität schnell geliefert und Anderungswünsche direkt umgesetzt. Durch die Automatisierungen konnten wir bis zu 160 Stunden im Monat einsparen. Können die Jungs nur weiterempfehlen!",
-      umgesetzt: "Neue Webseite, digitale Kundenverwaltung (CRM) und smarte Automatisierungen dahinter.",
+      umgesetzt: "Digitale Kundenverwaltung (CRM), Automatisierungen und eine neue Webseite.",
     },
     {
       name: "oliver fuchs",
@@ -399,7 +400,7 @@ export const kundenB = {
       sterne: 5,
       datum: "September 2026",
       text: "Ich war mit der Zusammenarbeit und dem Ergebnis rundum zufrieden! Die Firma hat von Anfang an zuverlässig und professionell gearbeitet. Meine Fragen wurden schnell beantwortet und Änderungswünsche unkompliziert umgesetzt. Besonders gefallen hat mir, dass meine Vorstellungen ernst genommen wurden und ich immer einen Ansprechpartner hatte. Die Arbeit wurde zügig erledigt und die Qualität hat mich überzeugt. Ich würde die Firma jederzeit wieder beauftragen und kann sie auf jeden Fall weiterempfehlen!",
-      umgesetzt: "Neue Webseite, automatische Angebotserstellung und automatisiertes Marketing.",
+      umgesetzt: "Automatische Angebotserstellung, automatisiertes Marketing und eine neue Webseite.",
     },
     {
       name: "Izzet Tüymen",
@@ -409,8 +410,8 @@ export const kundenB = {
       sterne: 5,
       datum: "Oktober 2026",
       text: "Für mich zählt am Ende vor allem das Ergebnis, und das ist hier wirklich erstklassig. Man sieht an jedem Detail, dass die Jungs sauber und mit hohem Anspruch gearbeitet haben. Nichts wirkt halbfertig oder schnell zusammengeschustert, im Gegenteil: Sie haben an Dinge gedacht, die mir selbst gar nicht aufgefallen wären. Auch aus meinem Umfeld habe ich dazu schon mehrfach positives Feedback bekommen. Die Zusammenarbeit war dabei angenehm und unkompliziert. Wer Wert auf Qualität legt, ist bei Jannik & Lukas genau richtig.",
-      // OFFEN: bestätigen (abgeleitet aus dem Webdesign-Projekt Taxiizi)
-      umgesetzt: "Neue Webseite für den Taxi- und Limousinenservice.",
+      // OFFEN: was umgesetzt wurde (Webdesign-Projekt Taxiizi?), bis zur Bestätigung leer = Block entfällt
+      umgesetzt: "",
     },
     {
       name: "Max TV",
@@ -420,8 +421,8 @@ export const kundenB = {
       sterne: 5,
       datum: "Oktober 2026",
       text: "Absolut zuverlässig. Was abgemacht wurde, wurde auch eingehalten!",
-      // OFFEN: bestätigen (abgeleitet aus dem Webdesign-Projekt Betthupferl)
-      umgesetzt: "Neue Webseite für die Boutique in Traunstein.",
+      // OFFEN: was umgesetzt wurde (Webdesign-Projekt Betthupferl?), bis zur Bestätigung leer = Block entfällt
+      umgesetzt: "",
     },
     {
       name: "zGraniT RxyaL",
@@ -438,7 +439,7 @@ export const kundenB = {
 
 export const teamB = {
   label: "Wer dahintersteckt",
-  titel: "Wer dir den _Plan_ schreibt",
+  titel: "Wer das für dich _baut_",
   people: [
     // OFFEN: Fotos ("/b/lukas.jpg", "/b/jannik.jpg"); Texte sind Entwürfe, bitte prüfen und ergänzen
     {
@@ -480,14 +481,15 @@ export const aktuellesB = {
 };
 
 // Nächster Schritt: schwarzer Kasten mit Bild-Logo links (Vorbild: andreasbaulig.de „Überzeuge dich selbst“)
+// Runde 3: persönlich statt Wiederholung des Ablaufs, mit direktem Draht zu den Gründern
 export const naechsterB = {
   titel: ["Überzeuge dich selbst.", "Ganz unverbindlich."],
   absaetze: [
-    "Um uns und unsere Arbeit kennenzulernen, bieten wir dir einen kostenlosen KI-Workshop an. Dort schauen wir uns gemeinsam an, wie dein Betrieb arbeitet.",
-    "Meistens sprechen wir über Themen wie: Angebote, E-Mails, Kundenanfragen, Rechnungen und das Wissen im Betrieb.",
-    "Gerne schauen wir uns aber auch individuelle Themen an, die gerade deinen Betrieb betreffen.",
-    "Mache noch heute den ersten Schritt.",
+    "Um uns kennenzulernen, musst du nichts kaufen. Im kostenlosen Workshop siehst du in 45 Minuten, wie wir arbeiten und ob wir zu deinem Betrieb passen.",
+    "Wir sind Lukas und Jannik. Du sprichst bei uns immer direkt mit den Gründern, vom ersten Gespräch bis zur fertigen Automatisierung.",
   ],
+  telefon: "Lieber erst kurz sprechen? Ruf uns direkt an:",
+  schluss: "Mach noch heute den ersten Schritt.",
 };
 
 /* Zahnräder: das Lösungsprinzip direkt nach dem Problem (Baulig: „Was dich erwartet“).
@@ -497,7 +499,7 @@ export const zahnradB = {
   titel: "Spare dir _systematisch_ Zeit, statt noch ein Tool zu kaufen.",
   text: "Wir machen es andersrum: KI kommt als Motor in die Mitte deines Betriebs. Dreht sich das große Rad, drehen alle Bereiche mit, und nichts wird doppelt gemacht.",
   // Darunter die sechs Gewinne aus problemB.vorteile (Titel: problemB.vorteileTitel)
-  weiter: "So bauen wir das auf: in fünf Stufen",
+  weiter: "Wie das genau abläuft",
   weiterHref: "#leistungen",
   mitte: "KI",
   // lang = Desktop, kurz = Handy (größere Schrift, deshalb mit Trennung)
@@ -513,6 +515,8 @@ export const zahnradB = {
 // Masterplan-Kasten: schwarz, mit Laptop (Vorbild: andreasbaulig.de „Unser System als Training“). Inhalte wie in A.
 export const masterplanB = {
   label: "Das bekommst du",
+  // Preisanker (Wert laut Jannik, 05.10.2026), seit Runde 3 hier statt im Workshop-Bild
+  preis: { titel: "Wert des KI-Masterplans", alt: "1.099\u00a0€", neu: "0\u00a0€", text: "für dich kostenlos nach dem Workshop" },
   titel: "Dein KI-Masterplan: der Fahrplan, mit dem dein Betrieb jede Woche Zeit gewinnt.",
   intro: "48 Stunden nach dem Workshop bekommst du deinen persönlichen KI-Masterplan. Kostenlos, und er gehört dir, egal wie du dich danach entscheidest.",
   punkte: [
@@ -530,6 +534,7 @@ export const fragenB = {
   nochFragen: "Deine Frage ist nicht dabei? Ruf uns einfach an:",
   items: [
     { q: "Was kostet mich der Workshop?", a: "Nichts. Der Workshop, der KI-Masterplan und die Besprechung sind kostenlos, und du gehst dabei keine Verpflichtung ein." },
+    { q: "Und was kostet die Umsetzung?", a: "Das hängt davon ab, was wir bauen. Nach dem Masterplan bekommst du ein Angebot mit einem klaren Preis. Erst dann entscheidest du, und für die Umsetzung gilt unsere Geld-zurück-Garantie." },
     { q: "Wo ist der Haken?", a: "Es gibt keinen. Wir verdienen erst dann Geld, wenn du dich entscheidest, den Plan mit uns umzusetzen. Wenn nicht, hast du trotzdem einen fertigen Plan in der Hand." },
     { q: "Wir kennen uns mit KI gar nicht aus. Ist das ein Problem?", a: "Im Gegenteil, genau dafür sind wir da. Wir erklären alles in normaler Sprache und zeigen deinem Team Schritt für Schritt, wie die Helfer funktionieren." },
     { q: "Lohnt sich das auch für kleinere Betriebe?", a: "Ja. Gerade dort fällt jede gewonnene Stunde auf. Im Workshop sehen wir gemeinsam, ob und wo es sich für dich rechnet." },
