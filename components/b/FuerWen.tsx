@@ -2,8 +2,8 @@ import { fuerWenB } from "@/app/copy-b";
 import { Grad, Haken, Kreuz, stufe } from "./ui";
 
 /* Für wen: ehrliche Ja/Nein-Liste vor den Fragen (Baulig: „Für wen ist das?“).
-   Zwei schwarz-weiße Kästen in der Bildsprache der Problem-Sektion: links grüne Haken,
-   rechts rote Kreuze (wie „Was passiert, wenn du nichts änderst“). Am Handy untereinander. */
+   Zwei helle Karten in der Kartenart ab der Lösung (feiner Rand, weicher Schatten):
+   links grüne Haken, rechts ruhige graue Kreuze, damit das Nein nicht schreit. Am Handy untereinander. */
 export default function FuerWen() {
   const { ja, nein } = fuerWenB;
   return (
@@ -17,17 +17,19 @@ export default function FuerWen() {
         </div>
 
         <div className="fw-grid">
-          <div className="fw-kasten" data-rv="">
+          <div className="fw-kasten fw-kasten--ja" data-rv="">
             <h3 className="fw-kasten-titel">
               <span className="fw-marke fw-marke--ja" aria-hidden="true">
-                <Haken size={20} farbe="#fff" />
+                <Haken size={18} farbe="#16a34a" />
               </span>
               {ja.titel}
             </h3>
             <ul className="fw-liste">
               {ja.punkte.map((p) => (
                 <li key={p}>
-                  <Haken size={24} farbe="#16a34a" />
+                  <span className="fw-symbol fw-symbol--ja" aria-hidden="true">
+                    <Haken size={22} farbe="#16a34a" />
+                  </span>
                   {p}
                 </li>
               ))}
@@ -37,15 +39,15 @@ export default function FuerWen() {
           <div className="fw-kasten fw-kasten--nein" data-rv="" style={stufe(1)}>
             <h3 className="fw-kasten-titel">
               <span className="fw-marke fw-marke--nein" aria-hidden="true">
-                <Kreuz size={20} />
+                <Kreuz size={18} />
               </span>
               {nein.titel}
             </h3>
             <ul className="fw-liste">
               {nein.punkte.map((p) => (
                 <li key={p}>
-                  <span className="fw-x" aria-hidden="true">
-                    <Kreuz size={22} />
+                  <span className="fw-symbol fw-symbol--nein" aria-hidden="true">
+                    <Kreuz size={20} />
                   </span>
                   {p}
                 </li>

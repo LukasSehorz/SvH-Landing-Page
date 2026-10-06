@@ -7,6 +7,7 @@ import { EMAIL, GROESSEN, STUNDEN, ZEITFRESSER, mailtoAdresse, type Abwehr, type
 import { Haken } from "./ui";
 
 /* Anmeldung zum KI-Workshop (Variante B): ein einziger, übersichtlicher Schritt.
+   Handy: Auswahl-Knöpfe zweispaltig, Name und Firma nebeneinander, keine zusätzliche Karte (formular.css).
    Schickt an /api/anfrage wie Variante A (gleiche Felder, Prüfung und Spam-Abwehr).
    Antwort 503 = Versand noch nicht eingerichtet → E-Mail-Programm mit fertiger Nachricht. */
 
@@ -232,7 +233,7 @@ export default function Formular() {
             ["phone", F.phone, "tel", "tel", false],
           ] as const
         ).map(([k, label, typ, auto, pflicht]) => (
-          <div key={k} className="fm-feld">
+          <div key={k} className={`fm-feld fm-feld--${k}`}>
             <label htmlFor={id(k)}>
               {label} {pflicht ? null : <span className="fm-hint">{F.optional}</span>}
             </label>

@@ -2,10 +2,10 @@ import Image from "next/image";
 import { company } from "@/app/content";
 import { footerB, navB } from "@/app/copy-b";
 
-/* Fußzeile: dunkel wie die Leiste, rahmt die helle Seite ein. Die Abschnitts-Links zeigen auf die
-   Startseite („/#vorteile“), damit sie auch von Impressum, AGB usw. aus ins Ziel führen; auf der
-   Startseite selbst springt der Browser ohne Neuladen zum Abschnitt. „Aktuelles“ führt zur Seite
-   mit allen Videos. */
+/* Fußzeile: dunkel wie die Leiste, rahmt die helle Seite ein. Die Abschnitts-Links (Reihenfolge wie
+   das Menü) zeigen auf die Startseite („/#leistungen“), damit sie auch von Impressum, AGB usw. aus
+   ins Ziel führen; auf der Startseite selbst springt der Browser ohne Neuladen zum Abschnitt.
+   „Aktuelles“ führt zur Seite mit allen Videos. */
 export default function Footer() {
   return (
     <footer className="fb">

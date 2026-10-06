@@ -8,6 +8,7 @@
 @import "./styles/seiten.css";
 @import "./styles/loesungen.css";
 @import "./styles/abschluss.css";
+@import "./styles/garantie-b.css";
 
 /* =====================================================================
    SvH Consulting
@@ -129,10 +130,10 @@ ol {
   background: rgba(124, 106, 255, 0.3);
 }
 
+/* Kein border-radius hier: der Fokusring folgt der eigenen Form (runde Knöpfe bleiben rund) */
 :focus-visible {
   outline: 2px solid var(--violet);
   outline-offset: 3px;
-  border-radius: 6px;
 }
 
 .sr-only {

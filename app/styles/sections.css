@@ -243,11 +243,13 @@ html.rv-an [data-rv]:not([data-rv="in"]) {
   font-size: 16px;
   color: var(--page-ink-2);
 }
+/* Tippziel mindestens 44 px hoch */
 .fr-tel {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-top: 8px;
+  min-height: 48px;
+  margin-top: 2px;
   font-size: 19px;
   font-weight: 600;
   color: var(--page-ink);
@@ -368,12 +370,13 @@ html.rv-an [data-rv]:not([data-rv="in"]) {
   font-size: 14px;
   color: rgba(244, 244, 246, 0.5);
 }
+/* Grau auf #08080c: 0,58 ergibt #919193, Kontrast 6,4 : 1 (vorher 0,45 = 4,2 : 1, zu schwach) */
 .fb-copy {
   margin-top: 48px;
   padding-block: 24px 28px;
   border-top: 1px solid rgba(244, 244, 246, 0.1);
   font-size: 13.5px;
-  color: rgba(244, 244, 246, 0.45);
+  color: rgba(244, 244, 246, 0.58);
 }
 @media (max-width: 899px) {
   .fb-grid {

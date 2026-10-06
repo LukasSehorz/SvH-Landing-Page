@@ -32,26 +32,15 @@
     opacity 0.45s var(--ease),
     visibility 0.6s;
 }
-/* ausgeblendet (nur Handy): ganz aus dem Bild, ohne visibility, damit Tab-Fokus sie
-   zurückholen kann (focus-within); kein Schein des Knopfs bleibt oben stehen */
-.nav[data-hidden="true"] {
-  transform: translateY(calc(-100% - 60px));
-  opacity: 0;
-}
-.nav[data-hidden="true"] .nav-bar {
-  pointer-events: none;
-}
-.nav[data-hidden="true"]:focus-within {
-  transform: none;
-  opacity: 1;
-}
-.nav[data-hidden="true"]:focus-within .nav-bar {
-  pointer-events: auto;
-}
+/* Die Leiste blendet nie aus (Runde 2): am Handy bleibt der Knopf erreichbar. */
 /* Handy/Tablet: deckender Grund hinter der ganzen Kapsel (auch neben den runden Enden),
    darunter ein weicher Auslauf. So schaut keine große Überschrift über oder unter der
-   Leiste hervor, sobald gescrollt ist. */
-.nav::before {
+   Leiste hervor, sobald gescrollt ist.
+   Zwei Ebenen in derselben Form: ::before weiß (helle Seite), ::after Marken-Navy (#080a1d), solange
+   eine dunkle Bühne unter der Leiste liegt (#leistungen, Fußzeile; data-dunkel aus Navbar.tsx).
+   Gewechselt wird per Kreuzblende (nur opacity, kein Layout). */
+.nav::before,
+.nav::after {
   content: "";
   position: absolute;
   left: 0;
@@ -60,52 +49,75 @@
   height: 124px; /* 14 Rand + 64 Leiste + 46 Auslauf */
   background: linear-gradient(
     180deg,
-    var(--page) 0px,
-    var(--page) 82px,
-    rgba(255, 255, 255, 0.82) 94px,
-    rgba(255, 255, 255, 0.4) 108px,
-    rgba(255, 255, 255, 0) 100%
+    rgb(var(--auslauf)) 0px,
+    rgb(var(--auslauf)) 82px,
+    rgba(var(--auslauf), 0.82) 94px,
+    rgba(var(--auslauf), 0.4) 108px,
+    rgba(var(--auslauf), 0) 100%
   );
   opacity: 0;
   transition: opacity 0.4s var(--ease);
   pointer-events: none;
 }
-.nav[data-scrolled="true"]::before {
+.nav::before {
+  --auslauf: 255, 255, 255;
+}
+.nav::after {
+  --auslauf: 8, 10, 29;
+}
+.nav[data-scrolled="true"]:not([data-dunkel="true"])::before,
+.nav[data-scrolled="true"][data-dunkel="true"]::after {
   opacity: 1;
 }
+/* auf der dunklen Bühne: die Kapsel hebt sich mit einer etwas helleren Fläche vom Navy ab
+   (eine hellere Kante ginge nicht: clip-path schneidet sie an den Enden der kompakten Pille ab) */
+.nav[data-dunkel="true"] .nav-bar::before {
+  background: #171a33;
+}
 @media (max-width: 699px) {
-  .nav::before {
+  .nav::before,
+  .nav::after {
     top: -8px;
     height: 104px; /* 8 Rand + 56 Leiste + 40 Auslauf */
     background: linear-gradient(
       180deg,
-      var(--page) 0px,
-      var(--page) 66px,
-      rgba(255, 255, 255, 0.82) 78px,
-      rgba(255, 255, 255, 0.4) 90px,
-      rgba(255, 255, 255, 0) 100%
+      rgb(var(--auslauf)) 0px,
+      rgb(var(--auslauf)) 66px,
+      rgba(var(--auslauf), 0.82) 78px,
+      rgba(var(--auslauf), 0.4) 90px,
+      rgba(var(--auslauf), 0) 100%
     );
   }
 }
-/* ab 900 px: beim Runterscrollen kompakte Pille (Marke + Knopf), der Knopf verschwindet nie.
+/* ab 900 px: beim Runterscrollen kompakte Pille (Marke + Knopf), weicht der Knopf, nur die Marke.
    Die Leiste verwandelt sich weich: erst gehen die Links (schnell, ohne Verzögerung),
-   dann zieht sich die Kapsel zur Mitte zusammen. Zurück umgekehrt. */
-.nav[data-compact="true"] .nav-bar {
-  max-width: 604px;
-  transition:
-    max-width 0.6s var(--ease) 0.08s,
-    gap 0.6s var(--ease) 0.08s,
-    padding 0.6s var(--ease) 0.08s,
-    background-color 0.4s var(--ease),
-    border-color 0.4s var(--ease);
+   dann zieht sich die Kapsel zur Mitte zusammen. Zurück umgekehrt.
+   Ohne Layout-Sprung (CLS 0): Die Leiste behält immer ihre volle Breite. Es ändern sich nur
+   transform (Marke und Knopf rücken zur Mitte), clip-path (schwarze Fläche) und opacity (Links).
+   Die Wege rechnet Navbar.tsx aus den gemessenen Breiten (--nav-dx, --nav-dx2). */
+.nav {
+  --nav-x: 0px;
+}
+.nav[data-compact="true"]:not(:focus-within) {
+  --nav-x: var(--nav-dx, 0px);
+}
+.nav[data-compact="true"][data-at-form="true"]:not(:focus-within) {
+  --nav-x: var(--nav-dx2, 0px);
+}
+.nav-mark,
+.nav-end {
+  transition: transform 0.6s var(--ease) 0.08s;
+}
+.nav-mark {
+  transform: translateX(var(--nav-x));
+}
+.nav-end {
+  transform: translateX(calc(var(--nav-x) * -1));
 }
 .nav[data-compact="true"] .nav-links {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.12s linear;
-}
-.nav[data-compact="true"]:focus-within .nav-bar {
-  max-width: min(var(--shell), 100%);
 }
 .nav[data-compact="true"]:focus-within .nav-links {
   opacity: 1;
@@ -115,23 +127,29 @@
    der Pille, darunter ein weicher Auslauf. Keine halben Buchstaben großer Überschriften
    über oder neben der kompakten Pille. */
 @media (min-width: 900px) {
-  .nav::before {
+  .nav::before,
+  .nav::after {
     top: -14px;
     height: 116px; /* 14 Rand + 64 Pille + 38 Auslauf */
     background: linear-gradient(
       180deg,
-      var(--page) 0px,
-      var(--page) 78px,
-      rgba(255, 255, 255, 0.82) 88px,
-      rgba(255, 255, 255, 0.4) 100px,
-      rgba(255, 255, 255, 0) 100%
+      rgb(var(--auslauf)) 0px,
+      rgb(var(--auslauf)) 78px,
+      rgba(var(--auslauf), 0.82) 88px,
+      rgba(var(--auslauf), 0.4) 100px,
+      rgba(var(--auslauf), 0) 100%
     );
   }
 }
 
+/* Die Leiste selbst ist unsichtbar und fängt keine Klicks; sichtbar und klickbar sind nur die
+   schwarze Fläche (::before, per clip-path auf die Pille zugeschnitten, auch für Klicks) und die
+   Inhalte. So greift man in der kompakten Pille links und rechts daneben auf die Seite durch. */
 .nav-bar {
-  pointer-events: auto;
+  pointer-events: none;
   position: relative;
+  z-index: 1; /* über den beiden Ausläufen (::before, ::after der Leiste) */
+  isolation: isolate;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -141,70 +159,61 @@
   height: 64px;
   padding-inline: 10px 8px;
   border-radius: 999px;
+}
+.nav-bar > * {
+  pointer-events: auto;
+}
+/* schwarze Fläche: immer deckend (auf Weiß würde eine halbdurchsichtige Kapsel grau wirken) */
+.nav-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
   border: 1px solid var(--line);
-  background: rgba(8, 8, 12, 0.9);
-  backdrop-filter: blur(24px) saturate(140%);
-  -webkit-backdrop-filter: blur(24px) saturate(140%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 20px 50px -20px rgba(0, 0, 0, 0.7);
-  transition:
-    max-width 0.6s var(--ease),
-    gap 0.6s var(--ease),
-    padding 0.6s var(--ease),
-    background-color 0.4s var(--ease),
-    border-color 0.4s var(--ease);
-}
-/* über Inhalt: vollständig deckend, darunterliegende Überschriften scheinen nie durch */
-.nav[data-scrolled="true"] .nav-bar {
   background: #08080c;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  clip-path: inset(0 var(--nav-x) round 999px);
+  pointer-events: auto;
+  transition:
+    clip-path 0.6s var(--ease) 0.08s,
+    background-color 0.4s var(--ease);
 }
-/* Formular im Bild: kein Knopf, der zum Formular führt; die Pille schrumpft auf die Marke.
-   Handy: Knopf einfach aus. Ab 900 px faltet er sich weich zusammen (erst ausblenden,
-   dann Breite), zurück umgekehrt (erst Breite, dann einblenden). */
-@media (max-width: 899px) {
-  .nav[data-at-form="true"] .nav-end .btn-sm {
-    display: none !important;
-  }
+/* weicher Schatten der vollen Leiste: eigene Ebene. In der kompakten Pille blendet er aus
+   (mitgestaucht wirkte er wie ein grauer Kasten) und kommt erst nach dem Aufziehen zurück. */
+.nav-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  border-radius: inherit;
+  box-shadow: 0 14px 36px -18px rgba(8, 8, 12, 0.45);
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease) 0.45s;
 }
-@media (min-width: 900px) {
-  .nav-end .btn-sm {
-    max-width: 316px;
-    transition:
-      transform 0.5s var(--ease),
-      box-shadow 0.5s var(--ease),
-      max-width 0.6s var(--ease),
-      padding 0.6s var(--ease),
-      opacity 0.3s var(--ease) 0.3s,
-      visibility 0s;
-  }
-  .nav[data-at-form="true"] .nav-end .btn-sm {
-    max-width: 0;
-    padding-inline: 0;
-    opacity: 0;
-    visibility: hidden;
-    overflow: hidden;
-    pointer-events: none;
-    transition:
-      opacity 0.12s linear,
-      max-width 0.6s var(--ease) 0.08s,
-      padding 0.6s var(--ease) 0.08s,
-      visibility 0s 0.7s;
-  }
-  .nav[data-at-form="true"] .nav-end {
-    gap: 0;
-  }
+.nav[data-compact="true"]:not(:focus-within) .nav-bar::after {
+  opacity: 0;
+  transition: opacity 0.15s linear;
 }
-.nav[data-compact="true"][data-at-form="true"] .nav-bar {
-  max-width: 300px;
+/* Sektionsknopf (oder ab 900 px „Überzeuge dich selbst“) im Bild: kein zweiter gleicher Knopf.
+   Der Leisten-Knopf blendet weich aus, sein Platz bleibt (kein Springen von Marke, Links, Menü);
+   in der kompakten Pille schrumpft die Fläche zusätzlich auf die Marke (siehe oben). */
+.nav-end .btn-sm {
+  transition:
+    transform 0.5s var(--ease),
+    box-shadow 0.5s var(--ease),
+    opacity 0.3s var(--ease) 0.2s,
+    visibility 0s;
 }
-@media (min-width: 1180px) {
-  /* nur noch die Marke: Pille umschließt sie gleichmäßig */
-  .nav[data-compact="true"][data-at-form="true"] .nav-bar {
-    max-width: 218px;
-    gap: 0;
-    padding-inline: 10px;
-  }
+.nav[data-at-form="true"] .nav-end .btn-sm {
+  opacity: 0;
+  transform: scale(0.96);
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.2s var(--ease),
+    transform 0.25s var(--ease),
+    visibility 0s 0.25s;
 }
 
 /* Leisten-Knopf: ab 900 px derselbe Wortlaut wie in den Sektionen („… sichern“),
@@ -299,7 +308,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: gap 0.6s var(--ease);
 }
 
 .nav-burger {
@@ -590,6 +598,24 @@
     display: none;
   }
 }
+/* 320 px: Marke, Knopf und Menü passen nur enger nebeneinander (sonst ragt das Menü über den Rand) */
+@media (max-width: 359px) {
+  .nav-bar {
+    gap: 4px;
+    padding-inline: 4px;
+  }
+  .nav-mark {
+    min-width: 40px;
+    padding-inline: 8px 2px;
+  }
+  .nav-end {
+    gap: 4px;
+  }
+  .nav-end .btn-sm {
+    padding-inline: 10px;
+    font-size: 12.5px;
+  }
+}
 
 /* ------------------------------------------------------------ Label (Aufklapper) */
 
@@ -780,15 +806,7 @@
 
 /* ------------------------------------------------ Anpassung an die helle Seite */
 
-/* Auf Weiß würde die halbdurchsichtige Kapsel grau wirken: immer deckend schwarz
-   (wie in A nach dem Scrollen), Schatten weicher, damit er auf Weiß nicht schmiert */
-.nav-bar,
-.nav[data-scrolled="true"] .nav-bar {
-  background: #08080c;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 14px 36px -18px rgba(8, 8, 12, 0.45);
-}
+/* Fläche immer deckend schwarz, Schatten weich: steht seit Runde 2 direkt bei .nav-bar::before/::after */
 
 /* ------------------------------------------------ Aufklapper (Variante B) */
 

@@ -9,9 +9,12 @@ import { navB, type NavLink } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
 import { Arrow, Caret } from "@/components/system/Icons";
 
-/* Leiste: ursprünglich eine Kopie der Leiste aus der früheren Variante A, gleiches Aussehen und
-   Verhalten. Menü in der Reihenfolge der Seite: Vorteile, Leistungen (Leistungen 0–4, Lösungen),
-   Kunden, Ablauf (KI-Workshop, KI-Masterplan), Über uns (Gründer, Aktuelles).
+/* Leiste: ursprünglich eine Kopie der Leiste aus der früheren Variante A. Menü in der Reihenfolge
+   der Seite (Runde 2): Leistungen, Kunden, Lösungen, Über uns (Gründer, Aktuelles),
+   Ablauf (KI-Masterplan, KI-Workshop). Problem und Lösung (Zahnräder) davor haben keinen Menüpunkt.
+   Die Leiste bleibt immer sichtbar, auch am Handy (dort gibt es keine CTA-Leiste unten).
+   Lukas' Regel „nie zwei gleiche Knöpfe gleichzeitig im Bild“: Ist ein Knopf aus dem Inhalt oder
+   der Abschnitt „Überzeuge dich selbst“ (#termin) im Bild, weicht der Leisten-Knopf.
    Auf der Startseite springen die Punkte zu den Abschnitten, auf Unterseiten zurück zur Startseite. */
 
 const HOME = "/";
@@ -22,8 +25,12 @@ navB.links.forEach((l) => {
   ABSCHNITT_ZU_PUNKT.set(l.id, l.id);
   l.sub?.forEach((s) => ABSCHNITT_ZU_PUNKT.set(s.href.slice(1), l.id));
 });
-// Abschnitte ohne Menüpunkt am Ende der Seite: beenden die Markierung
-const OHNE_PUNKT = ["fuer-wen"];
+// Dunkle Bühnen über die volle Breite: liegt eine davon unter der Leiste, ist der Auslauf Navy statt Weiß
+const DUNKLE_BUEHNEN = "#leistungen, footer.fb";
+
+// Abschnitte ohne Menüpunkt nach „Ablauf“ (Überzeuge dich selbst, Für wen, Fragen, Abschluss):
+// beenden die Markierung. Vor „Leistungen“ (Hero, Problem, Lösung) ist ohnehin nichts markiert.
+const OHNE_PUNKT = ["termin", "fuer-wen"];
 
 /** Aufklapper (Desktop): öffnet per Klick, Tastatur oder Zeiger. */
 function Drop({
@@ -112,17 +119,18 @@ export default function Navbar() {
   const onHome = pathname === HOME;
   // Unterseiten: Anker auf die Startseite („/#vorteile“), dort nur „#vorteile“
   const pre = onHome ? "" : "/";
-  const [down, setDown] = useState(false); // scrollt gerade nach unten (jenseits des Starts)
+  const [down, setDown] = useState(false); // scrollt gerade nach unten (ab 900 px: kompakte Pille)
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [drop, setDrop] = useState<string | null>(null); // offener Aufklapper (Desktop)
   const [sheetSub, setSheetSub] = useState<string | null>(null); // offene Gruppe im Vollbild-Menü
   const burger = useRef<HTMLButtonElement>(null);
+  const kopf = useRef<HTMLElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
   const sheetId = useId();
 
-  // Ausblenden beim Runterscrollen, Einblenden beim Hochscrollen
+  // Richtung merken: ab 900 px wird die Leiste beim Runterscrollen zur kompakten Pille
   useEffect(() => {
     // erst im ersten Bild lesen: scrollY beim Einhängen erzwingt mitten in der Hydration ein Layout
     let lastY = -1;
@@ -149,9 +157,9 @@ export default function Navbar() {
   }, []);
 
   // Aktiver Abschnitt nach dem Leseweg: markiert ist der Menüpunkt des Abschnitts, der zuletzt
-  // die Linie bei 40 % der Fensterhöhe passiert hat. So bleibt „Vorteile“ auch in den Zahnrädern
-  // markiert und „Über uns“ im Kasten „Überzeuge dich selbst“. Ab „Für wen“ (Für wen, Fragen,
-  // Abschluss haben keinen Menüpunkt) ist nichts markiert, ebenso ganz oben im ersten Bild.
+  // die Linie bei 40 % der Fensterhöhe passiert hat (Unterpunkte markieren ihren Oberpunkt:
+  // Aktuelles → Über uns, Workshop → Ablauf). Bis „Leistungen“ (Hero, Problem, Lösung) und ab
+  // „Überzeuge dich selbst“ (danach Für wen, Fragen, Abschluss) ist nichts markiert.
   useEffect(() => {
     if (!onHome) return;
     const ids = [...Array.from(ABSCHNITT_ZU_PUNKT.keys()), ...OHNE_PUNKT];
@@ -204,20 +212,32 @@ export default function Navbar() {
     };
   }, [onHome]);
 
-  // Ab 900 px: Steht ein Knopf aus dem Inhalt oben im Fenster, faltet sich der Leisten-Knopf
-  // weg wie am Formular (nie zwei gleiche Knöpfe übereinander). Beobachtet werden die oberen
-  // 40 % (Vorlauf auch bei schnellem Scrollen), nach oben erweitert: beim Hochscrollen weicht
-  // der Leisten-Knopf, bevor ein Sektionsknopf von oben ins Bild kommt; beim Runterscrollen
-  // kehrt er erst zurück, wenn der Sektionsknopf oben aus dem Bild ist.
-  const [ctaOben, setCtaOben] = useState(false);
+  // Ab 900 px Menüpunkte und kompakte Pille, darunter Vollbild-Menü und eigene Knopf-Regel
+  const [wide, setWide] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 900px)");
+    const set = () => setWide(mq.matches);
+    set();
+    mq.addEventListener("change", set);
+    return () => mq.removeEventListener("change", set);
+  }, []);
+
+  // Steht ein Knopf aus dem Inhalt im Bild, faltet sich der Leisten-Knopf weg wie am Formular
+  // (nie zwei gleiche Knöpfe gleichzeitig). Ab 900 px werden die oberen 40 % beobachtet (Vorlauf
+  // auch bei schnellem Scrollen), nach oben erweitert: beim Hochscrollen weicht der Leisten-Knopf,
+  // bevor ein Sektionsknopf von oben ins Bild kommt. Unter 900 px zählt das ganze Fenster unter
+  // der Leiste: am Handy sieht man beide Knöpfe sonst gleichzeitig.
+  const [ctaImBild, setCtaImBild] = useState(false);
   useEffect(() => {
     const seen = new Map<Element, boolean>();
+    // Handy: was hinter der Leiste liegt, sieht man nicht; gezählt wird ab ihrer Unterkante
+    const unterkante = Math.round(kopf.current?.querySelector(".nav-bar")?.getBoundingClientRect().bottom ?? 72);
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => seen.set(e.target, e.isIntersecting));
-        setCtaOben(Array.from(seen.values()).some(Boolean));
+        setCtaImBild(Array.from(seen.values()).some(Boolean));
       },
-      { rootMargin: "25% 0px -60% 0px" },
+      { rootMargin: wide ? "25% 0px -60% 0px" : `-${unterkante}px 0px 0px 0px` },
     );
     const scan = () =>
       document.querySelectorAll("main [data-cta-inline]").forEach((el) => {
@@ -233,9 +253,9 @@ export default function Navbar() {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
       io.disconnect();
-      setCtaOben(false);
+      setCtaImBild(false);
     };
-  }, [pathname]);
+  }, [pathname, wide]);
 
   // Aufklapper schließen: Escape, Klick daneben
   useEffect(() => {
@@ -305,22 +325,70 @@ export default function Navbar() {
     setDrop(null);
   }
 
-  // Handy (< 900 px): Leiste blendet beim Runterscrollen aus, die CTA-Leiste unten übernimmt.
-  // Ab 900 px verschwindet der Knopf nie: die Leiste schrumpft zur kompakten Pille.
-  const [wide, setWide] = useState(false);
+  // Wege der kompakten Pille aus den echten Breiten (nav.css): Die Leiste behält ihre volle Breite,
+  // Marke und Knopf rücken per transform zur Mitte, die schwarze Fläche wird per clip-path schmaler.
+  // So entsteht beim Scrollen kein Layout-Sprung (vorher max-width/padding/gap: CLS 0,04 bei 1440 px).
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 900px)");
-    const set = () => setWide(mq.matches);
-    set();
-    mq.addEventListener("change", set);
-    return () => mq.removeEventListener("change", set);
+    const nav = kopf.current;
+    const bar = nav?.querySelector<HTMLElement>(".nav-bar");
+    const mark = nav?.querySelector<HTMLElement>(".nav-mark");
+    const end = nav?.querySelector<HTMLElement>(".nav-end");
+    if (!nav || !bar || !mark || !end) return;
+    const messen = () => {
+      const w = bar.offsetWidth; // Layout-Breite, unabhängig von transform
+      if (!w) return;
+      const rand = parseFloat(getComputedStyle(bar).paddingLeft) || 0;
+      // kompakt: Marke links, Knopf rechts (wie bisher höchstens 604 px)
+      const kompakt = Math.min(w, 604);
+      // Knopf weicht: nur die Marke (und das Menü, solange es zu sehen ist), gleichmäßig eingefasst
+      const b = burger.current;
+      const menue = b && b.offsetParent ? b.offsetWidth + (parseFloat(getComputedStyle(end).columnGap) || 0) : 0;
+      const nurMarke = Math.min(w, 2 * rand + mark.offsetWidth + menue);
+      nav.style.setProperty("--nav-dx", `${((w - kompakt) / 2).toFixed(1)}px`);
+      nav.style.setProperty("--nav-dx2", `${((w - nurMarke) / 2).toFixed(1)}px`);
+    };
+    messen();
+    const ro = new ResizeObserver(messen);
+    [bar, mark, end].forEach((el) => ro.observe(el));
+    return () => ro.disconnect();
   }, []);
+
+  // Dunkle Bühne unter der Leiste? Gemessen wird knapp unter ihrer Unterkante (dort endet der deckende
+  // Auslauf). Nur ein Attribut wechselt, die CSS blendet die Ausläufe über (kein Layout).
+  const [dunkel, setDunkel] = useState(false);
+  useEffect(() => {
+    let raf = 0;
+    const pruefe = () => {
+      raf = 0;
+      const linie = (kopf.current?.querySelector(".nav-bar")?.getBoundingClientRect().bottom ?? 72) + 12;
+      let d = false;
+      document.querySelectorAll(DUNKLE_BUEHNEN).forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.top <= linie && r.bottom > linie) d = true;
+      });
+      setDunkel(d);
+    };
+    const anstossen = () => {
+      if (!raf) raf = requestAnimationFrame(pruefe);
+    };
+    window.addEventListener("scroll", anstossen, { passive: true });
+    window.addEventListener("resize", anstossen);
+    anstossen();
+    return () => {
+      window.removeEventListener("scroll", anstossen);
+      window.removeEventListener("resize", anstossen);
+      cancelAnimationFrame(raf);
+    };
+  }, [pathname]);
+
+  // Die Leiste blendet nie aus (am Handy sonst viele Bildschirme ohne Knopf).
+  // Ab 900 px schrumpft sie beim Runterscrollen zur kompakten Pille.
   const menuActive = sheetOpen || drop !== null;
-  const hidden = !wide && down && !menuActive;
   const compact = wide && down && !menuActive;
-  const showBar = !hidden;
-  // Leisten-Knopf eingeklappt: Formular im Bild oder (ab 900 px) ein Sektionsknopf oben
-  const btnWeicht = (atForm || (wide && ctaOben)) && !sheetOpen;
+  // Leisten-Knopf eingeklappt: ein Sektionsknopf im Bild, ab 900 px auch „Überzeuge dich selbst“
+  // in der Fenstermitte. Am Handy zählt nur der Knopf selbst: sonst stünde der lange Abschnitt
+  // zeitweise ganz ohne Knopf da.
+  const btnWeicht = ((wide && atForm) || ctaImBild) && !sheetOpen;
 
   // B hat keine CTA-Leiste unten: die Leiste zeigt ihren Knopf auch mobil
   useEffect(() => {
@@ -329,20 +397,14 @@ export default function Navbar() {
     return () => html.removeAttribute("data-nav-cta");
   }, []);
 
-  // Zustand der Leiste für mitlaufende Elemente (z. B. Schalter-Band) bereitstellen
-  useEffect(() => {
-    const html = document.documentElement;
-    if (showBar) html.removeAttribute("data-nav-hidden");
-    else html.setAttribute("data-nav-hidden", "");
-  }, [showBar]);
-
   return (
     <>
       <header
+        ref={kopf}
         className="nav"
-        data-hidden={hidden ? "true" : "false"}
         data-compact={compact ? "true" : "false"}
         data-scrolled={scrolled ? "true" : "false"}
+        data-dunkel={dunkel ? "true" : "false"}
         data-at-form={btnWeicht ? "true" : "false"}
       >
         <nav className="nav-bar" aria-label="Hauptmenü">

@@ -141,14 +141,15 @@ export function BildBusiness({ aufgaben }: { aufgaben: string[] }) {
 
 /* ------------------------------------------------------------ 2 · CRM: Programme schweben um die Mitte */
 
-/* x in Prozent der Bildbreite (cqw), y in px; s = schmale Karte, b = breite Karte */
+/* x in Prozent der Bildbreite (cqw), y in px; s = schmale Karte, b = breite Karte,
+   xm/ym = Handy (niedrigere Bildfläche: die drei Reihen rücken zusammen, die mittlere etwas nach außen) */
 const CRM_ORTE = [
-  { n: "mail", xs: -25, ys: -62, xb: -31, yb: -36 },
-  { n: "kalender", xs: 25, ys: -62, xb: -16, yb: -66 },
-  { n: "webseite", xs: -37, ys: 2, xb: -23, yb: 56 },
-  { n: "telefon", xs: 37, ys: 2, xb: 16, yb: -62 },
-  { n: "beleg", xs: -25, ys: 66, xb: 31, yb: -24 },
-  { n: "tabelle", xs: 25, ys: 66, xb: 22, yb: 56 },
+  { n: "mail", xs: -25, ys: -62, xm: -24, ym: -57, xb: -31, yb: -36 },
+  { n: "kalender", xs: 25, ys: -62, xm: 24, ym: -57, xb: -16, yb: -66 },
+  { n: "webseite", xs: -37, ys: 2, xm: -39, ym: 0, xb: -23, yb: 56 },
+  { n: "telefon", xs: 37, ys: 2, xm: 39, ym: 0, xb: 16, yb: -62 },
+  { n: "beleg", xs: -25, ys: 66, xm: -24, ym: 57, xb: 31, yb: -24 },
+  { n: "tabelle", xs: 25, ys: 66, xm: 24, ym: 57, xb: 22, yb: 56 },
 ];
 
 export function BildCrm({ mitte, programme }: { mitte: string; programme: string[] }) {
@@ -158,7 +159,7 @@ export function BildCrm({ mitte, programme }: { mitte: string; programme: string
         {programme.map((p, i) => {
           const o = CRM_ORTE[i % CRM_ORTE.length];
           return (
-            <div key={p} className="lo-crm-app" style={v({ "--xs": o.xs, "--ys": o.ys, "--xb": o.xb, "--yb": o.yb, "--i": i })}>
+            <div key={p} className="lo-crm-app" style={v({ "--xs": o.xs, "--ys": o.ys, "--xm": o.xm, "--ym": o.ym, "--xb": o.xb, "--yb": o.yb, "--i": i })}>
               <span className="lo-crm-linie">
                 <span className="lo-crm-puls" />
               </span>

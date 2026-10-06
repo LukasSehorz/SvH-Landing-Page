@@ -2,7 +2,8 @@ import Image from "next/image";
 import { logosB } from "@/app/copy-b";
 import { LOGOS } from "./logos";
 
-/* Logo-Kasten unter der Trust-Bar: fast volle Breite, kräftiger schwarzer Rahmen.
+/* Logo-Kasten unter der Trust-Bar: fast volle Breite, helle Karte mit feinem Rand (wie die Lösungen).
+   Reihenfolge der Logos wie in logosB (copy-b.ts).
    Jedes Logo führt zur Webseite des Kunden; dazu die Zahl der weiteren Projekte (35 − Logos). */
 export default function KundenLogos() {
   const weitere = logosB.gesamt - logosB.firmen.length;

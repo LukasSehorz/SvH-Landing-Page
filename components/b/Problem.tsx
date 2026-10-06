@@ -1,10 +1,13 @@
-import Image from "next/image";
+import { cta } from "@/app/copy";
 import { problemB } from "@/app/copy-b";
-import { Grad, Haken, Kreuz, stufe } from "./ui";
+import Cta from "@/components/system/Cta";
+import { Grad, Kreuz, stufe } from "./ui";
 
-/* Problem und Vorteile als ein Schaubild (Lesart von links nach rechts, mobil von oben nach unten):
-   zwei Studien-Kästen → geschwungene Linien laufen zusammen → Folgen → Pfeil → SvH-Logo → Vorteile.
-   Bewusst schwarz-weiß; Farbe nur bei den Säulen (rot/grün) und den grünen Haken. */
+/* Problem als Schaubild, von oben nach unten (auch am Desktop, damit es mittig und ausgewogen steht):
+   zwei Studien-Kästen nebeneinander → geschwungene Linien laufen zusammen → „Was passiert, wenn du
+   nichts änderst“ → Knopf. Die Lösung mit den Gewinnen folgt in der nächsten Sektion (Zahnräder).
+   Bewusst schwarz-weiß im Comic-Stil („die graue Welt“): der einzige Abschnitt der Seite mit dicken
+   schwarzen Rahmen, gemalten Pfeilen und Strichmännchen. Farbe nur bei den Säulen (rot/grün) und den roten X. */
 
 const s1 = problemB.studie1;
 const s2 = problemB.studie2;
@@ -50,15 +53,11 @@ function Figur({ weg = false }: { weg?: boolean }) {
   );
 }
 
-/** Geschwungene Linien: waagrecht (Desktop) und senkrecht (schmale Schirme) */
+/** Zwei geschwungene Linien laufen von den beiden Studien zusammen und zeigen auf die Folgen */
 function Zusammenfuehrung() {
   return (
     <div className="pv-verbinder" aria-hidden="true">
-      <svg className="pv-quer" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <path d="M0 25 C 60 25, 40 50, 94 50" />
-        <path d="M0 75 C 60 75, 40 50, 94 50" />
-      </svg>
-      <svg className="pv-hoch" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
         <path d="M25 0 C 25 60, 50 40, 50 92" />
         <path d="M75 0 C 75 60, 50 40, 50 92" />
       </svg>
@@ -67,23 +66,9 @@ function Zusammenfuehrung() {
   );
 }
 
-function Pfeil() {
-  return (
-    <div className="pv-pfeil" aria-hidden="true">
-      <svg className="pv-quer" viewBox="0 0 100 40" preserveAspectRatio="none">
-        <path d="M0 20 C 30 2, 60 38, 94 20" />
-      </svg>
-      <svg className="pv-hoch" viewBox="0 0 40 100" preserveAspectRatio="none">
-        <path d="M20 0 C 2 30, 38 60, 20 92" />
-      </svg>
-      <span className="pv-pfeilspitze" />
-    </div>
-  );
-}
-
 export default function Problem() {
   return (
-    <section className="sb pv" id="vorteile" aria-labelledby="pv-titel">
+    <section className="sb pv" id="problem" aria-labelledby="pv-titel">
       <div className="pv-wrap">
         <div className="pv-kopf" data-rv="">
           <p className="b-label">{problemB.label}</p>
@@ -139,29 +124,10 @@ export default function Problem() {
               ))}
             </ul>
           </div>
+        </div>
 
-          <Pfeil />
-
-          <div className="pv-logo" data-rv="" style={stufe(3)}>
-            <Image src="/logo/svh-bild-navy.webp" alt="SvH Consulting" width={74} height={120} />
-          </div>
-
-          <div className="pv-vorteile pv-kasten" data-rv="" style={stufe(4)}>
-            <h3 className="pv-kasten-titel">
-              <Grad text={problemB.vorteileTitel} />
-            </h3>
-            <ul>
-              {problemB.vorteile.map((v) => (
-                <li key={v.titel}>
-                  <Haken size={24} farbe="#16a34a" />
-                  <span>
-                    <span className="pv-vorteil-titel">{v.titel}</span>
-                    <span className="pv-vorteil-text">{v.text}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className="pv-cta" data-rv="" style={stufe(3)}>
+          <Cta href="#termin">{cta.main}</Cta>
         </div>
       </div>
     </section>

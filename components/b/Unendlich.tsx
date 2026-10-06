@@ -4,11 +4,12 @@ import { leistungenB } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
 import { Grad, Pfeil, stufe } from "./ui";
 
-/* „Unsere Leistungen“ 0–4 als Unendlichkeitszeichen (Vorbild: andreasbaulig.de), aber geschlossen:
-   ein Band ohne Enden, die vier Farben gehen fließend ineinander über.
+/* „Unsere Leistungen“ 0–4 als Kapitelmarke: das Unendlichkeitszeichen leuchtet auf einer dunklen Bühne
+   (Vorbild: andreasbaulig.de), geschlossen, die vier Farben gehen fließend ineinander über.
    Auf dem Band laufen die Stufen 1–4: 1 oben links, 2 unten rechts, 3 oben rechts, 4 unten links
    (so läuft das Band auch). Die 0 (KI-Workshop) sitzt als Start-Knopf auf der Kreuzung in der Mitte.
-   Karten im Prinzip von „Unsere Haupt-Angebote“ (Apex): hell, feiner Rand, farbiger Schimmer in einer Ecke.
+   Darunter die Karten in Lesereihenfolge 0 → 4 (Handy untereinander, Tablet 0 oben und 2 × 2,
+   Computer alle fünf in einer Reihe). Karten hell wie in den Lösungen, Text linksbündig.
    Form: Lemniskate von Bernoulli, etwas höher gezogen. Alles wird auf dem Server berechnet. */
 
 const W = 1000;
@@ -27,8 +28,10 @@ const GROSS: Masse = { schrift: 30, r: 19, frei: 100, luecke: 11 };
 const KLEIN: Masse = { schrift: 40, r: 24, frei: 132, luecke: 13 };
 const SPITZE = 40; // Mindestabstand zur Spitze einer Schleife
 
-// Farben der vier Abschnitte (Markenfamilie Blau → Lila), weiße Schrift bleibt lesbar
-const FARBEN = ["#2f6bff", "#4f46e5", "#7c3aed", "#a855f7"];
+// Farben der vier Abschnitte (Markenfamilie Blau → Lila), weiße Schrift bleibt lesbar.
+// Auch die Lösungs-Karten nutzen sie für ihre Stufen-Schilder (gleiche Farbe = gleiche Stufe).
+export const STUFEN_FARBEN = ["#2f6bff", "#4f46e5", "#7c3aed", "#a855f7"];
+const FARBEN = STUFEN_FARBEN;
 
 type P = { x: number; y: number };
 
@@ -86,7 +89,6 @@ function beiLaenge(pts: P[], l: number[], s: number): P {
 // 0 ist der Start in der Mitte, auf dem Band laufen nur 1–4
 const START = leistungenB.teile.find((t) => t.nr === 0) ?? leistungenB.teile[0];
 const STUFEN = leistungenB.teile.filter((t) => t.nr > 0).slice(0, 4);
-const START_VERLAUF = `linear-gradient(135deg, ${FARBEN[0]}, ${FARBEN[3]})`;
 
 const ABSCHNITTE = STUFEN.map((teil, k) => {
   const pts = Array.from({ length: 121 }, (_, i) => punkt(tVon(k + i / 120)));
@@ -107,36 +109,13 @@ const ABSCHNITTE = STUFEN.map((teil, k) => {
     wort = Math.max(wort, anfang + 2 * m.r + m.luecke);
     return { nummer: beiLaenge(lesbar, l, wort - m.luecke - m.r), wort, m };
   };
-  const oben = k === 0 || k === 2;
-  const links = k === 0 || k === 3;
-  // kurzer, geschwungener Pfeil von der äußeren Schulter des Bandes zur Karte daneben (nur am Computer)
-  const g = k + (oben ? 0.24 : 0.76); // Schulter: zwischen Spitze und Scheitel
-  const p0 = punkt(tVon(g - 0.01));
-  const p1 = punkt(tVon(g + 0.01));
-  const auf = punkt(tVon(g));
-  let nx = -(p1.y - p0.y);
-  let ny = p1.x - p0.x;
-  const nl = Math.hypot(nx, ny) || 1;
-  nx /= nl;
-  ny /= nl;
-  if (nx * (links ? -1 : 1) < 0) {
-    nx = -nx;
-    ny = -ny;
-  }
-  const sx = auf.x + nx * (BAND / 2 + 12);
-  const sy = auf.y + ny * (BAND / 2 + 12);
-  const ex = sx + (links ? -54 : 54);
-  const ey = sy + (oben ? -26 : 30);
-  const pfeil = `M${sx.toFixed(1)} ${sy.toFixed(1)}Q${(sx + (links ? -4 : 4)).toFixed(1)} ${ey.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
   return {
     teil,
     farbe: FARBEN[k],
     textPfad: pfad(lesbar),
     gross: beschriftung(GROSS),
     klein: beschriftung(KLEIN),
-    pfeil,
     id: `lm-${k}`,
-    lage: `${oben ? "o" : "u"}${links ? "l" : "r"}`,
   };
 });
 
@@ -164,18 +143,16 @@ function Zeichen() {
   return (
     <svg className="um-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={ARIA}>
       <defs>
-        <filter id="um-schatten" x="-10%" y="-10%" width="120%" height="130%">
-          <feGaussianBlur stdDeviation="14" />
+        <filter id="um-schein" x="-15%" y="-25%" width="130%" height="150%">
+          <feGaussianBlur stdDeviation="22" />
         </filter>
-        <marker id="um-spitze" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M0 0L10 5L0 10" fill="none" stroke="#0b0b0e" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-        </marker>
         {ABSCHNITTE.map((a) => (
           <path key={a.id} id={a.id} d={a.textPfad} />
         ))}
       </defs>
 
-      <path d={UMRISS} className="um-schatten" fill="none" stroke="rgba(60,40,180,0.28)" strokeWidth={BAND} transform="translate(0 16)" filter="url(#um-schatten)" />
+      {/* weicher Lichtschein unter dem Band: auf der dunklen Bühne leuchtet das Zeichen */}
+      <path d={UMRISS} className="um-schatten" fill="none" stroke="rgba(106,85,255,0.55)" strokeWidth={BAND} filter="url(#um-schein)" />
       <g className="um-band">
         {STUECKE.map((s, i) => (
           <path key={i} d={s.d} fill="none" stroke={s.farbe} strokeWidth={BAND} strokeLinecap="butt" strokeLinejoin="round" />
@@ -200,9 +177,6 @@ function Zeichen() {
         </g>
       ))}
 
-      {ABSCHNITTE.map((a) => (
-        <path key={`p-${a.id}`} className="um-pfeil" d={a.pfeil} fill="none" stroke="#0b0b0e" strokeWidth="2.4" strokeLinecap="round" markerEnd="url(#um-spitze)" />
-      ))}
     </svg>
   );
 }
@@ -212,38 +186,39 @@ type Teil = (typeof leistungenB.teile)[number];
 // „E-Mails“ und „KI-…“ nicht am Bindestrich umbrechen (geschützter Bindestrich)
 const festeBindestriche = (t: string) => t.replace(/\b(KI|E)-(?=\w)/g, "$1\u2011");
 
-/** Karte einer Stufe: Nummer, Titel, Text, „Einfach erklärt“, Link */
-function Karte({ teil, farbe, klasse, d }: { teil: Teil; farbe: string; klasse: string; d: number }) {
+/** Karte einer Stufe: Nummer und Titel, ein Satz, „Einfach erklärt“. Nur die 0 hat einen Link. */
+function Karte({ teil, farbe, d }: { teil: Teil; farbe?: string; d: number }) {
   const start = teil.nr === 0;
+  const stil = {
+    ...stufe(d),
+    ...(farbe ? { "--f": farbe, "--f-weich": rgba(farbe, 0.16), "--f-text": mische(farbe, "#140c3c", 0.22) } : {}),
+  } as CSSProperties;
   return (
-    <article
-      className={`um-karte ${klasse}`}
-      data-rv=""
-      style={{ ...stufe(d), "--f": farbe, "--f-weich": rgba(farbe, 0.2) } as CSSProperties}
-      aria-labelledby={`um-karte-${teil.nr}`}
-    >
-      <h3 className="um-karte-kopf" id={`um-karte-${teil.nr}`}>
-        <span className="um-karte-nr" style={start ? { background: START_VERLAUF } : undefined}>
+    <li className={`um-karte${start ? " um-karte--start" : ""}`} data-rv="" style={stil}>
+      <h3 className="um-karte-kopf">
+        <span className="um-karte-nr">
           <span className="sr-only">Stufe </span>
           {teil.nr}
         </span>
         <span className="um-karte-titel">{festeBindestriche(teil.titel)}</span>
+        {start ? <span className="um-karte-marke">{leistungenB.start}</span> : null}
       </h3>
       <p className="um-karte-text">{festeBindestriche(teil.text)}</p>
       <p className="um-einfach">
         <strong>{leistungenB.einfachLabel}:</strong> {teil.einfach}
       </p>
-      <a className="um-mehr" href={teil.href}>
-        {leistungenB.mehr}
-        <span className="sr-only">: {teil.titel}</span> <Pfeil size={16} />
-      </a>
-    </article>
+      {start ? (
+        <a className="um-mehr" href={leistungenB.startLink.href}>
+          {leistungenB.startLink.text} <Pfeil size={16} />
+        </a>
+      ) : null}
+    </li>
   );
 }
 
 export default function Unendlich() {
   return (
-    <section className="sb sb--kompakt" id="leistungen" aria-labelledby="leistungen-titel">
+    <section className="sb sb--kompakt um" id="leistungen" aria-labelledby="leistungen-titel">
       <div className="sb-wrap um-wrap">
         <div className="b-kopf b-kopf--mitte um-kopf" data-rv="">
           <p className="b-label">{leistungenB.label}</p>
@@ -253,23 +228,22 @@ export default function Unendlich() {
           <p className="b-lead">{leistungenB.text}</p>
         </div>
 
-        <div className="um-grid">
-          <div className="um-mitte">
-            <div className="um-zeichen" data-rv="">
-              <Zeichen />
-              {/* Start-Knopf auf der Kreuzung: hier steigt man ein */}
-              <span className="um-start" aria-hidden="true">
-                <span className="um-start-nr">{START.nr}</span>
-                <span className="um-start-wort">{leistungenB.start}</span>
-              </span>
-              <span className="um-stiel" aria-hidden="true" />
-            </div>
-            <Karte teil={START} farbe={FARBEN[1]} klasse="um-karte--start" d={1} />
-          </div>
-          {ABSCHNITTE.map((a, k) => (
-            <Karte key={a.id} teil={a.teil} farbe={a.farbe} klasse={`um-karte--${a.lage}`} d={k + 2} />
-          ))}
+        <div className="um-zeichen" data-rv="">
+          <Zeichen />
+          {/* Start-Knopf auf der Kreuzung: hier steigt man ein */}
+          <span className="um-start" aria-hidden="true">
+            <span className="um-start-nr">{START.nr}</span>
+            <span className="um-start-wort">{leistungenB.start}</span>
+          </span>
+          <span className="um-stiel" aria-hidden="true" />
         </div>
+
+        <ol className="um-karten" aria-label="Die fünf Stufen der Reihe nach">
+          <Karte teil={START} d={1} />
+          {ABSCHNITTE.map((a, k) => (
+            <Karte key={a.id} teil={a.teil} farbe={a.farbe} d={k + 2} />
+          ))}
+        </ol>
 
         <div className="um-ende" data-rv="">
           <Cta href="#termin">{cta.main}</Cta>

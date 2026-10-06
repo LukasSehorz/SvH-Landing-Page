@@ -1,4 +1,4 @@
-/* Für wen, Abschluss und Tippziele der Fußzeile: gehört dem Bau-Agenten „Faden“ */
+/* Für wen, Abschluss und Tippziele der Fußzeile */
 
 /* ------------------------------------------------------------ Für wen */
 
@@ -13,27 +13,38 @@
   max-width: 1000px;
   margin: clamp(32px, 4vw, 52px) auto 0;
 }
-/* schwarz-weiße Kästen wie in der Problem-Sektion */
+/* Kartenart ab der Lösung (wie .lo-karte): hell, 1 px feiner Rand, großer Radius, leichter Schatten.
+   Ja-Karte mit dem zarten Blau der Lösungen, Nein-Karte neutral grau: sie tritt zurück. */
 .fw-kasten {
   padding: clamp(22px, 2.6vw, 32px);
-  border-radius: 22px;
-  background: #fff;
-  border: 2px solid #0b0b0e;
+  border-radius: 24px;
+  border: 1px solid #dde6fb;
+  background:
+    radial-gradient(90% 60% at 0% 0%, rgba(214, 228, 255, 0.6) 0%, rgba(214, 228, 255, 0) 70%),
+    linear-gradient(180deg, #f6f8ff 0%, #fcfdff 52%, #fff 100%);
   box-shadow:
-    0 2px 0 #0b0b0e,
-    0 18px 40px -18px rgba(11, 11, 14, 0.35);
+    0 1px 2px rgba(20, 40, 120, 0.04),
+    0 22px 44px -32px rgba(40, 60, 170, 0.32);
+}
+.fw-kasten--nein {
+  border-color: var(--linie);
+  background: linear-gradient(180deg, #fafafc 0%, #fff 100%);
+  box-shadow:
+    0 1px 2px rgba(11, 11, 14, 0.03),
+    0 22px 44px -34px rgba(11, 11, 14, 0.22);
 }
 .fw-kasten-titel {
   display: flex;
   align-items: center;
   gap: 12px;
   font-family: var(--font-display);
-  font-size: clamp(20px, 1.8vw, 23px);
+  font-size: clamp(19px, 1.7vw, 22px);
   font-weight: 700;
   line-height: 1.25;
   letter-spacing: -0.015em;
   color: var(--page-ink);
 }
+/* Zeichen im Titel: weicher Kreis statt voller Farbfläche */
 .fw-marke {
   display: grid;
   place-items: center;
@@ -41,45 +52,63 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  color: #fff;
 }
 .fw-marke--ja {
-  background: #16a34a;
+  background: #e3f5e9;
 }
 .fw-marke--nein {
-  background: #e5262f;
+  background: #eef0f4;
+  color: #6b7181;
 }
-.fw-marke svg path {
+.fw-marke .b-haken path {
   stroke-width: 2.8;
+}
+.fw-marke--nein svg path {
+  stroke-width: 2.4;
 }
 .fw-liste {
   display: grid;
   gap: 14px;
-  margin-top: 22px;
+  margin-top: 20px;
 }
 .fw-liste li {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: flex-start;
   font-size: 17px;
   line-height: 1.45;
   color: var(--page-ink);
 }
-/* nur das rote X, ohne Kreis (wie bei „Was passiert, wenn du nichts änderst“) */
-.fw-x {
+.fw-kasten--nein .fw-liste li {
+  color: var(--page-ink-2);
+}
+.fw-symbol {
   display: grid;
   place-items: center;
   flex: 0 0 24px;
   width: 24px;
   height: 24px;
-  color: #e5262f;
 }
-.fw-x svg path {
-  stroke-width: 2.8;
+/* Kreuze ruhig grau (kein Alarm-Rot) */
+.fw-symbol--nein {
+  color: #9399a6;
+}
+.fw-symbol--nein svg path {
+  stroke-width: 2.2;
 }
 @media (max-width: 759px) {
   .fw-grid {
     grid-template-columns: minmax(0, 1fr);
+    max-width: 560px;
+  }
+}
+@media (max-width: 599px) {
+  .fw-liste {
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .fw-liste li {
+    font-size: 16.5px;
   }
 }
 
@@ -92,32 +121,22 @@
     radial-gradient(70% 60% at 50% 100%, rgba(106, 85, 255, 0.09), transparent 72%),
     var(--page);
 }
+/* Kartenart ab der Lösung: 1 px feiner Rand, zartes Blau oben, weicher Schatten (kein Verlaufsrahmen mehr:
+   der Markenverlauf bleibt Knopf und Verlaufswort vorbehalten) */
 .ab-kasten {
   position: relative;
   max-width: 920px;
   margin-inline: auto;
   padding: clamp(40px, 6vw, 80px) clamp(22px, 5vw, 72px);
   border-radius: 32px;
-  background: linear-gradient(180deg, #fff 0%, #f8f7ff 100%);
+  border: 1px solid #dde6fb;
+  background:
+    radial-gradient(70% 55% at 50% 0%, rgba(214, 228, 255, 0.6) 0%, rgba(214, 228, 255, 0) 70%),
+    linear-gradient(180deg, #f6f8ff 0%, #fcfdff 50%, #fff 100%);
   text-align: center;
   box-shadow:
-    0 1px 2px rgba(11, 11, 14, 0.04),
-    0 40px 80px -44px rgba(60, 40, 180, 0.4);
-}
-/* feiner Rahmen im Markenverlauf */
-.ab-kasten::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  padding: 1.5px;
-  border-radius: inherit;
-  background: var(--grad-tief);
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+    0 1px 2px rgba(20, 40, 120, 0.04),
+    0 40px 80px -48px rgba(40, 60, 170, 0.38);
 }
 .ab-titel {
   max-width: 760px;

@@ -94,18 +94,15 @@
 
 /* ------------------------------------------------------------ Hero: Auftritt beim Laden */
 
-.hb-h1,
-.hb-sub,
+/* Zielgruppe, Überschrift, Unterzeile und Google-Siegel stehen sofort da: Deckkraft 0 beim Start
+   verzögerte das größte Element (LCP) am Handy auf 4,2 s. Nur Video, Haken und Knopf gleiten herein. */
 .hb-video,
 .hb-punkte li,
 .hb-cta {
   animation: b-rein 0.8s var(--ease) backwards;
 }
-.hb-sub {
-  animation-delay: 0.12s;
-}
 .hb-video {
-  animation-delay: 0.24s;
+  animation-delay: 0.12s;
 }
 .hb-punkte li:nth-child(1) {
   animation-delay: 0.34s;
@@ -194,8 +191,7 @@
 /* ------------------------------------------------------------ Problem → Lösung */
 
 /* Linien und Pfeile: „Ameisenstraße“ zeigt die Richtung */
-.pv-verbinder svg path,
-.pv-pfeil svg path {
+.pv-verbinder svg path {
   stroke-dasharray: 11 8;
   animation: b-ameisen 1.4s linear infinite;
 }
@@ -211,14 +207,6 @@
 }
 .pv-figur--weg {
   animation: b-wackeln 4s ease-in-out infinite;
-}
-.pv-logo img {
-  animation: b-schweben 4s ease-in-out infinite;
-}
-/* Haken bei den Vorteilen ziehen beim Drüberfahren nach */
-.pv-vorteile li:hover .b-haken path {
-  stroke-dasharray: 30;
-  animation: b-zeichnen 0.45s var(--ease);
 }
 .pv-box,
 .pv-kasten {

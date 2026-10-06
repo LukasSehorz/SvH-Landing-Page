@@ -72,13 +72,14 @@ export const heroB = {
     titel: "Kurz erklärt: So gewinnst du Zeit mit KI",
     platzhalter: "Video folgt",
   },
-  // Google-Sterne direkt unter der Überschrift (echte Werte, Link aufs Profil)
+  // Google-Sterne unter der Unterzeile (echte Werte, Link aufs Profil).
+  // label beginnt mit dem sichtbaren Text, damit Sprachsteuerung den Link findet.
   google: {
     schnitt: "5,0",
     text: "bei Google",
     anzahl: "5 Bewertungen",
     href: GOOGLE_PROFIL,
-    label: "5,0 von 5 Sternen bei Google, 5 Bewertungen (öffnet in neuem Fenster)",
+    label: "5,0 bei Google · 5 Bewertungen, Profil öffnen, neues Fenster",
   },
   // OFFEN: Foto von Jannik und Lukas, z. B. "/b/gruender.jpg". Leer = kein Hintergrundbild.
   hintergrund: "",
@@ -88,7 +89,7 @@ export const heroB = {
    Bis Lukas es bestätigt, steht überall „im Monat“ (Wortlaut des Kunden). */
 export const trustB = [
   { big: "35+", small: "umgesetzte Projekte" },
-  { big: "bis zu 160 Std.", small: "im Monat gespart bei", logo: "estera" },
+  { big: "bis zu 160\u00a0Std.", small: "im Monat gespart bei", logo: "estera" },
   { big: "Geld-zurück-Garantie", small: "auf die Umsetzung" },
   { big: "0 €", small: "für Workshop und Masterplan" },
 ];
@@ -156,14 +157,15 @@ export const problemB = {
 /* Unsere Leistungen 0–4 (Lukas, 06.10.2026). Satzbau angelehnt an „Unsere Haupt-Angebote“ von Apex:
    „Wir tun X – damit du Y“. Eigene Worte, du-Form, Kinder-Test: jede Stufe hat einen „Einfach erklärt“-Satz.
    0 ist der Start (Workshop), 1–4 bauen aufeinander auf und laufen als Kreislauf im Unendlichkeitszeichen:
-   Lage am Zeichen: 1 oben links, 2 unten rechts, 3 oben rechts, 4 unten links, 0 in der Mitte (Kreuzung). */
+   Lage am Zeichen: 1 oben links, 2 unten rechts, 3 oben rechts, 4 unten links, 0 in der Mitte (Kreuzung).
+   Unter dem Zeichen stehen die Karten in Lesereihenfolge 0 → 4; nur die 0 hat einen Link (zum Workshop-Ablauf). */
 export const leistungenB = {
   label: "Unsere Leistungen",
   titel: "So bauen wir dein _System_ auf: in fünf Stufen.",
   text: "Die Stufen bauen aufeinander auf. Jedes Projekt startet bei 0, und jede weitere Stufe spart dir mehr Zeit.",
-  mehr: "Mehr erfahren",
   einfachLabel: "Einfach erklärt",
   start: "Start",
+  startLink: { text: "So läuft der Workshop", href: "#workshop" },
   teile: [
     {
       nr: 0,
@@ -171,7 +173,6 @@ export const leistungenB = {
       titel: "KI-Workshop",
       text: "Wir finden in 45 Minuten deine größten Zeitfresser – damit du weißt, wo sich KI für dich lohnt.",
       einfach: "Wir schauen zusammen, wo bei dir die Zeit verloren geht. Kostenlos.",
-      href: "#workshop",
     },
     {
       nr: 1,
@@ -179,7 +180,6 @@ export const leistungenB = {
       titel: "KI-Wissensmanagement",
       text: "Wir bündeln das Wissen aus Köpfen, Ordnern und Postfächern an einem Ort – damit dein Team in Sekunden Antworten findet, statt Stunden zu suchen.",
       einfach: "Eine KI, die alles über deinen Betrieb weiß und sofort antwortet.",
-      href: "#loesungen",
     },
     {
       nr: 2,
@@ -187,7 +187,6 @@ export const leistungenB = {
       titel: "Digitale Prozesse",
       text: "Wir ersetzen Zettel, Excel-Listen und doppeltes Abtippen durch klare digitale Abläufe – damit jede Info von allein dort landet, wo sie gebraucht wird.",
       einfach: "Schluss mit Zettelwirtschaft.",
-      href: "#loesungen",
     },
     {
       nr: 3,
@@ -195,7 +194,6 @@ export const leistungenB = {
       titel: "KI-Automatisierungen",
       text: "Wir bauen Automatisierungen für Angebote, Rechnungen, Anfragen und Berichte – damit dein Team die immer gleiche Arbeit los ist.",
       einfach: "Wie ein Fließband für deine Büroarbeit.",
-      href: "#loesungen",
     },
     {
       nr: 4,
@@ -203,7 +201,6 @@ export const leistungenB = {
       titel: "KI-Agenten",
       text: "Wir bauen digitale Kollegen, die ans Telefon gehen, E-Mails, Chats und WhatsApp beantworten und Termine eintragen – damit keine Anfrage mehr liegen bleibt, rund um die Uhr.",
       einfach: "Ein Kollege, der nie Feierabend macht.",
-      href: "#loesungen",
     },
   ],
 };
@@ -229,7 +226,7 @@ export const workshopB = {
     {
       titel: "KI-Masterplan",
       wann: "Nach 48 Std.",
-      tag: "nach 48 Stunden",
+      tag: "", // die Zeitmarke steht schon im Badge (wann)
       text: "Wir schreiben dir die 3 Automatisierungen auf, die dir am meisten Zeit sparen, und wie man sie umsetzt. Dann besprechen wir den Plan gemeinsam.",
       punkte: [] as string[],
       preis: "0 €",
@@ -264,33 +261,21 @@ export const workshopB = {
 };
 
 /* Lösungen (Bento wie „Intelligente Automations“ bei Apex, Lukas 06.10.2026): Stil und Bewegung als Vorbild,
-   Texte und Abbildungen eigen. Die sieben Lösungen stammen aus Lukas' Pyramide, jede gehört zu einer Stufe (1–4).
+   Texte und Abbildungen eigen. Die sieben Lösungen stammen aus Lukas' Pyramide, jede gehört zu einer Stufe (1–4);
+   sie stehen nach Stufe sortiert (1, 2, 2, 3, 4, 4, 4).
    Inhalte in den kleinen Abbildungen sind erfundene Beispiele (nur Bild, für Screenreader ausgeblendet). */
 export const loesungenB = {
   label: "Was wir bauen",
   titel: "Intelligente _Automatisierungen_. Gebaut für deinen Betrieb.",
-  text: "Aus den fünf Stufen entstehen ganz konkrete Helfer. Keine Vorlagen von der Stange: Wir bauen genau das, was dein Betrieb braucht, und verbinden es mit den Programmen, die du schon hast.",
-  stufe: (nr: number) => `Stufe ${nr}`,
+  text: "Aus den fünf Stufen entstehen konkrete Helfer, verbunden mit den Programmen, die du schon hast.",
+  // Schild je Karte: „Stufe 1 · Wissen“ (Kurzname wie im Unendlichkeitszeichen darüber)
+  stufe: (nr: number) => `Stufe ${nr} · ${leistungenB.teile.find((t) => t.nr === nr)?.kurz ?? ""}`,
   karten: [
-    {
-      id: "business",
-      stufe: 3,
-      titel: "Business-Automatisierung",
-      text: "Angebote, Rechnungen, Erinnerungen und Berichte laufen von allein. Dein Team gibt nur noch frei.",
-      ui: { aufgaben: ["Angebot erstellt", "Rechnung verschickt", "Zahlung erinnert", "Bericht für Montag"] },
-    },
-    {
-      id: "crm",
-      stufe: 2,
-      titel: "CRM-Einrichtung & Automatisierungen",
-      text: "Wir richten deine Kundenliste (CRM) ein und verbinden sie mit E-Mail, Kalender, Webseite und Buchhaltung. Jede Anfrage landet von allein am richtigen Platz.",
-      ui: { mitte: "CRM", programme: ["E-Mail", "Kalender", "Webseite", "Telefon", "Buchhaltung", "Tabellen"] },
-    },
     {
       id: "wissen",
       stufe: 1,
       titel: "KI-Wissensdatenbank",
-      text: "Frag einfach, die KI antwortet sofort und nennt die Quelle. Aus Handbüchern, Preislisten und E-Mails deines Betriebs.",
+      text: "Frag einfach: Die KI antwortet sofort aus deinen Unterlagen und nennt die Quelle.",
       ui: {
         frage: "Wie lange gilt die Garantie auf Terrassendächer?",
         antwort: "5 Jahre auf die Konstruktion, 2 Jahre auf Markisen.",
@@ -299,21 +284,17 @@ export const loesungenB = {
       },
     },
     {
-      id: "agenten",
-      stufe: 4,
-      titel: "Personalisierte KI-Agenten",
-      text: "Ein digitaler Kollege, der deine Sprache spricht, deine Preise kennt und nur tut, was du freigibst.",
-      ui: {
-        name: "Dein Vertriebs-Agent",
-        aktiv: "Aktiv",
-        regeln: ["Kennt deine Preise und Produkte", "Antwortet in deinem Ton", "Trägt Termine ein", "Fragt bei Unklarem nach"],
-      },
+      id: "crm",
+      stufe: 2,
+      titel: "CRM-Einrichtung & Automatisierungen",
+      text: "Wir verbinden deine Kundenliste mit E-Mail und Kalender. Nichts geht verloren.",
+      ui: { mitte: "CRM", programme: ["E-Mail", "Kalender", "Webseite", "Telefon", "Buchhaltung", "Tabellen"] },
     },
     {
       id: "fulfilment",
       stufe: 2,
       titel: "Fulfilment-Systeme",
-      text: "Vom Auftrag bis zur Lieferung läuft jeder Schritt wie am Fließband. Nichts bleibt liegen, jeder weiß, was als Nächstes kommt.",
+      text: "Vom Auftrag bis zur Lieferung läuft alles wie am Fließband. Nichts bleibt liegen.",
       ui: {
         auftrag: "Auftrag #2417",
         schritte: ["Auftrag da", "Eingeplant", "In Arbeit", "Geliefert"],
@@ -321,10 +302,39 @@ export const loesungenB = {
       },
     },
     {
+      id: "business",
+      stufe: 3,
+      titel: "Business-Automatisierung",
+      text: "Angebote, Rechnungen und Berichte laufen von allein. Du gibst nur noch frei.",
+      ui: { aufgaben: ["Angebot erstellt", "Rechnung verschickt", "Zahlung erinnert", "Bericht für Montag"] },
+    },
+    {
+      id: "agenten",
+      stufe: 4,
+      titel: "Personalisierte KI-Agenten",
+      text: "Ein digitaler Kollege, der deine Preise kennt und nur tut, was du freigibst.",
+      ui: {
+        name: "Dein Vertriebs-Agent",
+        aktiv: "Aktiv",
+        regeln: ["Kennt deine Preise und Produkte", "Antwortet in deinem Ton", "Trägt Termine ein", "Fragt bei Unklarem nach"],
+      },
+    },
+    {
+      id: "voice",
+      stufe: 4,
+      titel: "Voice- & Chat-Agenten",
+      text: "Der Agent nimmt Anrufe und Chats an und bucht Termine, rund um die Uhr.",
+      ui: {
+        anruf: "Anruf um 21:14 Uhr",
+        agent: "KI-Agent am Telefon",
+        status: ["Anruf angenommen", "Frage beantwortet", "Termin eingetragen"],
+      },
+    },
+    {
       id: "whatsapp",
       stufe: 4,
       titel: "KI-WhatsApp-Kundenservice",
-      text: "Deine Kunden schreiben per WhatsApp, die KI antwortet sofort, auch nachts. Schwierige Fälle gibt sie an dein Team weiter.",
+      text: "Die KI antwortet sofort, auch nachts. Schwierige Fälle gehen an dein Team.",
       ui: {
         kopf: "WhatsApp",
         nachrichten: [
@@ -332,17 +342,6 @@ export const loesungenB = {
           { von: "ki", text: "Ja, von 9 bis 13 Uhr. Soll ich dir einen Termin eintragen?" },
           { von: "kunde", text: "Gerne, um 10 Uhr." },
         ],
-      },
-    },
-    {
-      id: "voice",
-      stufe: 4,
-      titel: "Voice- & Chat-Agenten",
-      text: "Am Telefon und im Chat auf deiner Webseite: Der Agent nimmt Anfragen an, beantwortet Fragen und bucht Termine, rund um die Uhr.",
-      ui: {
-        anruf: "Anruf um 21:14 Uhr",
-        agent: "KI-Agent am Telefon",
-        status: ["Anruf angenommen", "Frage beantwortet", "Termin eingetragen"],
       },
     },
   ],
@@ -356,13 +355,16 @@ export type Bewertung = { name: string; firma: string; logo: string; href: strin
 export const kundenB = {
   label: "Ergebnisse",
   titel: "Was unsere Kunden _sagen_",
-  text: "Klingt gut? Das sagen die Betriebe, für die wir schon gearbeitet haben. Echte Bewertungen von Google, dazu, was wir umgesetzt haben.",
+  text: "Klingt gut? Hier siehst du, was es anderen Betrieben gebracht hat. Darunter echte Bewertungen von Google.",
   // Ergebnisse mit Zahl über dem Karussell (OFFEN: Estera Monat oder Woche, siehe trustB; dritter Kunde ohne Namen)
   ergebnisse: [
     { firma: "Estera GmbH", logo: "estera", zahl: "bis zu 160 Std.", einheit: "im Monat gespart", gebaut: "Webseite, Kundenverwaltung (CRM) und Automatisierungen" },
     { firma: "Fuchs Pools", logo: "fuchspools", zahl: "+15 Std.", einheit: "pro Woche gespart", gebaut: "Webseite, automatische Angebote und automatisiertes Marketing" },
     { firma: "Kundenprojekt", logo: "", zahl: "1 Tag → 30 Min.", einheit: "pro Angebot", gebaut: "Automatische Angebote mit einem KI-Wissensspeicher" },
   ],
+  gebaut: "Was wir gebaut haben",
+  // Pfeil in „1 Tag → 30 Min.“ für Screenreader
+  pfeil: "auf",
   ctaZeile: "Das will ich für meinen Betrieb auch.",
   schnitt: "5,0",
   anzahl: "5 Google-Bewertungen",
@@ -374,8 +376,8 @@ export const kundenB = {
   position: (i: number, n: number) => `Bewertung ${i} von ${n}`,
   profilLink: "Alle Bewertungen auf Google",
   google: "Google-Bewertung",
+  // leeres „umgesetzt“ bei einer Bewertung: der Block entfällt ganz
   umgesetzt: "Was wir umgesetzt haben",
-  folgt: "Details folgen",
   weiter: "Weiterlesen",
   weniger: "Weniger anzeigen",
   bewertungen: [
@@ -444,6 +446,7 @@ export const teamB = {
       rolle: "Gründer · Digitalisierung und Prozessoptimierung",
       initials: "LS",
       foto: "",
+      linkedin: "https://www.linkedin.com/in/lukas-sehorz-324870242/",
       text: [
         "Lukas hat Digitalisierung und Prozessoptimierung studiert. Er findet die Stellen, an denen in deinem Betrieb jeden Tag Zeit verloren geht, und macht daraus Abläufe, die wie von selbst laufen.",
       ],
@@ -453,26 +456,27 @@ export const teamB = {
       rolle: "Gründer · KI und Kommunikation",
       initials: "JvH",
       foto: "",
+      linkedin: "https://www.linkedin.com/in/jannik-vom-hofe-b525b53b4/",
       text: [
         "Jannik verfolgt jeden Tag, was sich bei KI tut, und zeigt auf YouTube, was davon für Betriebe wirklich zählt. Er übersetzt Technik in Alltagssprache, damit dein ganzes Team mitkommt.",
       ],
     },
   ],
   fotoFolgt: "Foto folgt",
+  // LinkedIn-Profile stehen in den Gründer-Karten (vorher als eigene Zeile unter den Videos)
+  linkedin: "LinkedIn",
+  linkedinLabel: (name: string) => `${name} auf LinkedIn (neues Fenster)`,
 };
 
 export const aktuellesB = {
   label: "Aktuelles",
   title: "Was KI gerade für Betriebe _bedeutet_",
-  text: "Auf YouTube und LinkedIn zeigen wir, was in der KI gerade passiert und was davon für deinen Betrieb wirklich zählt.",
+  // Beleg zum Gründer-Text von Jannik (der Kanal ist seiner: company.youtube)
+  text: "Auf seinem YouTube-Kanal zeigt Jannik, was in der KI gerade passiert und was davon für deinen Betrieb wirklich zählt.",
   ansehen: "Video ansehen",
   alle: "Alle Videos auf YouTube",
-  linkedinTitel: "Folge uns auf LinkedIn",
-  linkedin: [
-    { name: "Jannik vom Hofe", href: "https://www.linkedin.com/in/jannik-vom-hofe-b525b53b4/" },
-    { name: "Lukas Sehorz", href: "https://www.linkedin.com/in/lukas-sehorz-324870242/" },
-  ],
-  linkedinSub: "auf LinkedIn",
+  neuesFenster: " (YouTube, neues Fenster)",
+  neuesFensterKurz: " (neues Fenster)",
 };
 
 // Nächster Schritt: schwarzer Kasten mit Bild-Logo links (Vorbild: andreasbaulig.de „Überzeuge dich selbst“)
@@ -544,7 +548,7 @@ export const fuerWenB = {
   ja: {
     titel: "Das passt, wenn …",
     punkte: [
-      "dein Team jede Woche Stunden mit Abtippen, Angeboten oder E-Mails verbringt",
+      "dein Team jede Woche Stunden mit Abtippen, Angeboten oder E‑Mails verbringt", // geschützter Bindestrich: nie „E- / Mails“
       "du wachsen willst, ohne gleich neue Leute einzustellen",
       "ihr KI schon ausprobiert habt, es aber noch nicht richtig läuft",
       "du offen bist, Abläufe zu ändern, wenn es sich lohnt",

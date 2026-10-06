@@ -1,6 +1,7 @@
 /* =====================================================================
    Lösungen (Bento): gehört dem Bau-Agenten „Lösungen“
    Sieben helle Karten, oben eine kleine gläserne Oberfläche in Markenblau, unten Stufe, Titel, Text.
+   Reihenfolge nach Stufe (1, 2, 2, 3, 4, 4, 4); am Handy niedrigere Bildflächen und straffere Abstände.
    Grundzustand = fertiger Endzustand (ohne JavaScript, bei „Bewegung reduzieren“).
    Die ruhigen Endlos-Abläufe laufen nur mit .lo-an (Karte im Bild) und stehen mit .lo-pause.
    ===================================================================== */
@@ -34,13 +35,14 @@
   gap: 16px;
   margin-top: clamp(36px, 5vw, 64px);
 }
+/* nach Stufe gelesen: links oben Stufe 1, dann 2, 2, 3, 4, 4, 4 */
 @media (min-width: 640px) {
   .lo-raster {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-areas:
-      "business crm"
-      "wissen agenten"
-      "fulfilment whatsapp"
+      "wissen crm"
+      "fulfilment business"
+      "agenten whatsapp"
       "voice voice";
     gap: 20px;
   }
@@ -49,8 +51,8 @@
   .lo-raster {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-template-areas:
-      "business crm crm"
-      "wissen agenten fulfilment"
+      "wissen crm crm"
+      "fulfilment business agenten"
       "voice voice whatsapp";
     gap: 24px;
   }
@@ -145,12 +147,14 @@
   letter-spacing: 0.01em;
   color: #3557e0;
 }
+/* Punkt in der Farbe der Stufe (wie im Unendlichkeitszeichen) */
 .lo-stufe::before {
   content: "";
-  width: 6px;
-  height: 6px;
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--grad-tief);
+  background: var(--stufe, var(--lo-blau));
 }
 .lo-titel {
   margin-top: 2px;
@@ -172,11 +176,31 @@
   text-wrap: pretty;
 }
 @media (max-width: 639px) {
+  .sb.lo {
+    padding-block: 52px 56px;
+  }
+  .lo-raster {
+    gap: 12px;
+    margin-top: 26px;
+  }
   .lo-karte {
     border-radius: 22px;
   }
   .lo-text {
-    padding: 4px 22px 24px;
+    gap: 7px;
+    padding: 0 20px 19px;
+  }
+  .lo-stufe {
+    padding: 3px 10px 3px 8px;
+    font-size: 12px;
+  }
+  .lo-titel {
+    margin-top: 0;
+    font-size: 19px;
+  }
+  .lo-p {
+    font-size: 15px;
+    line-height: 1.5;
   }
 }
 
@@ -837,7 +861,7 @@
   color: #3557e0;
 }
 
-/* sehr schmale Karte: Schritte untereinander, der Punkt läuft nach unten */
+/* schmale Karte (unter 330 px): Schritte untereinander, der Punkt läuft nach unten */
 @container lo-bild (max-width: 329px) {
   .lo-fu-karte {
     gap: 11px;
@@ -1140,9 +1164,147 @@
     padding: 4px 0;
   }
 }
+
+/* =====================================================================
+   Handy: niedrigere Bildflächen (je nach Inhalt), die kleinen Oberflächen rücken zusammen.
+   Schrift in den Oberflächen bleibt bei mindestens 11 px.
+   ===================================================================== */
 @media (max-width: 639px) {
+  /* Schatten der Oberflächen laufen weich aus statt an der Bildkante abgeschnitten zu werden
+     (die Karte selbst schneidet an ihren runden Ecken) */
+  .lo-bild {
+    height: 188px;
+    overflow: visible;
+  }
+  .lo-karte--wissen .lo-bild {
+    height: 192px;
+  }
+  .lo-karte--crm .lo-bild {
+    height: 188px;
+  }
+  .lo-karte--fulfilment .lo-bild {
+    height: 180px;
+  }
+  .lo-karte--business .lo-bild {
+    height: 164px;
+  }
   .lo-karte--voice .lo-bild {
-    height: 262px;
+    height: 216px;
+  }
+  /* WhatsApp: das Handy ist höher als die Fläche und läuft unten weich aus, hier wird geschnitten */
+  .lo-karte--whatsapp .lo-bild {
+    height: 206px;
+    overflow: hidden;
+  }
+
+  /* Business: Aufgaben enger gestapelt */
+  .lo-bz {
+    gap: 5px;
+  }
+  .lo-bz-chip {
+    height: 30px;
+  }
+
+  /* CRM: drei Reihen rücken zusammen, Kacheln etwas kleiner */
+  .lo-crm::before {
+    height: 130px;
+  }
+  .lo-crm-buehne {
+    --r-mitte: 37px;
+    top: calc(50% - 10px);
+  }
+  .lo-crm-app {
+    --px: calc(var(--xm) * 1cqw);
+    --py: calc(var(--ym) * 1px);
+  }
+  .lo-crm-kachel {
+    left: -18px;
+    top: -18px;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+  .lo-crm-label {
+    top: 22px;
+  }
+
+  /* Wissen: ohne „KI-Antwort“-Zeile, Abstände knapper */
+  .lo-wi {
+    padding: 6px 16px 0;
+  }
+  .lo-wi-fenster {
+    gap: 8px;
+    padding: 10px;
+  }
+  .lo-wi-feld {
+    padding: 7px 11px;
+  }
+  .lo-wi-antwort {
+    gap: 4px;
+    padding: 8px 11px 9px;
+  }
+  .lo-wi-ki {
+    display: none;
+  }
+  .lo-wi-quelle {
+    margin-top: 1px;
+  }
+  .lo-wi-skelett {
+    padding: 30px 12px 10px;
+  }
+
+  /* Agent: Zeilen enger */
+  .lo-ag-karte {
+    padding: 10px 11px 4px;
+  }
+  .lo-ag-kopf {
+    padding-bottom: 8px;
+  }
+  .lo-ag-zeile {
+    padding: 4px 2px;
+  }
+
+  /* Fulfilment */
+  .lo-fu-karte {
+    gap: 13px;
+    padding: 12px 12px 13px;
+  }
+
+  /* Voice: Welle und Status flacher */
+  .lo-vo-anruf {
+    padding: 10px 12px 11px;
+  }
+  .lo-vo-welle {
+    height: 30px;
+  }
+  .lo-vo-status {
+    padding: 3px 12px;
+  }
+  .lo-vo-status li {
+    padding: 3px 0;
+  }
+
+  /* WhatsApp: Handy rückt nach oben, läuft nach der dritten Nachricht weich aus */
+  .lo-wa {
+    padding-top: 10px;
+  }
+  .lo-wa-kopf {
+    padding-top: 23px;
+    padding-bottom: 6px;
+  }
+  .lo-wa-chat {
+    gap: 5px;
+    padding: 8px 10px;
+  }
+  .lo-wa-handy {
+    -webkit-mask-image: linear-gradient(180deg, #000 174px, transparent 196px);
+    mask-image: linear-gradient(180deg, #000 174px, transparent 196px);
+  }
+}
+/* kleines Handy (Bildbreite unter 330 px): Fulfilment-Schritte stehen untereinander */
+@media (max-width: 369px) {
+  .lo-karte--fulfilment .lo-bild {
+    height: 236px;
   }
 }
 

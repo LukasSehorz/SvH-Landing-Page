@@ -4,8 +4,9 @@ import Cta from "@/components/system/Cta";
 import { Grad, Haken } from "./ui";
 
 /* Abschluss: der letzte Aufruf vor der Fußzeile (Baulig: letzter Aufruf). Bewusst das Gegenstück
-   zum schwarzen Kasten „Überzeuge dich selbst“: hell, zentriert, ruhig. Markenverlauf nur als
-   Akzent (feiner Rahmen, Verlaufswort, Haken). Der Knopf öffnet die Anmeldung (#termin). */
+   zum schwarzen Kasten „Überzeuge dich selbst“: hell, zentriert, ruhig, in der Kartenart ab der Lösung.
+   Markenverlauf nur im Verlaufswort und im Knopf; die Haken grün wie bei „Für wen“.
+   Der Knopf öffnet die Anmeldung (#termin). */
 export default function Abschluss() {
   return (
     <section className="ab" id="abschluss" aria-labelledby="ab-titel">
@@ -18,7 +19,7 @@ export default function Abschluss() {
         <ul className="ab-punkte">
           {abschlussB.punkte.map((p) => (
             <li key={p}>
-              <Haken size={22} />
+              <Haken size={22} farbe="#16a34a" />
               {p}
             </li>
           ))}

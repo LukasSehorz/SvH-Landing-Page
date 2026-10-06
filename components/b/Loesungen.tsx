@@ -1,12 +1,15 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { loesungenB } from "@/app/copy-b";
 import { Grad, stufe } from "@/components/b/ui";
 import LoesungenBewegung from "@/components/b/LoesungenBewegung";
 import { BildAgenten, BildBusiness, BildCrm, BildFulfilment, BildVoice, BildWhatsapp, BildWissen } from "@/components/b/LoesungenBilder";
+import { STUFEN_FARBEN } from "@/components/b/Unendlich";
 
 /* Lösungen als Bento-Raster (Vorbild: Aufbau und Bewegung der Apex-Sektion „Intelligente Automations“;
-   Texte, Symbole und Abbildungen sind eigen). Sieben Karten aus Lukas' Pyramide, jede mit kleiner,
-   ruhiger Endlos-Animation, die nur läuft, solange die Karte im Bild ist (LoesungenBewegung). */
+   Texte, Symbole und Abbildungen sind eigen). Sieben Karten aus Lukas' Pyramide, nach Stufe sortiert
+   (1, 2, 2, 3, 4, 4, 4). Das Schild „Stufe 1 · Wissen“ trägt den Punkt in der Farbe der Stufe aus dem
+   Unendlichkeitszeichen darüber. Jede Karte hat eine kleine, ruhige Endlos-Animation, die nur läuft,
+   solange die Karte im Bild ist (LoesungenBewegung). */
 
 type Karte = (typeof loesungenB.karten)[number];
 type UiAlle = {
@@ -69,7 +72,7 @@ function OhneTrennung({ text }: { text: string }) {
   );
 }
 
-/* Einblende-Staffel je Reihe im Desktop-Raster (2 · 3 · 2 Karten) */
+/* Einblende-Staffel je Reihe im Desktop-Raster (2 · 3 · 2 Karten: wissen crm · fulfilment business agenten · voice whatsapp) */
 const STAFFEL = [0, 1, 0, 1, 2, 0, 1];
 
 export default function Loesungen() {
@@ -92,7 +95,9 @@ export default function Loesungen() {
                 <Bild karte={k} />
               </div>
               <div className="lo-text">
-                <span className="lo-stufe">{t.stufe(k.stufe)}</span>
+                <span className="lo-stufe" style={{ "--stufe": STUFEN_FARBEN[k.stufe - 1] } as CSSProperties}>
+                  {t.stufe(k.stufe)}
+                </span>
                 <h3 className="lo-titel">{k.titel}</h3>
                 <p className="lo-p">
                   <OhneTrennung text={k.text} />

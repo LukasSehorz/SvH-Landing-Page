@@ -2,17 +2,22 @@ import Image from "next/image";
 import { cta } from "@/app/copy";
 import { workshopB } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
+import Garantie from "./Garantie";
 import { Grad, Haken, stufe } from "./ui";
 
-/* Stufe 0: der kostenlose KI-Workshop als Fahrplan in drei Schritten (Überblick aller Stufen: Unendlich.tsx).
+/* Fahrplan mit Garantie (nach dem Masterplan, vor „Überzeuge dich selbst“):
+   drei helle Schritt-Karten mit Zeitmarke statt Ziffer (Heute / Nach 48 Std. / Danach; die Ziffern 0–4
+   gehören in den Leistungen zu den Stufen), daneben das Bild mit dem Preis-Kasten,
+   darunter die Geld-zurück-Garantie (Garantie.tsx), dann Hinweis und Knopf als lautestes Element.
+   Reihenfolge am Handy wie im HTML: Kopf, Schritte, Bild, Garantie, Knopf.
    Die früheren Detail-Abschnitte (Automatisierung, Assistenten, Wissen) ersetzt seit 06.10.2026 Loesungen.tsx. */
 
 /** Pfeil nach unten zwischen zwei Schritten */
 function PfeilRunter() {
   return (
     <span className="wf-pfeil" aria-hidden="true">
-      <svg viewBox="0 0 24 34" width="22" height="30" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2v28M5 23l7 7 7-7" />
+      <svg viewBox="0 0 24 34" width="16" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 3v27M6 24l6 6 6-6" />
       </svg>
     </span>
   );
@@ -37,17 +42,17 @@ export function Workshop() {
                 {i > 0 ? <PfeilRunter /> : null}
                 <div className={`wf-karte${i === 0 ? " wf-karte--haupt" : ""}`}>
                   <div className="wf-kopf">
-                    <span className="wf-nr">{i + 1}</span>
-                    <h3 className="wf-titel">{s.titel}</h3>
-                    <span className="wf-tag">{s.tag}</span>
+                    <span className="wf-wann">{s.wann}</span>
+                    {s.tag ? <span className="wf-tag">{s.tag}</span> : null}
                     {s.preis ? <span className="wf-preis">{s.preis}</span> : null}
                   </div>
+                  <h3 className="wf-titel">{s.titel}</h3>
                   <p className="wf-text">{s.text}</p>
                   {s.punkte.length ? (
                     <ul className="wf-punkte">
                       {s.punkte.map((p) => (
                         <li key={p}>
-                          <Haken size={20} farbe="#fff" />
+                          <Haken size={18} />
                           {p}
                         </li>
                       ))}
@@ -57,11 +62,6 @@ export function Workshop() {
               </li>
             ))}
           </ol>
-
-          <div className="wf-ende" data-rv="">
-            <p>{workshopB.hinweis}</p>
-            <Cta href="#termin">{cta.main}</Cta>
-          </div>
         </div>
 
         <div className="ws-bild" data-rv="" style={stufe(1)}>
@@ -84,6 +84,13 @@ export function Workshop() {
             </p>
             <p className="ws-preis-text">{workshopB.preis.text}</p>
           </div>
+        </div>
+
+        <Garantie />
+
+        <div className="wf-ende" data-rv="">
+          <p>{workshopB.hinweis}</p>
+          <Cta href="#termin">{cta.main}</Cta>
         </div>
       </div>
     </section>

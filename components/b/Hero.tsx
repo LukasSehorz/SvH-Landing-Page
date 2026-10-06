@@ -4,10 +4,12 @@ import { heroB } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
 import { GoogleG, Grad, Haken, Sterne } from "./ui";
 
-/* Hero der Variante B: Überschrift und Unterzeile oben, darunter links das Video, rechts vier Haken.
-   Im Hintergrund ein stark ausgeblichenes Foto der Gründer (gibt Tiefe, lenkt nicht ab).
-   Bewusst ohne Animationen: in drei Sekunden verstehen, worum es geht.
-   Über der Überschrift ein kleines Vertrauenssiegel: 5,0 Sterne bei Google (Link aufs Profil). */
+/* Hero: Kopf von oben nach unten wie bei andreasbaulig.de: kleine Zeile für die Zielgruppe,
+   Überschrift, Unterzeile, darunter das Vertrauenssiegel (5,0 Sterne bei Google, Link aufs Profil).
+   Darunter links das Video, rechts vier Haken mit dem Knopf.
+   Zielgruppe, Überschrift, Unterzeile und Siegel stehen sofort da (keine Einblendung, schnelles LCP);
+   nur Video, Haken und Knopf gleiten beim Laden nacheinander herein (animation.css).
+   Optional im Hintergrund ein stark ausgeblichenes Foto der Gründer (gibt Tiefe, lenkt nicht ab). */
 
 export default function Hero() {
   return (
@@ -19,6 +21,12 @@ export default function Hero() {
       ) : null}
       <div className="shell hb-inhalt">
         <div className="hb-kopf">
+          <p className="hb-ziel">{heroB.zielgruppe}</p>
+          <h1 id="hb-titel" className="hb-h1">
+            <Grad text={heroB.h1} />
+          </h1>
+          <p className="hb-sub">{heroB.sub}</p>
+          {/* Tippfläche 44 px hoch, die sichtbare Pille darin ist schlanker (::before) */}
           <a className="hb-google" href={heroB.google.href} target="_blank" rel="noopener noreferrer" aria-label={heroB.google.label}>
             <GoogleG size={17} />
             <span className="hb-google-zahl">{heroB.google.schnitt}</span>
@@ -28,10 +36,6 @@ export default function Hero() {
               {heroB.google.anzahl}
             </span>
           </a>
-          <h1 id="hb-titel" className="hb-h1">
-            <Grad text={heroB.h1} />
-          </h1>
-          <p className="hb-sub">{heroB.sub}</p>
         </div>
 
         <div className="hb-grid">

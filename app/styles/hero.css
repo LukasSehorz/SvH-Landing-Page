@@ -3,42 +3,63 @@
 .hb {
   position: relative;
   overflow: hidden;
-  /* etwas knapper als vorher: das Google-Siegel darüber kostet sonst Höhe im ersten Bildschirm */
+  /* knapp unter der Leiste: Zielgruppe, Überschrift und Siegel sollen im ersten Bildschirm stehen */
   padding-top: calc(var(--nav-offset) + clamp(8px, 1.4vw, 24px));
   padding-bottom: clamp(48px, 5vw, 80px);
 }
 
-/* Kopf: Überschrift + Unterzeile, kompakt, damit Video und Text weit oben stehen */
+/* Kopf: Zielgruppe, Überschrift, Unterzeile, Siegel. Kompakt, damit Video und Text weit oben stehen */
 .hb-kopf {
   max-width: 1340px;
-  margin: 0 auto clamp(28px, 3.2vw, 48px);
+  margin: 0 auto clamp(24px, 2.8vw, 42px);
   text-align: center;
 }
-/* Vertrauenssiegel über der Überschrift: G, 5,0, fünf Sterne, „bei Google · 5 Bewertungen“.
+/* Zielgruppe über der Überschrift (Muster von andreasbaulig.de): klein, kräftig, Versalien */
+.hb-ziel {
+  margin: 0 auto 14px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: var(--page-ink);
+}
+/* Vertrauenssiegel unter der Unterzeile: G, 5,0, fünf Sterne, „bei Google · 5 Bewertungen“.
+   Der Link ist 44 px hoch (Tippziel), die sichtbare Pille darin 34 px (::before).
    Feste Höhe und eine Zeile: kein Umbruch, kein Layout-Sprung beim Laden der Schrift. */
 .hb-google {
+  position: relative;
+  isolation: isolate;
   display: flex;
   align-items: center;
   gap: 8px;
   width: fit-content;
-  height: 34px;
-  margin: 0 auto 16px;
+  height: 44px;
+  margin: 13px auto 0;
   padding: 0 15px 0 11px;
   border-radius: 999px;
+  font-size: 13.5px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--page-ink-2);
+}
+.hb-google::before {
+  content: "";
+  position: absolute;
+  inset: 5px 0;
+  z-index: -1;
+  border-radius: inherit;
   background: #fff;
   border: 1px solid var(--linie);
   box-shadow:
     0 1px 2px rgba(11, 11, 14, 0.04),
     0 8px 20px -14px rgba(40, 30, 120, 0.35);
-  font-size: 13.5px;
-  line-height: 1;
-  white-space: nowrap;
-  color: var(--page-ink-2);
   transition:
     border-color 0.3s var(--ease),
     box-shadow 0.3s var(--ease);
 }
-.hb-google:hover {
+.hb-google:hover::before {
   border-color: rgba(11, 11, 14, 0.16);
   box-shadow:
     0 1px 2px rgba(11, 11, 14, 0.05),
@@ -188,7 +209,8 @@
     margin-inline: 0;
     text-align: left;
   }
-  .hb-sub {
+  .hb-sub,
+  .hb-ziel {
     margin-inline: 0;
   }
   .hb-google {
@@ -227,12 +249,25 @@
   .hb-punkte li {
     font-size: 16px;
   }
+  .hb-ziel {
+    margin-bottom: 10px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+  .hb-sub {
+    margin-top: 14px;
+  }
   .hb-google {
     gap: 7px;
-    height: 32px;
-    margin-bottom: 14px;
+    margin-top: 10px;
     padding: 0 13px 0 10px;
     font-size: 13px;
+  }
+  .hb-google::before {
+    inset: 6px 0; /* sichtbar 32 px */
+  }
+  .hb-kopf {
+    margin-bottom: 18px;
   }
 }
 /* sehr schmale Handys: „bei Google ·“ fällt weg, das G sagt es schon (Link-Name bleibt vollständig) */
