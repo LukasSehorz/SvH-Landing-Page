@@ -5,8 +5,9 @@
  * Aufbau seit 06.10.2026 nach der Struktur von andreasbaulig.de (nur Aufbau und Psychologie, keine Inhalte):
  *   Versprechen + Beweis (Zielgruppe, Google, Logos) → Problem „nicht deine Schuld“ →
  *   Lösung mit den Gewinnen (Zahnräder) → System (Leistungen 0–4) → Beweis (Ergebnisse, Bewertungen) →
- *   konkrete Lösungen (Bento) → Gründer und Videos → Programm (Masterplan) → Fahrplan mit Garantie (Workshop) →
- *   „Überzeuge dich selbst“ → Für wen → Fragen → Abschluss. (Runde 2 nach Prüfbericht, 06.10.2026)
+ *   konkrete Lösungen (Bento) → Gründer → Programm (Masterplan, mit Preisanker) → Fahrplan mit Garantie (Workshop) →
+ *   „Überzeuge dich selbst“ → Für wen → Fragen → Videos (Aktuelles) → Abschluss.
+ *   (Runde 3, 06.10.2026: die Videos führen zu YouTube und stehen deshalb erst hinter den Fragen, nicht vor dem Angebot)
  * Jede Überschrift greift den Abschnitt davor auf (roter Faden), die kleinen Labels darüber zeigen das Kapitel.
  * Auszeichnung in Überschriften: _Wort_ = Verlaufswort.
  *
@@ -256,8 +257,7 @@ export const workshopB = {
   // OFFEN: großes Bild rechts (z. B. Foto aus einem Workshop), "/b/workshop.jpg"
   bild: "",
   bildFolgt: "Bild folgt",
-  // Preis-Kasten auf dem Bild (Wert laut Jannik, 05.10.2026)
-  preis: { titel: "Dein KI-Masterplan", alt: "1.099\u00a0€", neu: "0\u00a0€", text: "für dich kostenlos nach dem Workshop" },
+  // Preisanker „1.099 € → 0 €“: seit Runde 3 im Masterplan (masterplanB.preis)
 };
 
 /* Lösungen (Bento wie „Intelligente Automations“ bei Apex, Lukas 06.10.2026): Stil und Bewegung als Vorbild,
@@ -361,7 +361,7 @@ export const kundenB = {
   ergebnisse: [
     { firma: "Estera GmbH", logo: "estera", zahl: "bis zu 160 Std.", einheit: "im Monat gespart", gebaut: "Kundenverwaltung (CRM), Automatisierungen und neue Webseite" },
     { firma: "Fuchs Pools", logo: "fuchspools", zahl: "15 Std.", einheit: "pro Woche gespart", gebaut: "Automatische Angebote, automatisiertes Marketing und neue Webseite" },
-    { firma: "Kundenprojekt", logo: "", zahl: "1 Tag → 30 Min.", einheit: "pro Angebot", gebaut: "Automatische Angebote mit einem KI-Wissensspeicher" },
+    { firma: "Kundenprojekt", logo: "", zahl: "1 Tag → 30 Min.", einheit: "pro Angebot", gebaut: "Automatische Angebote mit einem KI\u2011Wissensspeicher" }, // geschützter Bindestrich: nie „KI- / Wissensspeicher“
   ],
   gebaut: "Was wir gebaut haben",
   // Pfeil in „1 Tag → 30 Min.“ für Screenreader
@@ -472,8 +472,9 @@ export const teamB = {
 export const aktuellesB = {
   label: "Aktuelles",
   title: "Was KI gerade für Betriebe _bedeutet_",
-  // Beleg zum Gründer-Text von Jannik (der Kanal ist seiner: company.youtube)
-  text: "Auf seinem YouTube-Kanal zeigt Jannik, was in der KI gerade passiert und was davon für deinen Betrieb wirklich zählt.",
+  // Beleg zum Gründer-Text von Jannik (der Kanal ist seiner: company.youtube). Steht seit Runde 3 weit hinter
+  // den Gründern, deshalb „Mitgründer“ dazu, damit der Satz auch allein verständlich ist.
+  text: "Mitgründer Jannik zeigt auf seinem YouTube-Kanal, was in der KI gerade passiert und was davon für deinen Betrieb wirklich zählt.",
   ansehen: "Video ansehen",
   alle: "Alle Videos auf YouTube",
   neuesFenster: " (YouTube, neues Fenster)",

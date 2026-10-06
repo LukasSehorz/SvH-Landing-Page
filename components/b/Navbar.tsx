@@ -13,8 +13,9 @@ import { Arrow, Caret } from "@/components/system/Icons";
    der Seite (Runde 2): Leistungen, Kunden, Lösungen, Über uns (Gründer, Aktuelles),
    Ablauf (KI-Masterplan, KI-Workshop). Problem und Lösung (Zahnräder) davor haben keinen Menüpunkt.
    Die Leiste bleibt immer sichtbar, auch am Handy (dort gibt es keine CTA-Leiste unten).
-   Lukas' Regel „nie zwei gleiche Knöpfe gleichzeitig im Bild“: Ist ein Knopf aus dem Inhalt oder
-   der Abschnitt „Überzeuge dich selbst“ (#termin) im Bild, weicht der Leisten-Knopf.
+   Lukas' Regel „nie zwei gleiche Knöpfe gleichzeitig im Bild“: Steht ein Knopf aus dem Inhalt sichtbar
+   im Fenster unter der Leiste, weicht der Leisten-Knopf (Runde 3: nur dann, sonst gab es Bildschirme
+   ganz ohne Knopf).
    Auf der Startseite springen die Punkte zu den Abschnitten, auf Unterseiten zurück zur Startseite. */
 
 const HOME = "/";
@@ -191,27 +192,6 @@ export default function Navbar() {
     };
   }, [onHome]);
 
-  // Formular im Bild: der Leisten-Knopf führt dorthin, wo man schon ist, also blendet er aus
-  const [atForm, setAtForm] = useState(false);
-  useEffect(() => {
-    if (!onHome) return;
-    let io: IntersectionObserver | null = null;
-    const watch = () => {
-      const el = document.getElementById("termin");
-      if (!el) return false;
-      io = new IntersectionObserver(([e]) => setAtForm(e.isIntersecting), { rootMargin: "-30% 0px -30% 0px" });
-      io.observe(el);
-      return true;
-    };
-    // Abschluss kann später hydrieren: kurz nachfassen
-    const late = watch() ? 0 : window.setTimeout(watch, 1500);
-    return () => {
-      window.clearTimeout(late);
-      io?.disconnect();
-      setAtForm(false);
-    };
-  }, [onHome]);
-
   // Ab 900 px Menüpunkte und kompakte Pille, darunter Vollbild-Menü und eigene Knopf-Regel
   const [wide, setWide] = useState(false);
   useEffect(() => {
@@ -222,22 +202,28 @@ export default function Navbar() {
     return () => mq.removeEventListener("change", set);
   }, []);
 
-  // Steht ein Knopf aus dem Inhalt im Bild, faltet sich der Leisten-Knopf weg wie am Formular
-  // (nie zwei gleiche Knöpfe gleichzeitig). Ab 900 px werden die oberen 40 % beobachtet (Vorlauf
-  // auch bei schnellem Scrollen), nach oben erweitert: beim Hochscrollen weicht der Leisten-Knopf,
-  // bevor ein Sektionsknopf von oben ins Bild kommt. Unter 900 px zählt das ganze Fenster unter
-  // der Leiste: am Handy sieht man beide Knöpfe sonst gleichzeitig.
+  // Steht ein Knopf aus dem Inhalt sichtbar im Fenster, faltet sich der Leisten-Knopf weg (nie zwei
+  // gleiche Knöpfe gleichzeitig). Gezählt wird überall genau das, was man sieht: das Fenster unterhalb
+  // der Leiste (was hinter ihr liegt, sieht man nicht). Kein Vorlauf über den Rand hinaus mehr: der ließ
+  // den Leisten-Knopf schon weichen, wenn der Sektionsknopf noch 100–150 px außerhalb stand.
+  // „Sichtbar“ heißt: mindestens zur Hälfte im Fenster. Ein Anschnitt von ein paar Pixeln am Rand ist
+  // kein Knopf (sonst stünde der Bildschirm praktisch ohne Knopf da).
+  const [kante, setKante] = useState(72);
+  useEffect(() => {
+    const messen = () => setKante(Math.round(kopf.current?.querySelector(".nav-bar")?.getBoundingClientRect().bottom ?? 72));
+    messen();
+    window.addEventListener("resize", messen);
+    return () => window.removeEventListener("resize", messen);
+  }, []);
   const [ctaImBild, setCtaImBild] = useState(false);
   useEffect(() => {
     const seen = new Map<Element, boolean>();
-    // Handy: was hinter der Leiste liegt, sieht man nicht; gezählt wird ab ihrer Unterkante
-    const unterkante = Math.round(kopf.current?.querySelector(".nav-bar")?.getBoundingClientRect().bottom ?? 72);
     const io = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => seen.set(e.target, e.isIntersecting));
+        entries.forEach((e) => seen.set(e.target, e.isIntersecting && e.intersectionRatio >= 0.5));
         setCtaImBild(Array.from(seen.values()).some(Boolean));
       },
-      { rootMargin: wide ? "25% 0px -60% 0px" : `-${unterkante}px 0px 0px 0px` },
+      { rootMargin: `-${kante}px 0px 0px 0px`, threshold: [0, 0.5] },
     );
     const scan = () =>
       document.querySelectorAll("main [data-cta-inline]").forEach((el) => {
@@ -255,7 +241,7 @@ export default function Navbar() {
       io.disconnect();
       setCtaImBild(false);
     };
-  }, [pathname, wide]);
+  }, [pathname, kante]);
 
   // Aufklapper schließen: Escape, Klick daneben
   useEffect(() => {
@@ -385,17 +371,8 @@ export default function Navbar() {
   // Ab 900 px schrumpft sie beim Runterscrollen zur kompakten Pille.
   const menuActive = sheetOpen || drop !== null;
   const compact = wide && down && !menuActive;
-  // Leisten-Knopf eingeklappt: ein Sektionsknopf im Bild, ab 900 px auch „Überzeuge dich selbst“
-  // in der Fenstermitte. Am Handy zählt nur der Knopf selbst: sonst stünde der lange Abschnitt
-  // zeitweise ganz ohne Knopf da.
-  const btnWeicht = ((wide && atForm) || ctaImBild) && !sheetOpen;
-
-  // B hat keine CTA-Leiste unten: die Leiste zeigt ihren Knopf auch mobil
-  useEffect(() => {
-    const html = document.documentElement;
-    html.setAttribute("data-nav-cta", "");
-    return () => html.removeAttribute("data-nav-cta");
-  }, []);
+  // Leisten-Knopf eingeklappt: nur, solange ein Sektionsknopf sichtbar im Fenster steht
+  const btnWeicht = ctaImBild && !sheetOpen;
 
   return (
     <>

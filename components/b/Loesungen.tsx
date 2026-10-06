@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
+import { cta } from "@/app/copy";
 import { loesungenB } from "@/app/copy-b";
+import Cta from "@/components/system/Cta";
 import { Grad, stufe } from "@/components/b/ui";
 import LoesungenBewegung from "@/components/b/LoesungenBewegung";
 import { BildAgenten, BildBusiness, BildCrm, BildFulfilment, BildVoice, BildWhatsapp, BildWissen } from "@/components/b/LoesungenBilder";
@@ -9,7 +11,8 @@ import { STUFEN_FARBEN } from "@/components/b/Unendlich";
    Texte, Symbole und Abbildungen sind eigen). Sieben Karten aus Lukas' Pyramide, nach Stufe sortiert
    (1, 2, 2, 3, 4, 4, 4). Das Schild „Stufe 1 · Wissen“ trägt den Punkt in der Farbe der Stufe aus dem
    Unendlichkeitszeichen darüber. Jede Karte hat eine kleine, ruhige Endlos-Animation, die nur läuft,
-   solange die Karte im Bild ist (LoesungenBewegung). */
+   solange die Karte im Bild ist (LoesungenBewegung).
+   Unter dem Raster eine kurze Zeile und der Knopf (wie am Ende der Kunden): am Handy sonst eine lange Strecke ohne Knopf. */
 
 type Karte = (typeof loesungenB.karten)[number];
 type UiAlle = {
@@ -106,6 +109,11 @@ export default function Loesungen() {
             </li>
           ))}
         </ul>
+
+        <div className="lo-ende" data-rv="">
+          <p className="lo-ende-zeile">{t.ctaZeile}</p>
+          <Cta href="#termin">{cta.main}</Cta>
+        </div>
       </div>
       <LoesungenBewegung />
     </section>

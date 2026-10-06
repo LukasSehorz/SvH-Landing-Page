@@ -4,8 +4,9 @@ import { leistungenB } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
 import { Grad, Pfeil, stufe } from "./ui";
 
-/* „Unsere Leistungen“ 0–4 als Kapitelmarke: das Unendlichkeitszeichen leuchtet auf einer dunklen Bühne
+/* „Unsere Leistungen“ 0–4 als Kapitelmarke: das Unendlichkeitszeichen steht auf einer dunklen Bühne
    (Vorbild: andreasbaulig.de), geschlossen, die vier Farben gehen fließend ineinander über.
+   Seit Runde 3 ohne Neon-Schein: flaches Band mit feiner Glanzkante, wie ein Produktbild.
    Auf dem Band laufen die Stufen 1–4: 1 oben links, 2 unten rechts, 3 oben rechts, 4 unten links
    (so läuft das Band auch). Die 0 (KI-Workshop) sitzt als Start-Knopf auf der Kreuzung in der Mitte.
    Darunter die Karten in Lesereihenfolge 0 → 4 (Handy untereinander, Tablet 0 oben und 2 × 2,
@@ -74,6 +75,8 @@ const UMRISS_PUNKTE = Array.from({ length: N + 1 }, (_, i) => punkt(tVon((i / N)
 const UMRISS = pfad(UMRISS_PUNKTE);
 // Gesamtlänge des Bandes: für den Lichtimpuls, der endlos durch das Zeichen läuft
 const UMFANG = UMRISS_PUNKTE.reduce((s, p, i) => (i ? s + Math.hypot(p.x - UMRISS_PUNKTE[i - 1].x, p.y - UMRISS_PUNKTE[i - 1].y) : 0), 0);
+const IMPULS = UMFANG * 0.07; // Länge des Lichtimpulses
+const KERN = IMPULS * 0.55; // heller Kern in seiner Mitte
 
 function laengen(pts: P[]) {
   const l = [0];
@@ -143,32 +146,32 @@ function Zeichen() {
   return (
     <svg className="um-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={ARIA}>
       <defs>
-        <filter id="um-schein" x="-15%" y="-25%" width="130%" height="150%">
-          <feGaussianBlur stdDeviation="22" />
-        </filter>
         {ABSCHNITTE.map((a) => (
           <path key={a.id} id={a.id} d={a.textPfad} />
         ))}
       </defs>
 
-      {/* weicher Lichtschein unter dem Band: auf der dunklen Bühne leuchtet das Zeichen */}
-      <path d={UMRISS} className="um-schatten" fill="none" stroke="rgba(106,85,255,0.55)" strokeWidth={BAND} filter="url(#um-schein)" />
       <g className="um-band">
         {STUECKE.map((s, i) => (
           <path key={i} d={s.d} fill="none" stroke={s.farbe} strokeWidth={BAND} strokeLinecap="butt" strokeLinejoin="round" />
         ))}
       </g>
       <path d={UMRISS} className="um-glanz" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth={BAND * 0.18} transform={`translate(0 ${-BAND * 0.22})`} />
-      {/* Lichtimpuls, der das Band entlangläuft (zeigt: alles greift ineinander) */}
-      <path
-        d={UMRISS}
-        className="um-impuls"
-        fill="none"
-        stroke="#fff"
-        strokeWidth={BAND * 0.42}
-        strokeLinecap="round"
-        style={{ "--l": UMFANG.toFixed(0), strokeDasharray: `${(UMFANG * 0.06).toFixed(0)} ${UMFANG.toFixed(0)}` } as CSSProperties}
-      />
+      {/* Lichtimpuls, der das Band entlangläuft (zeigt: alles greift ineinander), ohne Weichzeichner */}
+      {/* Zwei Schichten statt Weichzeichner: breit und leise außen, schmal und heller innen (mittig).
+          Muster-Länge = Umfang, damit der Impuls nahtlos umläuft. */}
+      <g className="um-impuls" style={{ "--l": UMFANG.toFixed(0) } as CSSProperties}>
+        <path d={UMRISS} fill="none" stroke="#fff" strokeWidth={BAND * 0.46} strokeLinecap="round" strokeOpacity={0.4} style={{ strokeDasharray: `${IMPULS.toFixed(0)} ${(UMFANG - IMPULS).toFixed(0)}` }} />
+        <path
+          d={UMRISS}
+          className="um-impuls-kern"
+          fill="none"
+          stroke="#fff"
+          strokeWidth={BAND * 0.2}
+          strokeLinecap="round"
+          style={{ "--v": ((IMPULS - KERN) / 2).toFixed(0), strokeDasharray: `${KERN.toFixed(0)} ${(UMFANG - KERN).toFixed(0)}` } as CSSProperties}
+        />
+      </g>
 
       {ABSCHNITTE.map((a) => (
         <g key={`b-${a.id}`}>

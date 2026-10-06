@@ -48,7 +48,7 @@ function ErgebnisFirma({ e }: { e: Ergebnis }) {
   if (logo)
     return (
       <div className="kd-erg-firma">
-        <Image className={`kd-erg-logo kd-erg-logo--${e.logo}`} src={logo.src} alt={e.firma} width={logo.w} height={logo.h} />
+        <Image className={`kd-erg-logo kd-erg-logo--${e.logo}`} src={logo.src} alt={e.firma} width={logo.w} height={logo.h} sizes="140px" />
       </div>
     );
   return (
@@ -69,7 +69,7 @@ function FirmenLogo({ logo, firma, href }: { logo: string; firma: string; href: 
     logo === "betthupferl" ? (
       <span className="kd-wortmarke">Betthupferl</span>
     ) : logo && LOGOS[logo] ? (
-      <Image src={LOGOS[logo].src} alt={firma} width={LOGOS[logo].w} height={LOGOS[logo].h} />
+      <Image src={LOGOS[logo].src} alt={firma} width={LOGOS[logo].w} height={LOGOS[logo].h} sizes="180px" />
     ) : (
       <span className="kd-ohne-logo">{firma || "Kundenstimme"}</span>
     );

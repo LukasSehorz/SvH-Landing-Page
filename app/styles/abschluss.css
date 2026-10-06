@@ -114,9 +114,10 @@
 
 /* ------------------------------------------------------------ Abschluss */
 
-/* hell und zentriert, das Gegenstück zum schwarzen Kasten „Überzeuge dich selbst“ */
+/* hell und zentriert, das Gegenstück zum dunklen Kasten „Überzeuge dich selbst“.
+   Davor steht seit Runde 3 das getönte Videoband (Aktuelles): oben deshalb eigener Abstand. */
 .ab {
-  padding: clamp(8px, 2vw, 24px) var(--gutter) clamp(72px, 8.5vw, 128px);
+  padding: clamp(56px, 6vw, 96px) var(--gutter) clamp(72px, 8.5vw, 128px);
   background:
     radial-gradient(70% 60% at 50% 100%, rgba(106, 85, 255, 0.09), transparent 72%),
     var(--page);

@@ -14,9 +14,13 @@ import { SvgDefsB } from "@/components/b/ui";
    Anmeldefenster liegen hier, damit jeder Knopf „Kostenlosen KI-Workshop sichern“ auf jeder
    Seite (auch Impressum, Aktuelles, 404) die Anmeldung öffnet, ohne die Seite zu verlassen. */
 
-// Schriften werden von Next selbst ausgeliefert (keine Anfrage an Google)
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", weight: ["400", "500", "600"], display: "swap" });
-const interTight = Inter_Tight({ subsets: ["latin"], variable: "--font-inter-tight", weight: ["400", "500", "600", "800"], display: "swap" });
+// Schriften werden von Next selbst ausgeliefert (keine Anfrage an Google), nur Zeichensatz „latin“
+// (deckt ä, ö, ü, ß, € und Gedankenstriche ab). Vorgeladen wird nur die Schrift der H1 (Inter Tight):
+// zwei Vorlade-Dateien à ~46 KB konkurrierten am Handy mit dem CSS ums erste Bild (LCP).
+// Inter (Fließtext) lädt, sobald das CSS sie braucht. Bis dahin steht Arial mit angepassten Maßen da
+// (adjustFontFallback, Standard bei next/font: size-adjust, ascent/descent), der Wechsel springt nicht.
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", weight: ["400", "500", "600"], display: "swap", preload: false, adjustFontFallback: true });
+const interTight = Inter_Tight({ subsets: ["latin"], variable: "--font-inter-tight", weight: ["400", "500", "600", "800"], display: "swap", adjustFontFallback: true });
 // nur für den Schriftzug des Kunden Betthupferl (dessen Logo ist ein Schriftzug in Bodoni Moda, kursiv)
 const bodoni = Bodoni_Moda({ subsets: ["latin"], variable: "--font-bodoni", weight: "400", style: "italic", display: "swap", preload: false });
 

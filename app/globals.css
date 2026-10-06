@@ -12,7 +12,7 @@
 
 /* =====================================================================
    SvH Consulting
-   Helle Seite: Grund Weiß. Markenverlauf und schwarze Leiste.
+   Helle Seite: Grund Weiß. Markenverlauf und dunkle Leiste (--b-dunkel).
    Unterseiten (Rechtliches, Aktuelles, 404): styles/seiten.css
    ===================================================================== */
 
@@ -37,6 +37,11 @@
   --grad: linear-gradient(92deg, #5b8cff 0%, #7c6aff 48%, #b9a5ff 100%);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
+  /* Der eine Dunkelton der Seite (Runde 3): Marken-Navy, fast schwarz. Gilt für die Leiste,
+     die ∞-Bühne, Masterplan, „Nächster Schritt“ und die Fußzeile. -rgb für halbdurchsichtige Ausläufe. */
+  --b-dunkel: #080a1d;
+  --b-dunkel-rgb: 8, 10, 29;
+
   --font-display: var(--font-inter-tight), system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
 
@@ -49,6 +54,23 @@
   :root {
     --nav-offset: 84px;
   }
+}
+
+/* ------------------------------------------------------------ Ersatzschrift für fetten Text */
+
+/* next/font legt „Inter Fallback“ (Arial, auf Inter abgestimmt) nur für die normale Stärke an. Fetter Text
+   (Knöpfe, Titel) wurde bis zum Laden von Inter in Chrome als künstlich verdickte Arial gezeichnet (1–3 %
+   schmaler), in Safari als Arial Bold (5,5 % breiter): beim Wechsel rückte z. B. der Leisten-Knopf um 4 px.
+   Arial Bold auf 101,5 % trifft Inter (Stärke 600/700) in beiden auf unter 1 % (gemessen an fünf Texten).
+   Die Höhenmaße sind so umgerechnet, dass Zeilen genauso hoch bleiben wie mit dem normalen Ersatz. */
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 600 900;
+  size-adjust: 101.5%;
+  ascent-override: 95.45%;
+  descent-override: 23.77%;
+  line-gap-override: 0%;
 }
 
 /* ------------------------------------------------------------ Raster */

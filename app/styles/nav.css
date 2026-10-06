@@ -1,13 +1,14 @@
 /* =====================================================================
    Variante B · Leiste (Header)
    Kopie der Leiste aus der früheren Variante A (dort system.css „Menü“ und die Knöpfe
-   aus base.css). Die Leiste bleibt schwarz; nur der Auslauf dahinter ist weiß,
-   passend zur hellen Seite. Die dunklen Farbwerte gelten nur innerhalb der Leiste.
+   aus base.css). Die Leiste trägt den einen Dunkelton der Seite (--b-dunkel, Marken-Navy);
+   nur der Auslauf dahinter ist weiß, passend zur hellen Seite. Die dunklen Farbwerte gelten nur
+   innerhalb der Leiste.
    ===================================================================== */
 
 .nav,
 .nav-sheet {
-  --bg: #050507;
+  --bg: var(--b-dunkel);
   --ink: #f4f4f6;
   --ink-2: rgba(244, 244, 246, 0.652);
   --ink-3: rgba(244, 244, 246, 0.5);
@@ -36,7 +37,7 @@
 /* Handy/Tablet: deckender Grund hinter der ganzen Kapsel (auch neben den runden Enden),
    darunter ein weicher Auslauf. So schaut keine große Überschrift über oder unter der
    Leiste hervor, sobald gescrollt ist.
-   Zwei Ebenen in derselben Form: ::before weiß (helle Seite), ::after Marken-Navy (#080a1d), solange
+   Zwei Ebenen in derselben Form: ::before weiß (helle Seite), ::after Marken-Navy (--b-dunkel), solange
    eine dunkle Bühne unter der Leiste liegt (#leistungen, Fußzeile; data-dunkel aus Navbar.tsx).
    Gewechselt wird per Kreuzblende (nur opacity, kein Layout). */
 .nav::before,
@@ -63,7 +64,7 @@
   --auslauf: 255, 255, 255;
 }
 .nav::after {
-  --auslauf: 8, 10, 29;
+  --auslauf: var(--b-dunkel-rgb);
 }
 .nav[data-scrolled="true"]:not([data-dunkel="true"])::before,
 .nav[data-scrolled="true"][data-dunkel="true"]::after {
@@ -163,7 +164,7 @@
 .nav-bar > * {
   pointer-events: auto;
 }
-/* schwarze Fläche: immer deckend (auf Weiß würde eine halbdurchsichtige Kapsel grau wirken) */
+/* dunkle Fläche: immer deckend (auf Weiß würde eine halbdurchsichtige Kapsel grau wirken) */
 .nav-bar::before {
   content: "";
   position: absolute;
@@ -171,7 +172,7 @@
   z-index: -1;
   border-radius: inherit;
   border: 1px solid var(--line);
-  background: #08080c;
+  background: var(--b-dunkel);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
   clip-path: inset(0 var(--nav-x) round 999px);
   pointer-events: auto;
@@ -580,12 +581,11 @@
   }
 }
 
+/* Der Leisten-Knopf steht schon im HTML (vorher erst nach dem Laden per Skript: die Leiste sprang
+   am Handy um die Knopfbreite, CLS 0,01). Nur bei offenem Vollbild-Menü weicht er dessen Knopf. */
 @media (max-width: 899px) {
-  .nav-end .btn-sm {
+  html[data-menu-open] .nav-end .btn-sm {
     display: none;
-  }
-  html[data-nav-cta]:not([data-menu-open]) .nav-end .btn-sm {
-    display: inline-flex;
   }
 }
 
@@ -605,7 +605,7 @@
     padding-inline: 4px;
   }
   .nav-mark {
-    min-width: 40px;
+    min-width: 44px; /* Trefferfläche mindestens 44 × 44 px */
     padding-inline: 8px 2px;
   }
   .nav-end {

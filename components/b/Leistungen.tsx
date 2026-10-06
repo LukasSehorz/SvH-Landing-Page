@@ -6,8 +6,8 @@ import Garantie from "./Garantie";
 import { Grad, Haken, stufe } from "./ui";
 
 /* Fahrplan mit Garantie (nach dem Masterplan, vor „Überzeuge dich selbst“):
-   drei helle Schritt-Karten mit Zeitmarke statt Ziffer (Heute / Nach 48 Std. / Danach; die Ziffern 0–4
-   gehören in den Leistungen zu den Stufen), daneben das Bild mit dem Preis-Kasten,
+   drei helle Schritt-Karten mit Zeitmarke statt Ziffer (Dein Termin / Nach 48 Std. / Danach; die Ziffern 0–4
+   gehören in den Leistungen zu den Stufen), daneben das Bild (der Preisanker steht seit Runde 3 im Masterplan),
    darunter die Geld-zurück-Garantie (Garantie.tsx), dann Hinweis und Knopf als lautestes Element.
    Reihenfolge am Handy wie im HTML: Kopf, Schritte, Bild, Garantie, Knopf.
    Die früheren Detail-Abschnitte (Automatisierung, Assistenten, Wissen) ersetzt seit 06.10.2026 Loesungen.tsx. */
@@ -73,17 +73,6 @@ export function Workshop() {
               <span>{workshopB.bildFolgt}</span>
             </div>
           )}
-          <div className="ws-preis">
-            <p className="ws-preis-titel">{workshopB.preis.titel}</p>
-            <p className="ws-preis-zeile">
-              <del className="ws-preis-alt">
-                <span className="sr-only">statt </span>
-                {workshopB.preis.alt}
-              </del>
-              <span className="ws-preis-neu">{workshopB.preis.neu}</span>
-            </p>
-            <p className="ws-preis-text">{workshopB.preis.text}</p>
-          </div>
         </div>
 
         <Garantie />

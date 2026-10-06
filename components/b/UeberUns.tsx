@@ -6,10 +6,11 @@ import { Grad, stufe } from "./ui";
 
 /* Über uns: die zwei Gründer als helle Karten (Kartenart wie bei den Lösungen). Das Foto steht
    neben dem Namen statt als riesige Kachel; ohne Foto ein ruhiger Platzhalter mit Initialen.
+   Getönter Grund: zwischen den weißen Lösungen und dem Masterplan wechselt so der Hintergrund (Runde 3).
    Handy: Foto klein neben Name und Rolle, Text darunter. Ab 1100 px: Foto links über die ganze Höhe. */
 export function UeberUns() {
   return (
-    <section className="sb uu" id="ueber-uns" aria-labelledby="ueber-uns-titel">
+    <section className="sb sb--tint uu" id="ueber-uns" aria-labelledby="ueber-uns-titel">
       <div className="sb-wrap">
         <div className="b-kopf b-kopf--mitte" data-rv="">
           <p className="b-label">{teamB.label}</p>
@@ -74,15 +75,16 @@ function LinkedInLogo() {
   );
 }
 
-/* Aktuelles: Beleg zu den Gründern („Jannik zeigt auf YouTube …“). Bewusst kompakt als heller Kasten
-   direkt unter den Gründer-Karten, damit es wie eine Fortsetzung wirkt und nicht wie ein Ausgang:
-   die zwei neuesten Videos (Liste aus Variante A) und ein leiser Link zum Kanal.
+/* Aktuelles: Janniks Videos (führen zu YouTube, also von der Seite weg). Seit Runde 3 hinter den Fragen,
+   direkt vor dem Abschluss: vor dem Angebot gibt es keinen Ausgang mehr. Kompaktes getöntes Band
+   zwischen den weißen Fragen und dem weißen Abschluss: die zwei neuesten Videos (Liste aus Variante A)
+   als weiße Karten und ein leiser Link zum Kanal.
    Handy: Videos als flache Zeilen (Bild links, Titel rechts), der Kanal-Link darunter.
    Ab 1000 px: Text und Kanal-Link links, Videos rechts. */
 export function Aktuelles() {
   const videos = aktuelles.videos.slice(0, 2);
   return (
-    <section className="ak-band" id="aktuelles" aria-labelledby="aktuelles-titel">
+    <section className="sb sb--tint ak-band" id="aktuelles" aria-labelledby="aktuelles-titel">
       <div className="sb-wrap">
         <div className="ak-kasten" data-rv="">
           <div className="ak-kopf">

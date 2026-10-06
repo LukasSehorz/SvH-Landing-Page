@@ -448,8 +448,9 @@ html.rv-an .pv-box:not([data-rv="in"]) .pv-saeule {
 
 /* ------------------------------------------------------------ Unendlichkeitszeichen */
 
-/* Kapitelmarke: dunkle, ruhige Bühne (Marken-Navy, fast schwarz). Davor (Zahnräder) und danach (Kunden)
-   ist die Seite hell. Gerade Kanten über die volle Breite, dazu ein weicher Lichtschein hinter dem Zeichen. */
+/* Kapitelmarke: dunkle, ruhige Bühne im einen Dunkelton der Seite (--b-dunkel). Davor (Zahnräder) und
+   danach (Kunden) ist die Seite hell. Gerade Kanten über die volle Breite, dahinter nur ein leiser
+   Lichtkegel wie bei einem Produktbild (Runde 3: kein Neon-Leuchten mehr ums Band). */
 .sb--kompakt {
   padding-block: clamp(56px, 5.5vw, 80px);
 }
@@ -457,9 +458,7 @@ html.rv-an .pv-box:not([data-rv="in"]) .pv-saeule {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background:
-    radial-gradient(70% 42% at 50% 0%, rgba(63, 116, 255, 0.1), rgba(63, 116, 255, 0) 70%),
-    linear-gradient(180deg, #080a1d 0%, #0c0e28 50%, #080a1d 100%);
+  background: var(--b-dunkel);
   color: #fff;
 }
 .um .b-label {
@@ -486,13 +485,13 @@ html.rv-an .pv-box:not([data-rv="in"]) .pv-saeule {
   max-width: 640px;
   margin: clamp(20px, 2.4vw, 32px) auto 0;
 }
-/* Lichtschein hinter dem Zeichen: Markenblau und -lila, ganz weich auslaufend */
+/* Lichtkegel hinter dem Zeichen: leise, ganz weich auslaufend (hebt das Band vom Grund, ohne zu leuchten) */
 .um-zeichen::before {
   content: "";
   position: absolute;
   z-index: -1;
   inset: -24% -20%;
-  background: radial-gradient(closest-side, rgba(106, 85, 255, 0.3) 0%, rgba(63, 116, 255, 0.12) 55%, rgba(63, 116, 255, 0) 100%);
+  background: radial-gradient(closest-side, rgba(106, 85, 255, 0.13) 0%, rgba(63, 116, 255, 0.05) 55%, rgba(63, 116, 255, 0) 100%);
   pointer-events: none;
 }
 .um-svg {
@@ -530,8 +529,8 @@ html.rv-an .pv-box:not([data-rv="in"]) .pv-saeule {
   border-radius: 999px;
   background: #fff;
   box-shadow:
-    0 0 0 5px rgba(255, 255, 255, 0.22),
-    0 0 36px 2px rgba(140, 120, 255, 0.55);
+    0 0 0 4px rgba(255, 255, 255, 0.16),
+    0 10px 24px -8px rgba(0, 0, 0, 0.6);
 }
 .um-start-nr {
   font-family: var(--font-display);
@@ -605,14 +604,13 @@ html.rv-an .pv-box:not([data-rv="in"]) .pv-saeule {
   text-align: left;
   color: var(--page-ink);
 }
-/* Start: weicher heller Lichtring statt farbigem Rand */
+/* Start: feiner heller Ring statt farbigem Rand (ohne Leuchten) */
 .um-karte--start {
   padding-bottom: 8px;
   border-color: #fff;
   box-shadow:
     inset 0 1px 0 #fff,
-    0 0 0 4px rgba(150, 132, 255, 0.32),
-    0 0 44px -8px rgba(124, 106, 255, 0.6),
+    0 0 0 3px rgba(150, 132, 255, 0.38),
     0 24px 48px -28px rgba(0, 0, 0, 0.7);
 }
 .um-karte-kopf {
@@ -707,8 +705,7 @@ html.rv-an .pv-box:not([data-rv="in"]) .pv-saeule {
   .um .um-karte--start:hover {
     box-shadow:
       inset 0 1px 0 #fff,
-      0 0 0 4px rgba(150, 132, 255, 0.4),
-      0 0 52px -6px rgba(124, 106, 255, 0.7),
+      0 0 0 3px rgba(150, 132, 255, 0.5),
       0 30px 56px -26px rgba(0, 0, 0, 0.8);
   }
 }
@@ -732,16 +729,18 @@ html.rv-an .pv-box:not([data-rv="in"]) .pv-saeule {
     max-width: none;
     margin-inline: -8px;
   }
-  .um-band path,
-  .um-schatten {
+  .um-band path {
     stroke-width: 112px;
   }
   .um-glanz {
     stroke-width: 20px;
     transform: translateY(-25px);
   }
-  .um-impuls {
-    stroke-width: 48px;
+  .um-impuls path {
+    stroke-width: 52px;
+  }
+  .um-impuls .um-impuls-kern {
+    stroke-width: 22px;
   }
   .um-lbl--gross {
     display: none;
@@ -912,7 +911,7 @@ html.rv-an .pv-box:not([data-rv="in"]) .pv-saeule {
   gap: 16px;
   background:
     radial-gradient(80% 60% at 50% 35%, rgba(106, 85, 255, 0.45), transparent 70%),
-    linear-gradient(180deg, #14142a, #08080c);
+    linear-gradient(180deg, #14142a, var(--b-dunkel, #080a1d));
 }
 .ws-bild-platzhalter img {
   width: 72px;
@@ -1644,9 +1643,10 @@ a.kd-logo:focus-visible {
 /* ------------------------------------------------------------ Über uns: Gründer */
 
 /* Kartenart ab der Lösung (wie .lo-karte): hell, 1 px feiner Rand, großer Radius, leichter Schatten.
-   Unten knapp: der Aktuelles-Kasten darunter steht auf demselben weißen Grund und setzt die Gründer fort. */
+   Getönter Grund (sb--tint) zwischen den weißen Lösungen und dem Masterplan; etwas straffer als ein
+   normaler Abschnitt, weil nur zwei Karten darin stehen. */
 .sb.uu {
-  padding-bottom: clamp(14px, 1.8vw, 24px);
+  padding-block: clamp(64px, 7vw, 104px);
 }
 .uu-gruender {
   display: grid;
@@ -1808,10 +1808,10 @@ a.kd-logo:focus-visible {
 
 /* ------------------------------------------------------------ Einblicke: YouTube und LinkedIn */
 
-/* Aktuelles: kompakter heller Kasten direkt unter den Gründern (gleicher weißer Grund),
-   der Masterplan darunter bringt seinen eigenen Abstand oben mit */
-.ak-band {
-  padding-bottom: clamp(8px, 1.5vw, 16px);
+/* Aktuelles: kompaktes getöntes Band zwischen den weißen Fragen und dem weißen Abschluss (Runde 3).
+   Das Band selbst ist die Fläche, die Videos stehen als weiße Karten darauf. */
+.sb.ak-band {
+  padding-block: clamp(56px, 6vw, 88px);
 }
 .ak-kasten {
   display: grid;
@@ -1823,10 +1823,6 @@ a.kd-logo:focus-visible {
   gap: 20px;
   max-width: 1080px;
   margin-inline: auto;
-  padding: clamp(20px, 3vw, 36px);
-  border-radius: 28px;
-  border: 1px solid var(--linie-2);
-  background: var(--tint);
 }
 .ak-kopf {
   grid-area: kopf;
@@ -1949,8 +1945,6 @@ a.kd-logo:focus-visible {
 @media (max-width: 699px) {
   .ak-kasten {
     gap: 16px;
-    padding: 18px 16px 16px;
-    border-radius: 24px;
   }
   .ak-liste {
     grid-template-columns: minmax(0, 1fr);
@@ -2018,7 +2012,7 @@ a.kd-logo:focus-visible {
 /* ------------------------------------------------------------ Masterplan (schwarzer Kasten mit Laptop) */
 
 .mp {
-  /* steht nach Gründern und Aktuelles, vor dem Workshop-Ablauf (getönter Grund): unten knapp */
+  /* steht nach den Gründern (getönt), vor dem Workshop-Ablauf (getönt): unten knapp */
   padding: clamp(64px, 7vw, 112px) var(--gutter) clamp(24px, 3vw, 48px);
   /* Sprung aus dem Menü: der schwarze Kasten landet knapp unter der Leiste, nicht der weiße Rand davor */
   scroll-margin-top: calc(24px - clamp(64px, 7vw, 112px));
@@ -2029,7 +2023,7 @@ a.kd-logo:focus-visible {
   margin-inline: auto;
   padding: clamp(32px, 4.4vw, 64px);
   padding-right: 42%;
-  background: #000;
+  background: var(--b-dunkel, #080a1d);
   color: #fff;
   box-shadow: 0 30px 60px -30px rgba(11, 11, 14, 0.6);
 }
@@ -2063,6 +2057,53 @@ a.kd-logo:focus-visible {
   font-size: 16px;
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.85);
+}
+/* Preisanker unter den Punkten: kleines Preisschild auf dem dunklen Kasten (gläsern, feiner Rand),
+   Alt-Preis rot durchgestrichen, „0 €“ groß in Grün. Farben für dunklen Grund aufgehellt (Kontrast ≥ 4,5:1). */
+.mp-preis {
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 28px;
+  padding: 16px 24px 16px 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.mp-preis-titel {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lav);
+}
+.mp-preis-zeile {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 14px;
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.05;
+}
+.mp-preis-alt {
+  font-size: 22px;
+  color: #ff6b70;
+  text-decoration: line-through;
+  text-decoration-thickness: 2.5px;
+  text-decoration-color: #ff6b70;
+}
+.mp-preis-neu {
+  font-size: 38px;
+  letter-spacing: -0.02em;
+  color: #4ade80;
+}
+.mp-preis-text {
+  margin-top: 4px;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.75);
 }
 .mp-cta {
   margin-top: 28px;
@@ -2106,11 +2147,29 @@ a.kd-logo:focus-visible {
 /* Handy: schwarzer Kasten randlos als Band, Text auf der Fluchtlinie der Seite,
    der Knopf passt so in einer Zeile hinein */
 @media (max-width: 599px) {
+  /* das dunkle Band schließt direkt an das getönte Gründer-Band an (kein schmaler weißer Streifen dazwischen) */
   .mp {
     padding-inline: 0;
+    padding-top: 0;
+    scroll-margin-top: 24px;
   }
   .mp-kasten {
     padding-inline: var(--gutter);
+  }
+  /* Preisschild so breit wie der Knopf darunter: gleiche Kanten */
+  .mp-preis {
+    width: 100%;
+    padding: 14px 18px;
+  }
+  .mp-preis-neu {
+    font-size: 34px;
+  }
+}
+/* 320 px: der Plan im Laptop passt sonst nicht ganz auf den Bildschirm (letzte Zeile 8 px abgeschnitten).
+   Reine Abbildung (aria-hidden), daher darf die Schrift hier unter 9 px. */
+@media (max-width: 359px) {
+  .mp .lp-bildschirm {
+    font-size: 8.25px;
   }
 }
 
@@ -2232,7 +2291,7 @@ a.kd-logo:focus-visible {
 .nx-kasten {
   margin-left: -80px;
   padding: clamp(36px, 4.4vw, 64px) clamp(32px, 4.4vw, 64px) clamp(36px, 4.4vw, 64px) calc(80px + clamp(28px, 3.4vw, 52px));
-  background: #000;
+  background: var(--b-dunkel, #080a1d);
   color: #fff;
   box-shadow: 0 30px 60px -30px rgba(11, 11, 14, 0.6);
 }
@@ -2253,8 +2312,59 @@ a.kd-logo:focus-visible {
 .nx-titel + .nx-absatz {
   margin-top: 28px;
 }
+/* Direkter Draht: feine Linie, leise Frage, darunter die Nummer als Link (Trefferfläche 48 px) */
+.nx-direkt {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.nx-direkt-text {
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.72);
+}
+.nx-tel {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  margin-top: 6px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+  transition: color 0.3s var(--ease);
+}
+.nx-tel-symbol {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(185, 165, 255, 0.3);
+  background: rgba(185, 165, 255, 0.12);
+}
+@media (hover: hover) {
+  .nx-tel:hover {
+    color: var(--lav);
+  }
+}
+.nx-tel:focus-visible {
+  border-radius: 999px;
+}
+/* Schluss-Satz direkt über dem Knopf */
+.nx-schluss {
+  margin-top: 26px;
+  font-family: var(--font-display);
+  font-size: clamp(20px, 1.8vw, 24px);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
 .nx-cta {
-  margin-top: 30px;
+  margin-top: 18px;
 }
 @media (max-width: 899px) {
   .nx-wrap {
@@ -2425,80 +2535,16 @@ html[data-dialog-offen] {
   padding: 0.6em;
 }
 
-/* Preis-Kasten auf dem Workshop-Bild: 1.099 € rot durchgestrichen, 0 € grün */
-.ws-preis {
-  position: absolute;
-  left: 24px;
-  bottom: 24px;
-  z-index: 1;
-  padding: 16px 20px;
-  border-radius: 18px;
-  background: #fff;
-  box-shadow: 0 20px 40px -16px rgba(0, 0, 0, 0.55);
-}
-.ws-preis-titel {
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--page-ink-2);
-}
-.ws-preis-zeile {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  margin-top: 4px;
-  font-family: var(--font-display);
-  font-weight: 800;
-  line-height: 1.1;
-}
-.ws-preis-alt {
-  font-size: 24px;
-  color: #d9262f;
-  text-decoration: line-through;
-  text-decoration-thickness: 3px;
-  text-decoration-color: #d9262f;
-}
-.ws-preis-neu {
-  font-size: 40px;
-  letter-spacing: -0.02em;
-  color: #16a34a;
-}
-.ws-preis-text {
-  margin-top: 2px;
-  font-size: 14px;
-  color: var(--page-ink-2);
-}
+/* Workshop-Bild am Handy: Fotoformat 3:2 (der Preis-Kasten darauf ist seit Runde 3 im Masterplan) */
 @media (max-width: 599px) {
-  /* Handy: Bild etwas höher als 4:3, damit der Preis-Kasten es nicht ganz verdeckt */
   .ws-bild {
-    aspect-ratio: 5 / 4;
+    aspect-ratio: 3 / 2;
   }
   .ws-bild-platzhalter {
-    align-content: start;
-    gap: 10px;
-    padding-top: 7%;
+    gap: 12px;
   }
   .ws-bild-platzhalter img {
     width: 52px;
-  }
-  .ws-preis {
-    left: 14px;
-    bottom: 14px;
-    max-width: calc(100% - 28px); /* nie bis an den Bildrand */
-    padding: 12px 16px;
-  }
-  .ws-preis-neu {
-    font-size: 32px;
-  }
-}
-/* 320 px: der Preis-Kasten bricht zweizeilig um, das Bild braucht wieder die volle Höhe */
-@media (max-width: 359px) {
-  .ws-bild {
-    aspect-ratio: 1 / 1;
-  }
-  .ws-bild-platzhalter img {
-    width: 44px;
   }
 }
 
@@ -2530,7 +2576,10 @@ html[data-dialog-offen] {
 .zr-faden path {
   vector-effect: non-scaling-stroke;
   stroke-dasharray: 11 8;
-  animation: b-ameisen 1.4s linear infinite;
+}
+/* die „Ameisen“ laufen einmal nach unten, sobald der Abschnitt erscheint, dann steht die Linie */
+.zr:has(.zr-kopf[data-rv="in"]) .zr-faden path {
+  animation: b-ameisen 2.4s var(--ease) backwards;
 }
 .zr-faden-spitze {
   position: absolute;
@@ -2690,7 +2739,10 @@ html[data-dialog-offen] {
   display: inline-block;
   margin-left: 6px;
   vertical-align: -3px;
-  animation: b-runter 1.8s ease-in-out infinite;
+}
+/* wippt drei Mal, sobald die Gewinne im Bild sind, dann Ruhe */
+.zr-gewinne[data-rv="in"] .zr-weiter-pfeil {
+  animation: b-runter 1.6s ease-in-out 0.9s 3;
 }
 @media (max-width: 899px) {
   .zr-grid {

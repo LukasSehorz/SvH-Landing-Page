@@ -327,7 +327,7 @@ html.rv-an [data-rv]:not([data-rv="in"]) {
 /* ------------------------------------------------------------ Fußzeile */
 
 .fb {
-  background: #08080c;
+  background: var(--b-dunkel);
   color: rgba(244, 244, 246, 0.7);
   padding-top: clamp(56px, 6vw, 80px);
 }
@@ -360,6 +360,7 @@ html.rv-an [data-rv]:not([data-rv="in"]) {
   font-size: 15.5px;
 }
 .fb-liste a {
+  min-width: 44px; /* kurze Links („AGB“) brauchen trotzdem 44 px Trefferfläche (Höhe: abschluss.css) */
   color: #f4f4f6;
   transition: color 0.3s var(--ease);
 }
@@ -370,7 +371,7 @@ html.rv-an [data-rv]:not([data-rv="in"]) {
   font-size: 14px;
   color: rgba(244, 244, 246, 0.5);
 }
-/* Grau auf #08080c: 0,58 ergibt #919193, Kontrast 6,4 : 1 (vorher 0,45 = 4,2 : 1, zu schwach) */
+/* Grau auf --b-dunkel (#080a1d): 0,58 ergibt Kontrast 6,3 : 1, 0,5 noch 4,9 : 1 (0,45 wäre zu schwach) */
 .fb-copy {
   margin-top: 48px;
   padding-block: 24px 28px;

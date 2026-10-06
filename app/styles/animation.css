@@ -1,8 +1,15 @@
 /* =====================================================================
-   Variante B · Animationen
-   Keine Scroll-Effekte: alles läuft beim Laden, von selbst (ruhige Endlosschleifen)
-   oder beim Drüberfahren. Endlosschleifen (Zahnräder, Lösungen) laufen nur, solange sie im Bild sind.
-   „Bewegung reduzieren“ im System stoppt alles (Regel in b.css).
+   Animationen
+   Regel seit Runde 3 („Apple-Ruhe, aber keine tote Seite“): Bewegung nur mit Bedeutung.
+   - Einmal: Auftritt beim Laden (Hero), Einblenden beim ersten Erscheinen (data-rv, Reveal.tsx),
+     Lichtkante über den Knopf, „Ameisen“ auf den Linien, Pfeil am Zahnrad-Link (3 Mal).
+   - Endlos nur, wo die Bewegung die Aussage ist: Zahnräder (bausteine.css), Szenen der Lösungen
+     (loesungen.css), Lichtimpuls und Start-Ring im ∞ (hier, langsam).
+   - Beim Drüberfahren: Karten, Logos, Knöpfe.
+   Gestrichen (Endlosschleifen ohne Bedeutung): fließender Verlauf in Verlaufswörtern und Trust-Leiste,
+   schwebende Elemente (Laptop, Bild „Nächster Schritt“, Figuren), wackelndes Männchen, hüpfende
+   Play-Symbole und Preise, pulsierende Ringe am Video, wippende Pfeile im Workshop.
+   „Bewegung reduzieren“ im System stoppt alles (globals.css).
    ===================================================================== */
 
 @keyframes b-rein {
@@ -19,76 +26,27 @@
     stroke-dashoffset: 0;
   }
 }
-@keyframes b-schweben {
-  50% {
-    translate: 0 -8px;
-  }
-}
-@keyframes b-puls-ring {
-  from {
-    transform: scale(1);
-    opacity: 0.55;
-  }
-  to {
-    transform: scale(1.9);
-    opacity: 0;
-  }
-}
-@keyframes b-farbfluss {
-  to {
-    background-position: 200% 0;
-  }
-}
+/* Lichtkante: läuft einmal von rechts nach links über den Knopf */
 @keyframes b-glanz {
-  0%,
-  72% {
+  from {
     background-position: 130% 0;
   }
-  100% {
+  to {
     background-position: -40% 0;
   }
 }
+/* „Ameisenstraße“: die Striche laufen drei Schritte (3 × 19 px) in Pfeilrichtung und bleiben stehen */
 @keyframes b-ameisen {
+  from {
+    stroke-dashoffset: 57;
+  }
   to {
-    stroke-dashoffset: -38;
+    stroke-dashoffset: 0;
   }
 }
 @keyframes b-runter {
   50% {
     transform: translateY(6px);
-  }
-}
-@keyframes b-pop {
-  0%,
-  80%,
-  100% {
-    scale: 1;
-  }
-  88% {
-    scale: 1.14;
-  }
-}
-@keyframes b-wackeln {
-  0%,
-  86%,
-  100% {
-    rotate: 0deg;
-  }
-  90% {
-    rotate: -9deg;
-  }
-  94% {
-    rotate: 7deg;
-  }
-}
-@keyframes b-blinken {
-  50% {
-    opacity: 0;
-  }
-}
-@keyframes b-saeule {
-  from {
-    transform: scaleY(0);
   }
 }
 
@@ -136,47 +94,27 @@
 .hb-punkte li:nth-child(4) .b-haken path {
   animation-delay: 0.96s;
 }
-/* Play-Knopf: Ring pulsiert nach außen */
+/* Play-Knopf: ruhig (der feste Ring steht in hero.css), wächst nur beim Drüberfahren */
 .hb-play {
   position: relative;
   transition: transform 0.35s var(--ease);
-}
-.hb-play::before,
-.hb-play::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 2px solid rgba(185, 165, 255, 0.8);
-  animation: b-puls-ring 2.4s var(--ease) infinite;
-}
-.hb-play::after {
-  animation-delay: 1.2s;
 }
 .hb-video:hover .hb-play {
   transform: scale(1.08);
 }
 
-/* ------------------------------------------------------------ Verlaufswörter und Trust-Bar: Farbe fließt */
+/* ------------------------------------------------------------ Knöpfe: Lichtkante einmal */
 
-.b-grad {
-  background-image: linear-gradient(92deg, #3f74ff 0%, #6a55ff 25%, #8c6dff 50%, #6a55ff 75%, #3f74ff 100%);
-  background-size: 200% 100%;
-  animation: b-farbfluss 7s linear infinite;
-}
-.tb {
-  background-image: linear-gradient(92deg, #3f74ff 0%, #6a55ff 22%, #8c6dff 50%, #6a55ff 78%, #3f74ff 100%);
-  background-size: 200% 100%;
-  animation: b-farbfluss 14s linear infinite;
-}
-
-/* ------------------------------------------------------------ Knöpfe: Lichtkante läuft regelmäßig durch */
-
+/* Einmal, wenn der Knopf erscheint, und wieder beim Drüberfahren (Übergang in nav.css).
+   Knöpfe in einer Einblend-Gruppe warten, bis die Gruppe im Bild ist. */
 .btn-primary::after {
-  animation: b-glanz 5.5s var(--ease) infinite;
+  animation: b-glanz 1.2s var(--ease) 0.6s backwards;
 }
-.btn-primary:hover::after {
+[data-rv]:not([data-rv="in"]) .btn-primary::after {
   animation: none;
+}
+.hb-cta .btn-primary::after {
+  animation-delay: 1.5s;
 }
 
 /* ------------------------------------------------------------ Logo-Kasten */
@@ -190,23 +128,12 @@
 
 /* ------------------------------------------------------------ Problem → Lösung */
 
-/* Linien und Pfeile: „Ameisenstraße“ zeigt die Richtung */
+/* Linien und Pfeil: die „Ameisen“ laufen einmal in Pfeilrichtung, sobald die Studien im Bild sind */
 .pv-verbinder svg path {
   stroke-dasharray: 11 8;
-  animation: b-ameisen 1.4s linear infinite;
 }
-/* Männchen wippen, das durchgestrichene wackelt ab und zu */
-.pv-figur:not(.pv-figur--weg) > svg {
-  animation: b-schweben 2.6s ease-in-out infinite;
-}
-.pv-figur:nth-child(2) > svg {
-  animation-delay: 0.3s;
-}
-.pv-figur:nth-child(3) > svg {
-  animation-delay: 0.6s;
-}
-.pv-figur--weg {
-  animation: b-wackeln 4s ease-in-out infinite;
+.pv-boxen:has(> [data-rv="in"]) + .pv-verbinder svg path {
+  animation: b-ameisen 2.4s var(--ease) 0.2s backwards;
 }
 .pv-box,
 .pv-kasten {
@@ -225,36 +152,41 @@
 
 /* ------------------------------------------------------------ Unendlichkeitszeichen: Lichtimpuls */
 
+/* Ein Glanz läuft ruhig das Band entlang (zeigt: alles greift ineinander). Ohne Weichzeichner:
+   zwei Schichten (Unendlich.tsx) im Modus „weiches Licht“ hellen das Band nur auf, statt einen weißen
+   Fleck daraufzulegen. --v rückt den schmalen Kern in die Mitte des breiten Scheins. */
 .um-impuls {
-  opacity: 0.32;
-  stroke-dashoffset: calc(var(--l) * 1px);
-  animation: um-lauf 9s linear infinite;
-  filter: blur(6px);
+  opacity: 0.7;
+  mix-blend-mode: soft-light;
+}
+.um-impuls path {
+  stroke-dashoffset: calc((var(--l) - var(--v, 0)) * 1px);
+  animation: um-lauf 12s linear infinite;
 }
 @keyframes um-lauf {
   to {
-    stroke-dashoffset: 0;
+    stroke-dashoffset: calc(var(--v, 0) * -1px);
   }
 }
-/* Start-Knopf: ein weicher Ring geht langsam nach außen (zeigt: hier geht es los) */
+/* Start-Knopf: ein feiner Ring geht langsam nach außen, dann lange Ruhe (zeigt: hier geht es los) */
 .um-start::before {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  border: 2px solid rgba(255, 255, 255, 0.95);
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
   opacity: 0;
-  animation: um-ring 3.6s var(--ease) infinite;
+  animation: um-ring 6.5s var(--ease) 1s infinite;
   pointer-events: none;
 }
 @keyframes um-ring {
   0% {
     transform: scale(1);
-    opacity: 0.85;
+    opacity: 0.7;
   }
-  70%,
+  40%,
   100% {
-    transform: scale(1.55);
+    transform: scale(1.5);
     opacity: 0;
   }
 }
@@ -283,9 +215,6 @@
 
 /* ------------------------------------------------------------ Workshop */
 
-.wf-pfeil {
-  animation: b-runter 1.8s ease-in-out infinite;
-}
 .wf-karte {
   transition:
     transform 0.35s var(--ease),
@@ -294,16 +223,9 @@
 .wf-karte:hover {
   transform: translateY(-3px);
 }
-.ws-preis-neu {
-  display: inline-block;
-  animation: b-pop 3.2s var(--ease) infinite;
-}
 
 /* ------------------------------------------------------------ Masterplan, Kunden, Gründer, Nächster Schritt */
 
-.mp-laptop {
-  animation: b-schweben 6s ease-in-out infinite;
-}
 .kd-karte,
 .ak-li-link {
   transition:
@@ -331,11 +253,12 @@
 .uu-gruender-eintrag:hover .uu-foto-initialen {
   transform: scale(1.05);
 }
-.nx-bild img {
-  animation: b-schweben 5s ease-in-out infinite;
-}
+/* Play-Symbol der Videos: wächst nur beim Drüberfahren */
 .ak-play {
-  animation: b-pop 3.6s var(--ease) infinite;
+  transition: transform 0.35s var(--ease);
+}
+a:hover .ak-play {
+  transform: scale(1.08);
 }
 
 /* ------------------------------------------------------------ Fragen: Antwort gleitet auf */

@@ -5,8 +5,11 @@ import Cta from "@/components/system/Cta";
 import Laptop from "./Laptop";
 import { Haken } from "./ui";
 
-/* Masterplan: schwarzer Kasten mit Text links, rechts ragt ein Laptop mit dem Plan heraus
-   (Vorbild: andreasbaulig.de „Unser System als Training“, etwas kleiner). */
+/* Masterplan: dunkler Kasten mit Text links, rechts ragt ein Laptop mit dem Plan heraus
+   (Vorbild: andreasbaulig.de „Unser System als Training“, etwas kleiner).
+   Unter den Punkten steht der Preisanker „1.099 € → 0 €“ als kleines Preisschild (seit Runde 3 hier statt
+   auf dem Workshop-Bild), direkt vor dem Knopf. Der Laptop ist reine Abbildung: Seine Mini-Schrift (7–9 px)
+   ist für Screenreader ausgeblendet, alle Inhalte stehen links als Text. */
 export default function Masterplan() {
   const d = masterplanB;
   return (
@@ -24,13 +27,24 @@ export default function Masterplan() {
               <p className="mp-punkt-text">{p.text}</p>
             </div>
           ))}
+          <div className="mp-preis">
+            <p className="mp-preis-titel">{d.preis.titel}</p>
+            <p className="mp-preis-zeile">
+              <del className="mp-preis-alt">
+                <span className="sr-only">statt </span>
+                {d.preis.alt}
+              </del>
+              <span className="mp-preis-neu">{d.preis.neu}</span>
+            </p>
+            <p className="mp-preis-text">{d.preis.text}</p>
+          </div>
           <Cta href="#termin" className="mp-cta">
             {cta.main}
           </Cta>
         </div>
 
-        <div className="mp-laptop">
-          <Laptop label="Beispiel eines KI-Masterplans">
+        <div className="mp-laptop" aria-hidden="true">
+          <Laptop>
             <div className="sc-plan">
               <div className="sc-plan-deckblatt">
                 <Image src="/logo/svh-bild-navy.webp" alt="" width={16} height={26} />
