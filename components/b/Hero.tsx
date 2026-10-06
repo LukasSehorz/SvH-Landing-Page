@@ -2,11 +2,12 @@ import Image from "next/image";
 import { cta } from "@/app/copy";
 import { heroB } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
-import { Grad, Haken } from "./ui";
+import { GoogleG, Grad, Haken, Sterne } from "./ui";
 
 /* Hero der Variante B: Überschrift und Unterzeile oben, darunter links das Video, rechts vier Haken.
    Im Hintergrund ein stark ausgeblichenes Foto der Gründer (gibt Tiefe, lenkt nicht ab).
-   Bewusst ohne Animationen: in drei Sekunden verstehen, worum es geht. */
+   Bewusst ohne Animationen: in drei Sekunden verstehen, worum es geht.
+   Über der Überschrift ein kleines Vertrauenssiegel: 5,0 Sterne bei Google (Link aufs Profil). */
 
 export default function Hero() {
   return (
@@ -18,6 +19,15 @@ export default function Hero() {
       ) : null}
       <div className="shell hb-inhalt">
         <div className="hb-kopf">
+          <a className="hb-google" href={heroB.google.href} target="_blank" rel="noopener noreferrer" aria-label={heroB.google.label}>
+            <GoogleG size={17} />
+            <span className="hb-google-zahl">{heroB.google.schnitt}</span>
+            <Sterne n={5} size={14} className="hb-google-sterne" deko />
+            <span className="hb-google-text">
+              <span className="hb-google-wo">{heroB.google.text} · </span>
+              {heroB.google.anzahl}
+            </span>
+          </a>
           <h1 id="hb-titel" className="hb-h1">
             <Grad text={heroB.h1} />
           </h1>

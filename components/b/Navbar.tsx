@@ -10,7 +10,8 @@ import Cta from "@/components/system/Cta";
 import { Arrow, Caret } from "@/components/system/Icons";
 
 /* Leiste: ursprünglich eine Kopie der Leiste aus der früheren Variante A, gleiches Aussehen und
-   Verhalten. Menü: Vorteile, Leistungen (aufklappbar), Kunden, Über uns (aufklappbar mit Aktuelles).
+   Verhalten. Menü in der Reihenfolge der Seite: Vorteile, Leistungen (Leistungen 0–4, Lösungen),
+   Kunden, Ablauf (KI-Workshop, KI-Masterplan), Über uns (Gründer, Aktuelles).
    Auf der Startseite springen die Punkte zu den Abschnitten, auf Unterseiten zurück zur Startseite. */
 
 const HOME = "/";
@@ -21,6 +22,8 @@ navB.links.forEach((l) => {
   ABSCHNITT_ZU_PUNKT.set(l.id, l.id);
   l.sub?.forEach((s) => ABSCHNITT_ZU_PUNKT.set(s.href.slice(1), l.id));
 });
+// Abschnitte ohne Menüpunkt am Ende der Seite: beenden die Markierung
+const OHNE_PUNKT = ["fuer-wen"];
 
 /** Aufklapper (Desktop): öffnet per Klick, Tastatur oder Zeiger. */
 function Drop({
@@ -145,24 +148,39 @@ export default function Navbar() {
     };
   }, []);
 
-  // Aktiver Abschnitt (Unterabschnitte zählen für ihren Menüpunkt)
+  // Aktiver Abschnitt nach dem Leseweg: markiert ist der Menüpunkt des Abschnitts, der zuletzt
+  // die Linie bei 40 % der Fensterhöhe passiert hat. So bleibt „Vorteile“ auch in den Zahnrädern
+  // markiert und „Über uns“ im Kasten „Überzeuge dich selbst“. Ab „Für wen“ (Für wen, Fragen,
+  // Abschluss haben keinen Menüpunkt) ist nichts markiert, ebenso ganz oben im ersten Bild.
   useEffect(() => {
     if (!onHome) return;
-    const ids = Array.from(ABSCHNITT_ZU_PUNKT.keys());
-    const seen = new Map<string, boolean>();
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => seen.set(e.target.id, e.isIntersecting));
-        const current = ids.find((id) => seen.get(id));
-        setActive(current ? (ABSCHNITT_ZU_PUNKT.get(current) ?? null) : null);
-      },
-      { rootMargin: "-40% 0px -55% 0px" },
-    );
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) io.observe(el);
-    });
-    return () => io.disconnect();
+    const ids = [...Array.from(ABSCHNITT_ZU_PUNKT.keys()), ...OHNE_PUNKT];
+    let raf = 0;
+    const pruefe = () => {
+      raf = 0;
+      const linie = window.innerHeight * 0.4;
+      let zuletzt: string | null = null;
+      let oben = -Infinity;
+      for (const id of ids) {
+        const top = document.getElementById(id)?.getBoundingClientRect().top;
+        if (top !== undefined && top <= linie && top > oben) {
+          oben = top;
+          zuletzt = id;
+        }
+      }
+      setActive(zuletzt ? (ABSCHNITT_ZU_PUNKT.get(zuletzt) ?? null) : null);
+    };
+    const anstossen = () => {
+      if (!raf) raf = requestAnimationFrame(pruefe);
+    };
+    window.addEventListener("scroll", anstossen, { passive: true });
+    window.addEventListener("resize", anstossen);
+    anstossen();
+    return () => {
+      window.removeEventListener("scroll", anstossen);
+      window.removeEventListener("resize", anstossen);
+      cancelAnimationFrame(raf);
+    };
   }, [onHome]);
 
   // Formular im Bild: der Leisten-Knopf führt dorthin, wo man schon ist, also blendet er aus

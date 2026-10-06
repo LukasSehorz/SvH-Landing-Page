@@ -1,9 +1,14 @@
+import type { CSSProperties } from "react";
+import { cta } from "@/app/copy";
 import { leistungenB } from "@/app/copy-b";
+import Cta from "@/components/system/Cta";
 import { Grad, Pfeil, stufe } from "./ui";
 
-/* „Unsere Leistungen“ als Unendlichkeitszeichen (Vorbild: andreasbaulig.de), aber geschlossen:
+/* „Unsere Leistungen“ 0–4 als Unendlichkeitszeichen (Vorbild: andreasbaulig.de), aber geschlossen:
    ein Band ohne Enden, die vier Farben gehen fließend ineinander über.
-   Lage: 1 oben links, 2 unten rechts, 3 oben rechts, 4 unten links (so läuft das Band auch).
+   Auf dem Band laufen die Stufen 1–4: 1 oben links, 2 unten rechts, 3 oben rechts, 4 unten links
+   (so läuft das Band auch). Die 0 (KI-Workshop) sitzt als Start-Knopf auf der Kreuzung in der Mitte.
+   Karten im Prinzip von „Unsere Haupt-Angebote“ (Apex): hell, feiner Rand, farbiger Schimmer in einer Ecke.
    Form: Lemniskate von Bernoulli, etwas höher gezogen. Alles wird auf dem Server berechnet. */
 
 const W = 1000;
@@ -12,10 +17,15 @@ const CX = W / 2;
 const CY = H / 2;
 const A = 420; // halbe Breite
 const STRECK = 1.45; // Schleifen höher ziehen
-const BAND = 86; // Bandbreite
+const BAND = 86; // Bandbreite (Handy: dicker per CSS)
 const N = 480; // Stützpunkte
-const SCHRIFT = 30; // Beschriftung auf dem Band
-const R = 19; // Nummernkreis
+
+// Beschriftung auf dem Band: am Computer und (größer) am Handy
+// frei: Abstand zur Mitte (dort sitzt der Start-Knopf), luecke: zwischen Nummer und Wort
+type Masse = { schrift: number; r: number; frei: number; luecke: number };
+const GROSS: Masse = { schrift: 30, r: 19, frei: 100, luecke: 11 };
+const KLEIN: Masse = { schrift: 40, r: 24, frei: 132, luecke: 13 };
+const SPITZE = 40; // Mindestabstand zur Spitze einer Schleife
 
 // Farben der vier Abschnitte (Markenfamilie Blau → Lila), weiße Schrift bleibt lesbar
 const FARBEN = ["#2f6bff", "#4f46e5", "#7c3aed", "#a855f7"];
@@ -34,6 +44,7 @@ function punkt(t: number): P {
 const tVon = (g: number) => Math.PI - (g * Math.PI) / 2; // g ∈ [0, 4]
 
 const hex = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+const rgba = (h: string, a: number) => `rgba(${hex(h).join(",")},${a})`;
 function mische(a: string, b: string, w: number) {
   const x = hex(a);
   const y = hex(b);
@@ -72,30 +83,86 @@ function beiLaenge(pts: P[], l: number[], s: number): P {
   return { x: pts[i - 1].x + (pts[i].x - pts[i - 1].x) * f, y: pts[i - 1].y + (pts[i].y - pts[i - 1].y) * f };
 }
 
-const ABSCHNITTE = leistungenB.teile.map((teil, k) => {
+// 0 ist der Start in der Mitte, auf dem Band laufen nur 1–4
+const START = leistungenB.teile.find((t) => t.nr === 0) ?? leistungenB.teile[0];
+const STUFEN = leistungenB.teile.filter((t) => t.nr > 0).slice(0, 4);
+const START_VERLAUF = `linear-gradient(135deg, ${FARBEN[0]}, ${FARBEN[3]})`;
+
+const ABSCHNITTE = STUFEN.map((teil, k) => {
   const pts = Array.from({ length: 121 }, (_, i) => punkt(tVon(k + i / 120)));
   const lesbar = pts[pts.length - 1].x >= pts[0].x ? pts : [...pts].reverse(); // Schrift nie kopfüber
   const l = laengen(lesbar);
   const L = l[l.length - 1];
-  // Nummer direkt vor dem Wort: Gruppe (Kreis + Wort) mittig auf dem Abschnitt
-  const breite = teil.kurz.length * SCHRIFT * 0.57;
-  const textMitte = L / 2 + R + 3;
-  const nummer = beiLaenge(lesbar, l, L / 2 - breite / 2 - 3);
+  const vonMitte = Math.hypot(lesbar[0].x - CX, lesbar[0].y - CY) < 1; // Lesrichtung beginnt an der Kreuzung
+  // Scheitel der Schleife (höchster bzw. tiefster Punkt): dort liegt das Band am flachsten
+  const ys = lesbar.map((q) => q.y);
+  const scheitel = l[ys.indexOf(k === 0 || k === 2 ? Math.min(...ys) : Math.max(...ys))];
+  // Wort mittig auf dem Scheitel, Nummer davor; an der Kreuzung Platz für den Start-Knopf lassen
+  const beschriftung = (m: Masse) => {
+    const breite = teil.kurz.length * m.schrift * 0.58;
+    let wort = scheitel - breite / 2;
+    const ende = vonMitte ? L - SPITZE : L - m.frei;
+    const anfang = vonMitte ? m.frei : SPITZE;
+    wort = Math.min(wort, ende - breite);
+    wort = Math.max(wort, anfang + 2 * m.r + m.luecke);
+    return { nummer: beiLaenge(lesbar, l, wort - m.luecke - m.r), wort, m };
+  };
   const oben = k === 0 || k === 2;
   const links = k === 0 || k === 3;
-  const mitte = punkt(tVon(k + 0.5));
-  // kurzer, geschwungener Pfeil vom Band zur Seite des Textes
-  const sx = mitte.x + (links ? -26 : 26);
-  const sy = mitte.y + (oben ? -(BAND / 2 + 8) : BAND / 2 + 8);
-  const ex = sx + (links ? -62 : 62);
-  const ey = sy + (oben ? -34 : 34);
-  const pfeil = `M${sx.toFixed(1)} ${sy.toFixed(1)}Q${(sx + (links ? -6 : 6)).toFixed(1)} ${ey.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
-  return { teil, farbe: FARBEN[k], textPfad: pfad(lesbar), textMitte, nummer, pfeil, id: `lm-${k}`, lage: `${oben ? "o" : "u"}${links ? "l" : "r"}` };
+  // kurzer, geschwungener Pfeil von der äußeren Schulter des Bandes zur Karte daneben (nur am Computer)
+  const g = k + (oben ? 0.24 : 0.76); // Schulter: zwischen Spitze und Scheitel
+  const p0 = punkt(tVon(g - 0.01));
+  const p1 = punkt(tVon(g + 0.01));
+  const auf = punkt(tVon(g));
+  let nx = -(p1.y - p0.y);
+  let ny = p1.x - p0.x;
+  const nl = Math.hypot(nx, ny) || 1;
+  nx /= nl;
+  ny /= nl;
+  if (nx * (links ? -1 : 1) < 0) {
+    nx = -nx;
+    ny = -ny;
+  }
+  const sx = auf.x + nx * (BAND / 2 + 12);
+  const sy = auf.y + ny * (BAND / 2 + 12);
+  const ex = sx + (links ? -54 : 54);
+  const ey = sy + (oben ? -26 : 30);
+  const pfeil = `M${sx.toFixed(1)} ${sy.toFixed(1)}Q${(sx + (links ? -4 : 4)).toFixed(1)} ${ey.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+  return {
+    teil,
+    farbe: FARBEN[k],
+    textPfad: pfad(lesbar),
+    gross: beschriftung(GROSS),
+    klein: beschriftung(KLEIN),
+    pfeil,
+    id: `lm-${k}`,
+    lage: `${oben ? "o" : "u"}${links ? "l" : "r"}`,
+  };
 });
+
+type Abschnitt = (typeof ABSCHNITTE)[number];
+
+function Beschriftung({ a, b, klasse }: { a: Abschnitt; b: Abschnitt["gross"]; klasse: string }) {
+  return (
+    <g className={klasse} style={{ fontSize: b.m.schrift } as CSSProperties}>
+      <text className="um-band-text" dy="0.35em">
+        <textPath href={`#${a.id}`} startOffset={b.wort.toFixed(1)}>
+          {a.teil.kurz}
+        </textPath>
+      </text>
+      <circle cx={b.nummer.x} cy={b.nummer.y} r={b.m.r} fill="#fff" />
+      <text x={b.nummer.x} y={b.nummer.y} dy="0.36em" textAnchor="middle" className="um-nummer" fill={a.farbe} style={{ fontSize: b.m.r * 1.16 }}>
+        {a.teil.nr}
+      </text>
+    </g>
+  );
+}
+
+const ARIA = `Unendlichkeitszeichen. In der Mitte der Start: ${START.nr} ${START.titel}. Danach laufen vier Stufen im Kreis: ${STUFEN.map((t) => `${t.nr} ${t.kurz}`).join(", ")}.`;
 
 function Zeichen() {
   return (
-    <svg className="um-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Unendlichkeitszeichen aus vier Leistungen: 1 KI-Workshop, 2 KI-Automatisierung, 3 KI-Assistenten, 4 KI-Wissensmanagement">
+    <svg className="um-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={ARIA}>
       <defs>
         <filter id="um-schatten" x="-10%" y="-10%" width="120%" height="130%">
           <feGaussianBlur stdDeviation="14" />
@@ -108,11 +175,13 @@ function Zeichen() {
         ))}
       </defs>
 
-      <path d={UMRISS} fill="none" stroke="rgba(60,40,180,0.28)" strokeWidth={BAND} transform="translate(0 16)" filter="url(#um-schatten)" />
-      {STUECKE.map((s, i) => (
-        <path key={i} d={s.d} fill="none" stroke={s.farbe} strokeWidth={BAND} strokeLinecap="butt" strokeLinejoin="round" />
-      ))}
-      <path d={UMRISS} fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth={BAND * 0.18} transform={`translate(0 ${-BAND * 0.22})`} />
+      <path d={UMRISS} className="um-schatten" fill="none" stroke="rgba(60,40,180,0.28)" strokeWidth={BAND} transform="translate(0 16)" filter="url(#um-schatten)" />
+      <g className="um-band">
+        {STUECKE.map((s, i) => (
+          <path key={i} d={s.d} fill="none" stroke={s.farbe} strokeWidth={BAND} strokeLinecap="butt" strokeLinejoin="round" />
+        ))}
+      </g>
+      <path d={UMRISS} className="um-glanz" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth={BAND * 0.18} transform={`translate(0 ${-BAND * 0.22})`} />
       {/* Lichtimpuls, der das Band entlangläuft (zeigt: alles greift ineinander) */}
       <path
         d={UMRISS}
@@ -121,27 +190,54 @@ function Zeichen() {
         stroke="#fff"
         strokeWidth={BAND * 0.42}
         strokeLinecap="round"
-        style={{ "--l": UMFANG.toFixed(0), strokeDasharray: `${(UMFANG * 0.06).toFixed(0)} ${UMFANG.toFixed(0)}` } as React.CSSProperties}
+        style={{ "--l": UMFANG.toFixed(0), strokeDasharray: `${(UMFANG * 0.06).toFixed(0)} ${UMFANG.toFixed(0)}` } as CSSProperties}
       />
 
       {ABSCHNITTE.map((a) => (
         <g key={`b-${a.id}`}>
-          <text className="um-band-text" dy="10">
-            <textPath href={`#${a.id}`} startOffset={a.textMitte.toFixed(1)} textAnchor="middle">
-              {a.teil.kurz}
-            </textPath>
-          </text>
-          <circle cx={a.nummer.x} cy={a.nummer.y} r={R} fill="#fff" />
-          <text x={a.nummer.x} y={a.nummer.y} dy="8" textAnchor="middle" className="um-nummer" fill={a.farbe}>
-            {a.teil.nr}
-          </text>
+          <Beschriftung a={a} b={a.gross} klasse="um-lbl um-lbl--gross" />
+          <Beschriftung a={a} b={a.klein} klasse="um-lbl um-lbl--klein" />
         </g>
       ))}
 
       {ABSCHNITTE.map((a) => (
-        <path key={`p-${a.id}`} d={a.pfeil} fill="none" stroke="#0b0b0e" strokeWidth="2.4" strokeLinecap="round" markerEnd="url(#um-spitze)" />
+        <path key={`p-${a.id}`} className="um-pfeil" d={a.pfeil} fill="none" stroke="#0b0b0e" strokeWidth="2.4" strokeLinecap="round" markerEnd="url(#um-spitze)" />
       ))}
     </svg>
+  );
+}
+
+type Teil = (typeof leistungenB.teile)[number];
+
+// „E-Mails“ und „KI-…“ nicht am Bindestrich umbrechen (geschützter Bindestrich)
+const festeBindestriche = (t: string) => t.replace(/\b(KI|E)-(?=\w)/g, "$1\u2011");
+
+/** Karte einer Stufe: Nummer, Titel, Text, „Einfach erklärt“, Link */
+function Karte({ teil, farbe, klasse, d }: { teil: Teil; farbe: string; klasse: string; d: number }) {
+  const start = teil.nr === 0;
+  return (
+    <article
+      className={`um-karte ${klasse}`}
+      data-rv=""
+      style={{ ...stufe(d), "--f": farbe, "--f-weich": rgba(farbe, 0.2) } as CSSProperties}
+      aria-labelledby={`um-karte-${teil.nr}`}
+    >
+      <h3 className="um-karte-kopf" id={`um-karte-${teil.nr}`}>
+        <span className="um-karte-nr" style={start ? { background: START_VERLAUF } : undefined}>
+          <span className="sr-only">Stufe </span>
+          {teil.nr}
+        </span>
+        <span className="um-karte-titel">{festeBindestriche(teil.titel)}</span>
+      </h3>
+      <p className="um-karte-text">{festeBindestriche(teil.text)}</p>
+      <p className="um-einfach">
+        <strong>{leistungenB.einfachLabel}:</strong> {teil.einfach}
+      </p>
+      <a className="um-mehr" href={teil.href}>
+        {leistungenB.mehr}
+        <span className="sr-only">: {teil.titel}</span> <Pfeil size={16} />
+      </a>
+    </article>
   );
 }
 
@@ -150,6 +246,7 @@ export default function Unendlich() {
     <section className="sb sb--kompakt" id="leistungen" aria-labelledby="leistungen-titel">
       <div className="sb-wrap um-wrap">
         <div className="b-kopf b-kopf--mitte um-kopf" data-rv="">
+          <p className="b-label">{leistungenB.label}</p>
           <h2 className="b-h2" id="leistungen-titel">
             <Grad text={leistungenB.titel} />
           </h2>
@@ -157,23 +254,25 @@ export default function Unendlich() {
         </div>
 
         <div className="um-grid">
-          <div className="um-zeichen" data-rv="">
-            <Zeichen />
+          <div className="um-mitte">
+            <div className="um-zeichen" data-rv="">
+              <Zeichen />
+              {/* Start-Knopf auf der Kreuzung: hier steigt man ein */}
+              <span className="um-start" aria-hidden="true">
+                <span className="um-start-nr">{START.nr}</span>
+                <span className="um-start-wort">{leistungenB.start}</span>
+              </span>
+              <span className="um-stiel" aria-hidden="true" />
+            </div>
+            <Karte teil={START} farbe={FARBEN[1]} klasse="um-karte--start" d={1} />
           </div>
           {ABSCHNITTE.map((a, k) => (
-            <div key={a.id} className={`um-text um-text--${a.lage}`} data-rv="" style={stufe(k + 1)}>
-              <p className="um-text-kopf">
-                <span className="um-text-nr" style={{ background: a.farbe }}>
-                  {a.teil.nr}
-                </span>
-                {a.teil.titel}
-              </p>
-              <p className="um-text-body">{a.teil.text}</p>
-              <a className="um-mehr" href={a.teil.href}>
-                {leistungenB.mehr} <Pfeil size={16} />
-              </a>
-            </div>
+            <Karte key={a.id} teil={a.teil} farbe={a.farbe} klasse={`um-karte--${a.lage}`} d={k + 2} />
           ))}
+        </div>
+
+        <div className="um-ende" data-rv="">
+          <Cta href="#termin">{cta.main}</Cta>
         </div>
       </div>
     </section>

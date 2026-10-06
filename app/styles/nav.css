@@ -449,7 +449,7 @@
   transform: translateY(12px);
   transition-delay: 0s;
 }
-@media (min-width: 1180px) {
+@media (min-width: 1020px) {
   .nav-sheet {
     display: none;
   }
@@ -514,12 +514,28 @@
   width: 100%;
 }
 
-@media (max-width: 1179px) {
+/* Menüpunkte in der Leiste ab 1020 px (iPad quer), darunter das Vollbild-Menü */
+@media (max-width: 1019px) {
   .nav-links {
     display: none;
   }
   .nav-burger {
     display: inline-flex;
+  }
+}
+/* 1020–1179 px: alle fünf Hauptpunkte passen nur mit engeren Punkten und dem kurzen Knopftext */
+@media (min-width: 1020px) and (max-width: 1179px) {
+  .nav-links {
+    gap: 0;
+  }
+  .nav-link {
+    padding-inline: 10px;
+  }
+  .nav-cta-lang {
+    display: none;
+  }
+  .nav-cta-kurz {
+    display: inline;
   }
 }
 

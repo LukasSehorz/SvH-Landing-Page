@@ -86,6 +86,7 @@ export default function Problem() {
     <section className="sb pv" id="vorteile" aria-labelledby="pv-titel">
       <div className="pv-wrap">
         <div className="pv-kopf" data-rv="">
+          <p className="b-label">{problemB.label}</p>
           <h2 className="b-h2" id="pv-titel">
             <Grad text={problemB.titel} />
           </h2>

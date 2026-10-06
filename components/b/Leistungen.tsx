@@ -24,6 +24,7 @@ export function Workshop() {
       <div className="sb-wrap ws-grid">
         <div className="ws-links">
           <div className="b-kopf" data-rv="">
+            <p className="b-label">{workshopB.label}</p>
             <h2 className="b-h2" id="workshop-titel">
               <Grad text={workshopB.titel} />
             </h2>

@@ -3,7 +3,8 @@
 .hb {
   position: relative;
   overflow: hidden;
-  padding-top: calc(var(--nav-offset) + clamp(12px, 2vw, 32px));
+  /* etwas knapper als vorher: das Google-Siegel darüber kostet sonst Höhe im ersten Bildschirm */
+  padding-top: calc(var(--nav-offset) + clamp(8px, 1.4vw, 24px));
   padding-bottom: clamp(48px, 5vw, 80px);
 }
 
@@ -12,6 +13,57 @@
   max-width: 1340px;
   margin: 0 auto clamp(28px, 3.2vw, 48px);
   text-align: center;
+}
+/* Vertrauenssiegel über der Überschrift: G, 5,0, fünf Sterne, „bei Google · 5 Bewertungen“.
+   Feste Höhe und eine Zeile: kein Umbruch, kein Layout-Sprung beim Laden der Schrift. */
+.hb-google {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  height: 34px;
+  margin: 0 auto 16px;
+  padding: 0 15px 0 11px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--linie);
+  box-shadow:
+    0 1px 2px rgba(11, 11, 14, 0.04),
+    0 8px 20px -14px rgba(40, 30, 120, 0.35);
+  font-size: 13.5px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--page-ink-2);
+  transition:
+    border-color 0.3s var(--ease),
+    box-shadow 0.3s var(--ease);
+}
+.hb-google:hover {
+  border-color: rgba(11, 11, 14, 0.16);
+  box-shadow:
+    0 1px 2px rgba(11, 11, 14, 0.05),
+    0 10px 24px -14px rgba(40, 30, 120, 0.45);
+}
+.hb-google > svg {
+  flex: 0 0 auto;
+}
+.hb-google-zahl {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--page-ink);
+}
+.hb-google-sterne {
+  display: inline-flex;
+  gap: 1px;
+  margin-top: -1px; /* Sterne optisch auf die Ziffern ausrichten */
+}
+.hb-google-sterne svg {
+  display: block;
+}
+.hb-google-text {
+  margin-left: 2px;
 }
 .hb-h1 {
   margin: 0 auto;
@@ -139,6 +191,9 @@
   .hb-sub {
     margin-inline: 0;
   }
+  .hb-google {
+    margin-inline: 0;
+  }
   .hb-grid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -147,6 +202,9 @@
   }
 }
 @media (max-width: 699px) {
+  .hb {
+    padding-top: calc(var(--nav-offset) + 4px);
+  }
   .hb-video {
     border-radius: 18px;
   }
@@ -168,6 +226,19 @@
   }
   .hb-punkte li {
     font-size: 16px;
+  }
+  .hb-google {
+    gap: 7px;
+    height: 32px;
+    margin-bottom: 14px;
+    padding: 0 13px 0 10px;
+    font-size: 13px;
+  }
+}
+/* sehr schmale Handys: „bei Google ·“ fällt weg, das G sagt es schon (Link-Name bleibt vollständig) */
+@media (max-width: 374px) {
+  .hb-google-wo {
+    display: none;
   }
 }
 

@@ -1,7 +1,7 @@
 /* =====================================================================
    Variante B · Animationen
    Keine Scroll-Effekte: alles läuft beim Laden, von selbst (ruhige Endlosschleifen)
-   oder beim Drüberfahren. Die Zahnräder bleiben bewusst still.
+   oder beim Drüberfahren. Endlosschleifen (Zahnräder, Lösungen) laufen nur, solange sie im Bild sind.
    „Bewegung reduzieren“ im System stoppt alles (Regel in b.css).
    ===================================================================== */
 
@@ -195,8 +195,7 @@
 
 /* Linien und Pfeile: „Ameisenstraße“ zeigt die Richtung */
 .pv-verbinder svg path,
-.pv-pfeil svg path,
-.wm-trichter svg path {
+.pv-pfeil svg path {
   stroke-dasharray: 11 8;
   animation: b-ameisen 1.4s linear infinite;
 }
@@ -249,13 +248,49 @@
     stroke-dashoffset: 0;
   }
 }
-.um-text {
-  transition:
-    opacity 0.7s var(--ease),
-    transform 0.4s var(--ease);
+/* Start-Knopf: ein weicher Ring geht langsam nach außen (zeigt: hier geht es los) */
+.um-start::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  opacity: 0;
+  animation: um-ring 3.6s var(--ease) infinite;
+  pointer-events: none;
 }
-.um-text:hover {
-  transform: translateY(-3px);
+@keyframes um-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  70%,
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+}
+/* Karten heben sich beim Drüberfahren leicht an (eigene Eigenschaft, stört das Einblenden nicht) */
+.um-karte {
+  transition:
+    opacity 0.7s var(--ease) calc(var(--d, 0) * 90ms),
+    transform 0.7s var(--ease) calc(var(--d, 0) * 90ms),
+    translate 0.4s var(--ease),
+    box-shadow 0.4s var(--ease);
+}
+@media (hover: hover) {
+  .um-karte:hover {
+    translate: 0 -3px;
+    box-shadow:
+      inset 0 1px 0 #fff,
+      0 1px 2px rgba(11, 11, 14, 0.04),
+      0 24px 46px -24px rgba(60, 40, 180, 0.42);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .um-start::before {
+    animation: none;
+  }
 }
 
 /* ------------------------------------------------------------ Workshop */
@@ -274,114 +309,6 @@
 .ws-preis-neu {
   display: inline-block;
   animation: b-pop 3.2s var(--ease) infinite;
-}
-
-/* ------------------------------------------------------------ Klickbare Beispiele: Teile erscheinen nacheinander */
-
-.lt-panel-bild .bs-fluss > *,
-.lt-panel-bild .bs-blase,
-.lt-panel-bild .bs-erledigt,
-.lt-panel-bild .bs-vergleich,
-.lt-panel-bild .bs-hinweis,
-.lt-panel-bild .bs-postfach li,
-.lt-panel-bild .bs-entwurf,
-.lt-panel-bild .bs-kpis > div,
-.lt-panel-bild .bs-sms,
-.lt-panel-bild .bs-kalender {
-  animation: b-rein 0.5s var(--ease) backwards;
-}
-.lt-panel-bild .bs-fluss > :nth-child(2),
-.lt-panel-bild .bs-blase:nth-of-type(2),
-.lt-panel-bild .bs-postfach li:nth-child(2),
-.lt-panel-bild .bs-kpis > div:nth-child(2) {
-  animation-delay: 0.25s;
-}
-.lt-panel-bild .bs-fluss > :nth-child(3),
-.lt-panel-bild .bs-blase:nth-of-type(3),
-.lt-panel-bild .bs-postfach li:nth-child(3),
-.lt-panel-bild .bs-kpis > div:nth-child(3),
-.lt-panel-bild .bs-sms {
-  animation-delay: 0.5s;
-}
-.lt-panel-bild .bs-blase:nth-of-type(4),
-.lt-panel-bild .bs-entwurf,
-.lt-panel-bild .bs-vergleich,
-.lt-panel-bild .bs-hinweis {
-  animation-delay: 0.75s;
-}
-.lt-panel-bild .bs-erledigt {
-  animation-delay: 1s;
-}
-.lt-panel-bild .bs-balken span {
-  transform-origin: bottom;
-  animation: b-saeule 0.7s var(--ease) backwards;
-}
-.lt-panel-bild .bs-balken span:nth-child(2) { animation-delay: 0.06s; }
-.lt-panel-bild .bs-balken span:nth-child(3) { animation-delay: 0.12s; }
-.lt-panel-bild .bs-balken span:nth-child(4) { animation-delay: 0.18s; }
-.lt-panel-bild .bs-balken span:nth-child(5) { animation-delay: 0.24s; }
-.lt-panel-bild .bs-balken span:nth-child(6) { animation-delay: 0.3s; }
-.lt-panel-bild .bs-balken span:nth-child(7) { animation-delay: 0.36s; }
-/* „KI“-Kästchen arbeitet: pulsierender Ring */
-.bs-ki {
-  position: relative;
-}
-.bs-ki::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 2px solid rgba(106, 85, 255, 0.7);
-  animation: b-puls-ring 2s var(--ease) infinite;
-}
-.bs-slot--neu {
-  animation: b-pop 3s var(--ease) infinite;
-}
-.lt-knopf .b-haken {
-  transition: transform 0.3s var(--ease);
-}
-.lt-knopf:hover .b-haken {
-  transform: scale(1.15);
-}
-
-/* ------------------------------------------------------------ Wissensmanagement: Laptops */
-
-/* Vorher: Zettel schweben unruhig, das Fragezeichen pulsiert */
-.sc-zettel {
-  animation: b-schweben 3.4s ease-in-out infinite;
-}
-.sc-zettel--2 { animation-delay: 0.5s; }
-.sc-zettel--3 { animation-delay: 1s; }
-.sc-zettel--4 { animation-delay: 1.5s; }
-.sc-zettel--5 { animation-delay: 2s; }
-.sc-zettel--6 { animation-delay: 2.5s; }
-.sc-fragezeichen {
-  animation: b-pop 2.4s var(--ease) infinite;
-}
-/* Nachher: blinkender Cursor im Eingabefeld */
-.sc-eingabe::after {
-  content: "";
-  display: inline-block;
-  width: 1.5px;
-  height: 1.1em;
-  margin-left: 0.2em;
-  vertical-align: -0.2em;
-  background: var(--page-ink);
-  animation: b-blinken 1s steps(1) infinite;
-}
-.wm-ort {
-  transition:
-    opacity 0.7s var(--ease),
-    transform 0.4s var(--ease);
-}
-.wm-ort:hover {
-  transform: translateY(-4px);
-}
-.lp {
-  transition: transform 0.5s var(--ease);
-}
-.wm-laptop:hover .lp {
-  transform: translateY(-6px);
 }
 
 /* ------------------------------------------------------------ Masterplan, Kunden, Gründer, Nächster Schritt */

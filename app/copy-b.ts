@@ -285,6 +285,7 @@ export const loesungenB = {
         frage: "Wie lange gilt die Garantie auf Terrassendächer?",
         antwort: "5 Jahre auf die Konstruktion, 2 Jahre auf Markisen.",
         quelle: "Garantiebedingungen, S. 2",
+        ki: "KI-Antwort",
       },
     },
     {
@@ -294,6 +295,7 @@ export const loesungenB = {
       text: "Ein digitaler Kollege, der deine Sprache spricht, deine Preise kennt und nur tut, was du freigibst.",
       ui: {
         name: "Dein Vertriebs-Agent",
+        aktiv: "Aktiv",
         regeln: ["Kennt deine Preise und Produkte", "Antwortet in deinem Ton", "Trägt Termine ein", "Fragt bei Unklarem nach"],
       },
     },
@@ -302,7 +304,11 @@ export const loesungenB = {
       stufe: 2,
       titel: "Fulfilment-Systeme",
       text: "Vom Auftrag bis zur Lieferung läuft jeder Schritt wie am Fließband. Nichts bleibt liegen, jeder weiß, was als Nächstes kommt.",
-      ui: { schritte: ["Auftrag da", "Eingeplant", "In Arbeit", "Geliefert"] },
+      ui: {
+        auftrag: "Auftrag #2417",
+        schritte: ["Auftrag da", "Eingeplant", "In Arbeit", "Geliefert"],
+        hinweis: "Kunde automatisch informiert",
+      },
     },
     {
       id: "whatsapp",
@@ -310,6 +316,7 @@ export const loesungenB = {
       titel: "KI-WhatsApp-Kundenservice",
       text: "Deine Kunden schreiben per WhatsApp, die KI antwortet sofort, auch nachts. Schwierige Fälle gibt sie an dein Team weiter.",
       ui: {
+        kopf: "WhatsApp",
         nachrichten: [
           { von: "kunde", text: "Habt ihr am Samstag offen?" },
           { von: "ki", text: "Ja, von 9 bis 13 Uhr. Soll ich dir einen Termin eintragen?" },
@@ -322,7 +329,11 @@ export const loesungenB = {
       stufe: 4,
       titel: "Voice- & Chat-Agenten",
       text: "Am Telefon und im Chat auf deiner Webseite: Der Agent nimmt Anfragen an, beantwortet Fragen und bucht Termine, rund um die Uhr.",
-      ui: { anruf: "Anruf um 21:14 Uhr", status: ["Anruf angenommen", "Frage beantwortet", "Termin eingetragen"] },
+      ui: {
+        anruf: "Anruf um 21:14 Uhr",
+        agent: "KI-Agent am Telefon",
+        status: ["Anruf angenommen", "Frage beantwortet", "Termin eingetragen"],
+      },
     },
   ],
 };
@@ -540,6 +551,7 @@ export const fuerWenB = {
 
 // Abschluss ganz unten (Baulig: letzter Aufruf), Satz wie das LinkedIn-Banner
 export const abschlussB = {
+  label: "Dein Start",
   titel: "Wir stellen die KI auf, _du gewinnst die Zeit_.",
   text: "Starte mit dem kostenlosen KI-Workshop. 45 Minuten, danach weißt du, wo dein Betrieb jede Woche Zeit verliert und was sich zuerst lohnt.",
   punkte: ["0 € für Workshop und Masterplan", "Der Plan gehört dir, egal wie du dich entscheidest", "Geld zurück, wenn wir dir keine Zeit sparen"],

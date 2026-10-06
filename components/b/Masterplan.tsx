@@ -10,9 +10,10 @@ import { Haken } from "./ui";
 export default function Masterplan() {
   const d = masterplanB;
   return (
-    <section className="mp" aria-labelledby="mp-titel">
+    <section className="mp" id="masterplan" aria-labelledby="mp-titel">
       <div className="mp-kasten" data-rv="">
         <div className="mp-text">
+          <p className="b-label mp-label">{d.label}</p>
           <h2 className="mp-titel" id="mp-titel">
             {d.titel}
           </h2>

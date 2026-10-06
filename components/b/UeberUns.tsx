@@ -8,9 +8,10 @@ import { Grad, stufe } from "./ui";
    über die Person. Ohne Foto steht ein gestalteter Platzhalter mit Initialen. */
 export function UeberUns() {
   return (
-    <section className="sb" id="ueber-uns" aria-labelledby="ueber-uns-titel">
+    <section className="sb uu" id="ueber-uns" aria-labelledby="ueber-uns-titel">
       <div className="sb-wrap">
         <div className="b-kopf b-kopf--mitte" data-rv="">
+          <p className="b-label">{teamB.label}</p>
           <h2 className="b-h2" id="ueber-uns-titel">
             <Grad text={teamB.titel} />
           </h2>

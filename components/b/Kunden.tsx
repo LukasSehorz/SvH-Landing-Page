@@ -1,34 +1,14 @@
 import Image from "next/image";
+import { Fragment } from "react";
 import { kundenB } from "@/app/copy-b";
 import { LOGOS } from "./logos";
+import KundenKarussell from "./KundenKarussell";
 import MehrText from "./MehrText";
-import { Grad, stufe } from "./ui";
+import { GoogleG, Grad, Sterne } from "./ui";
 
-/* Kunden: hohe Karten (drei oben, zwei darunter). Oben das Firmenlogo, darunter die echte
-   Google-Bewertung, unten kurz, was wir umgesetzt haben. */
-
-function Sterne({ n }: { n: number }) {
-  return (
-    <span className="kd-sterne" role="img" aria-label={`${n} von 5 Sternen`}>
-      {Array.from({ length: 5 }, (_, i) => (
-        <svg key={i} viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
-          <path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z" fill={i < n ? "#fbbc04" : "#e2e2ea"} />
-        </svg>
-      ))}
-    </span>
-  );
-}
-
-function GoogleG({ size = 22 }: { size?: number }) {
-  return (
-    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
-      <path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h6c-.3 1.4-1 2.5-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8z" />
-      <path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.7c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2.1v2.8C3.9 20.5 7.7 23 12 23z" />
-      <path fill="#FBBC05" d="M5.7 14.1c-.2-.7-.4-1.4-.4-2.1s.1-1.4.4-2.1V7.1H2.1C1.4 8.6 1 10.2 1 12s.4 3.4 1.1 4.9z" />
-      <path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2C17.5 2.1 15 1 12 1 7.7 1 3.9 3.5 2.1 7.1l3.6 2.8C6.6 7.3 9.1 5.4 12 5.4z" />
-    </svg>
-  );
-}
+/* Kunden: echte Google-Bewertungen als endloses Karussell in einer Reihe (KundenKarussell).
+   Jede Karte: oben das Firmenlogo, darunter die Bewertung (wortgetreu), unten kurz, was wir umgesetzt haben.
+   Desktop drei Karten, Tablet zwei, Handy eine (die nächste schaut hinein). */
 
 /** Logo oben in der Karte: Bilddatei, Schriftzug (Betthupferl) oder neutral ohne Logo */
 function FirmenLogo({ logo, firma, href }: { logo: string; firma: string; href: string }) {
@@ -51,6 +31,32 @@ function FirmenLogo({ logo, firma, href }: { logo: string; firma: string; href: 
 }
 
 export default function Kunden() {
+  const karten = kundenB.bewertungen.map((b) => (
+    <Fragment key={b.name}>
+      <FirmenLogo logo={b.logo} firma={b.firma} href={b.href} />
+      <figure className="kd-bewertung">
+        <div className="kd-bewertung-kopf">
+          <span className="kd-avatar" aria-hidden="true">
+            {b.name.trim().charAt(0).toUpperCase()}
+          </span>
+          <span>
+            <span className="kd-name">{b.name}</span>
+            <span className="kd-datum">
+              {kundenB.google} · {b.datum}
+            </span>
+          </span>
+          <GoogleG size={18} />
+        </div>
+        <Sterne n={b.sterne} />
+        <MehrText text={b.text} weiter={kundenB.weiter} weniger={kundenB.weniger} />
+      </figure>
+      <div className="kd-umgesetzt">
+        <p className="kd-umgesetzt-label">{kundenB.umgesetzt}</p>
+        <p className={`kd-umgesetzt-text${b.umgesetzt ? "" : " kd-umgesetzt-text--offen"}`}>{b.umgesetzt || kundenB.folgt}</p>
+      </div>
+    </Fragment>
+  ));
+
   return (
     <section className="sb sb--tint" id="kunden" aria-labelledby="kunden-titel">
       <div className="sb-wrap">
@@ -68,37 +74,21 @@ export default function Kunden() {
           </a>
         </div>
 
-        {/* ohne JavaScript nicht kürzen (kein „Weiterlesen“ möglich) */}
+        {/* ohne JavaScript: ganze Texte und eine waagerecht scrollbare Reihe (alle fünf Karten erreichbar) */}
         <noscript>
-          <style>{".kd-text[data-zu]{display:block;-webkit-line-clamp:unset;overflow:visible}"}</style>
+          <style>
+            {".kd-text[data-zu]{display:block;-webkit-line-clamp:unset;overflow:visible}" +
+              ".kd-fenster{overflow-x:auto!important;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;padding-block:4px 32px;margin-block:-4px -32px}" +
+              ".kd-karte{scroll-snap-align:start}.kd-steuerung{display:none!important}"}
+          </style>
         </noscript>
-        <ul className="kd-karten">
-          {kundenB.bewertungen.map((b, i) => (
-            <li key={b.name} className="kd-karte" data-rv="" style={stufe(i % 3)}>
-              <FirmenLogo logo={b.logo} firma={b.firma} href={b.href} />
-              <figure className="kd-bewertung">
-                <div className="kd-bewertung-kopf">
-                  <span className="kd-avatar" aria-hidden="true">
-                    {b.name.trim().charAt(0).toUpperCase()}
-                  </span>
-                  <span>
-                    <span className="kd-name">{b.name}</span>
-                    <span className="kd-datum">
-                      {kundenB.google} · {b.datum}
-                    </span>
-                  </span>
-                  <GoogleG size={18} />
-                </div>
-                <Sterne n={b.sterne} />
-                <MehrText text={b.text} weiter={kundenB.weiter} weniger={kundenB.weniger} />
-              </figure>
-              <div className="kd-umgesetzt">
-                <p className="kd-umgesetzt-label">{kundenB.umgesetzt}</p>
-                <p className={`kd-umgesetzt-text${b.umgesetzt ? "" : " kd-umgesetzt-text--offen"}`}>{b.umgesetzt || kundenB.folgt}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <KundenKarussell
+          karten={karten}
+          bereich={kundenB.bereich}
+          zurueck={kundenB.zurueck}
+          vor={kundenB.vor}
+          positionen={kundenB.bewertungen.map((_, i) => kundenB.position(i + 1, kundenB.bewertungen.length))}
+        />
 
         <p className="kd-alle" data-rv="">
           <a className="b-textlink" href={kundenB.profil} target="_blank" rel="noopener noreferrer">
