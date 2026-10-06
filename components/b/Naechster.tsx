@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { cta } from "@/app/copy";
-import { naechsterB } from "@/app/(b)/copy";
+import { naechsterB } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
 
 /* Nächster Schritt (Vorbild: andreasbaulig.de „Überzeuge dich selbst. Ganz unverbindlich.“):

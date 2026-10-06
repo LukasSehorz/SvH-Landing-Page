@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { company } from "@/app/content";
-import { terminB } from "@/app/(b)/copy";
+import { terminB } from "@/app/copy-b";
 import Formular from "./Formular";
 import { Grad, Symbol } from "./ui";
 

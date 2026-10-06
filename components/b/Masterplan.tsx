@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { cta } from "@/app/copy";
-import { masterplanB } from "@/app/(b)/copy";
+import { masterplanB } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
 import Laptop from "./Laptop";
 import { Haken } from "./ui";

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { cta } from "@/app/copy";
-import { assistentenB, automatisierungB, leistungenB, wissenB, workshopB } from "@/app/(b)/copy";
+import { assistentenB, automatisierungB, leistungenB, wissenB, workshopB } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
 import { ASSISTENTEN_BILDER, AUTOMATISIERUNG_BILDER } from "./Beispiele";
 import Laptop from "./Laptop";

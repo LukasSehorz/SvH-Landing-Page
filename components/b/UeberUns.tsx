@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { aktuelles } from "@/app/copy";
 import { company } from "@/app/content";
-import { aktuellesB, teamB } from "@/app/(b)/copy";
+import { aktuellesB, teamB } from "@/app/copy-b";
 import { Grad, stufe } from "./ui";
 
 /* Über uns: die zwei Gründer ganz groß (links Lukas, rechts Jannik), darunter je ein großer Text
@@ -46,7 +46,7 @@ export function UeberUns() {
   );
 }
 
-function YouTubeLogo() {
+export function YouTubeLogo() {
   return (
     <svg viewBox="0 0 28 20" width="28" height="20" aria-hidden="true">
       <path d="M27.4 3.1A3.5 3.5 0 0 0 25 .6C22.8 0 14 0 14 0S5.2 0 3 .6A3.5 3.5 0 0 0 .6 3.1C0 5.3 0 10 0 10s0 4.7.6 6.9A3.5 3.5 0 0 0 3 19.4c2.2.6 11 .6 11 .6s8.8 0 11-.6a3.5 3.5 0 0 0 2.4-2.5c.6-2.2.6-6.9.6-6.9s0-4.7-.6-6.9z" fill="#FF0000" />

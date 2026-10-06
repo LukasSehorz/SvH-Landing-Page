@@ -4,8 +4,10 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   agentRules: false,
-  // zwei Root-Layouts (Variante A und B) → globale 404 in app/global-not-found.tsx
-  experimental: { globalNotFound: true },
+  // Die frühere Vorschau-Adresse /b (Variante B) führt jetzt auf die Startseite
+  async redirects() {
+    return [{ source: "/b", destination: "/", permanent: false }];
+  },
   // Sicherheits-Header (HSTS setzt der Hoster)
   async headers() {
     return [

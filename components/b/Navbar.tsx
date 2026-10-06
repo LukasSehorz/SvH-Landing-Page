@@ -5,15 +5,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { cta, nav } from "@/app/copy";
-import { navB, type NavLink } from "@/app/(b)/copy";
+import { navB, type NavLink } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
 import { Arrow, Caret } from "@/components/system/Icons";
 
-/* Leiste für Variante B: aufgebaut auf der Leiste aus A (components/system/Navbar.tsx), gleiches
-   Aussehen und Verhalten. Menü: Leistungen (aufklappbar), Vorteile, Kunden, Über uns (aufklappbar
-   mit Aktuelles). Startseite von B liegt unter /b. */
+/* Leiste: ursprünglich eine Kopie der Leiste aus der früheren Variante A, gleiches Aussehen und
+   Verhalten. Menü: Vorteile, Leistungen (aufklappbar), Kunden, Über uns (aufklappbar mit Aktuelles).
+   Auf der Startseite springen die Punkte zu den Abschnitten, auf Unterseiten zurück zur Startseite. */
 
-const HOME = "/b";
+const HOME = "/";
 
 // Abschnitt → Menüpunkt (Unterpunkte markieren ihren Oberpunkt als aktiv)
 const ABSCHNITT_ZU_PUNKT = new Map<string, string>();
@@ -107,7 +107,8 @@ function Drop({
 export default function Navbar() {
   const pathname = usePathname();
   const onHome = pathname === HOME;
-  const pre = onHome ? "" : HOME;
+  // Unterseiten: Anker auf die Startseite („/#vorteile“), dort nur „#vorteile“
+  const pre = onHome ? "" : "/";
   const [down, setDown] = useState(false); // scrollt gerade nach unten (jenseits des Starts)
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState<string | null>(null);
@@ -247,11 +248,9 @@ export default function Navbar() {
     const html = document.documentElement;
     if (!sheetOpen) {
       html.removeAttribute("data-menu-open");
-      window.__lenis?.start();
       return;
     }
     html.setAttribute("data-menu-open", "");
-    window.__lenis?.stop();
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     requestAnimationFrame(() => sheetRef.current?.querySelector<HTMLElement>("a,button")?.focus());

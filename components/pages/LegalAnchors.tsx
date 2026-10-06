@@ -3,11 +3,10 @@
 import { useEffect } from "react";
 
 /**
- * Sprünge aus dem Inhaltsverzeichnis der Rechtsseiten, unabhängig davon, ob
- * Lenis/GSAP geladen sind. Der Abstand zur Oberkante kommt aus dem CSS
- * (`scroll-margin-top` der Abschnitte), damit die Überschrift immer frei unter
- * der Leiste steht. Das aufklappbare Verzeichnis (mobil) klappt vor dem Messen zu,
- * sonst verschöbe sich das Ziel. Ohne JavaScript greift der normale Anker.
+ * Sprünge aus dem Inhaltsverzeichnis der Rechtsseiten. Der Abstand zur Oberkante
+ * kommt aus dem CSS (`scroll-margin-top` der Abschnitte), damit die Überschrift immer
+ * frei unter der Leiste steht. Das aufklappbare Verzeichnis (mobil) klappt vor dem
+ * Messen zu, sonst verschöbe sich das Ziel. Ohne JavaScript greift der normale Anker.
  */
 export default function LegalAnchors() {
   useEffect(() => {
@@ -18,7 +17,7 @@ export default function LegalAnchors() {
       const id = a.getAttribute("href")!.slice(1);
       const target = document.getElementById(id);
       if (!target) return;
-      e.preventDefault(); // SmoothScroll übernimmt dann nicht (prüft defaultPrevented)
+      e.preventDefault();
 
       const details = a.closest("details");
       if (details) details.open = false;
@@ -26,8 +25,7 @@ export default function LegalAnchors() {
       const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
       const y = Math.max(0, target.getBoundingClientRect().top + window.scrollY - margin);
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (window.__lenis) window.__lenis.scrollTo(y, { duration: 1.1, immediate: reduced });
-      else window.scrollTo({ top: y, behavior: reduced ? "auto" : "smooth" });
+      window.scrollTo({ top: y, behavior: reduced ? "auto" : "smooth" });
 
       history.replaceState(null, "", `#${id}`);
       window.dispatchEvent(new HashChangeEvent("hashchange"));
@@ -36,7 +34,7 @@ export default function LegalAnchors() {
       if (!heading.hasAttribute("tabindex")) heading.setAttribute("tabindex", "-1");
       heading.focus({ preventScroll: true });
     };
-    // Einfangphase: läuft vor dem globalen Anker-Handler
+    // Einfangphase: läuft vor anderen Klick-Handlern
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
   }, []);

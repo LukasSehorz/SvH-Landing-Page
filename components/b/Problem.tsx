@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { problemB } from "@/app/(b)/copy";
+import { problemB } from "@/app/copy-b";
 import { Grad, Haken, Kreuz, stufe } from "./ui";
 
 /* Problem und Vorteile als ein Schaubild (Lesart von links nach rechts, mobil von oben nach unten):

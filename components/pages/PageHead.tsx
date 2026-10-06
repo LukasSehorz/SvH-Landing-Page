@@ -1,40 +1,30 @@
 import type { ReactNode } from "react";
-import Rich from "@/components/system/Rich";
-import { PitchCenterMark } from "./PitchMark";
+import { Grad } from "@/components/b/ui";
 
 /**
- * Kopf der Unterseiten: Beschriftung, Überschrift (H1, mit Verlaufswort),
- * Einleitung. Dahinter ein leiser Lichtschleier, Punktraster und der fein
- * angedeutete Mittelkreis. Der Auftritt läuft rein per CSS (pages.css), ohne JavaScript.
+ * Kopf der Unterseiten (Rechtliches, Aktuelles, 404) im hellen Stil der Startseite:
+ * Beschriftung in Akzentfarbe, große Überschrift (H1, _Wort_ = Verlaufswort), Einleitung.
+ * Ohne Bewegung: steht sofort da, kein Einblenden beim Laden.
  */
 export default function PageHead({
   label,
   title,
   lead,
-  quiet = false,
+  center = false,
   className = "",
   children,
-}: Readonly<{ label: string; title: string; lead?: string; quiet?: boolean; className?: string; children?: ReactNode }>) {
+}: Readonly<{ label: string; title: string; lead?: string; center?: boolean; className?: string; children?: ReactNode }>) {
   return (
-    <header className={`pg-head ${quiet ? "pg-head--quiet" : ""} ${className}`}>
-      <div className="pg-head-bg" aria-hidden="true">
-        <div className="pg-veil" />
-        <div className="dots pg-dots" />
-        <PitchCenterMark className="pg-pitch" />
-      </div>
-      <div className="shell pg-head-inner">
-        <p className="label pg-in" style={{ "--i": 0 } as React.CSSProperties}>
-          {label}
-        </p>
-        <h1 className="pg-title pg-in" style={{ "--i": 1 } as React.CSSProperties}>
-          <Rich text={title} />
-        </h1>
-        {lead ? (
-          <p className="lead pg-lead pg-in" style={{ "--i": 2 } as React.CSSProperties}>
-            <Rich text={lead} />
-          </p>
-        ) : null}
-        {children}
+    <header className={`sk${center ? " sk--mitte" : ""}${className ? ` ${className}` : ""}`}>
+      <div className="sb-wrap">
+        <div className="sk-inhalt">
+          <p className="b-label">{label}</p>
+          <h1 className="sk-h1">
+            <Grad text={title} />
+          </h1>
+          {lead ? <p className="sk-lead">{lead}</p> : null}
+          {children}
+        </div>
       </div>
     </header>
   );

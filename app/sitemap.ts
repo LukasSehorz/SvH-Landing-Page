@@ -9,7 +9,7 @@ import { aktuelles } from "./copy";
 const BASE = "https://svh-consult.de";
 
 const STAND = {
-  start: "2026-09-29", // neue Landingpage
+  start: "2026-10-06", // helle Landingpage (ehemals Variante B) ist die einzige Startseite
   recht: "2026-09-29", // Rechtstexte von der alten Seite übernommen
 };
 

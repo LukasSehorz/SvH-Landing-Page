@@ -1,8 +1,11 @@
 import Image from "next/image";
 import { company } from "@/app/content";
-import { footerB, navB } from "@/app/(b)/copy";
+import { footerB, navB } from "@/app/copy-b";
 
-/* Fußzeile der Variante B: dunkel wie die Leiste, rahmt die helle Seite ein. */
+/* Fußzeile: dunkel wie die Leiste, rahmt die helle Seite ein. Die Abschnitts-Links zeigen auf die
+   Startseite („/#vorteile“), damit sie auch von Impressum, AGB usw. aus ins Ziel führen; auf der
+   Startseite selbst springt der Browser ohne Neuladen zum Abschnitt. „Aktuelles“ führt zur Seite
+   mit allen Videos. */
 export default function Footer() {
   return (
     <footer className="fb">
@@ -16,11 +19,11 @@ export default function Footer() {
           <ul className="fb-liste">
             {navB.links.map((l) => (
               <li key={l.id}>
-                <a href={l.href}>{l.label}</a>
+                <a href={`/${l.href}`}>{l.label}</a>
               </li>
             ))}
             <li>
-              <a href="#aktuelles">Aktuelles</a>
+              <a href="/aktuelles">Aktuelles</a>
             </li>
           </ul>
         </nav>

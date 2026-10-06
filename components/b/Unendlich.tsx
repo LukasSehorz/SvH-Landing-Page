@@ -1,4 +1,4 @@
-import { leistungenB } from "@/app/(b)/copy";
+import { leistungenB } from "@/app/copy-b";
 import { Grad, Pfeil, stufe } from "./ui";
 
 /* „Unsere Leistungen“ als Unendlichkeitszeichen (Vorbild: andreasbaulig.de), aber geschlossen:

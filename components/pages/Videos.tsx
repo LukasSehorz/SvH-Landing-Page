@@ -1,16 +1,14 @@
 import Image from "next/image";
 import { Fragment } from "react";
 import { aktuelles, ergebnisse } from "@/app/copy";
-import { ArrowOut } from "@/components/system/Icons";
+import { YouTubeLogo } from "@/components/b/UeberUns";
+import { stufe } from "@/components/b/ui";
 
 /*
- * Videoliste für /aktuelles. Es wird nichts eingebettet: Das Vorschaubild
- * liegt bei uns (public/aktuelles), erst der Klick öffnet YouTube in einem
- * neuen Fenster. So geht beim Aufruf der Seite nichts an Google.
- * Die ganze Karte ist klickbar (gestreckter Link am Titel).
- * Vorschaubilder über next/image (AVIF, Qualität 82) mit ehrlichen `sizes`:
- * Der Browser holt die Breite passend zur Anzeige × Pixeldichte, auf Retina also
- * 2- bis 3-fach (scharf), ohne die 1280-px-Quelle roh zu laden.
+ * Videoliste für /aktuelles im hellen Stil der Startseite (Karten wie im Abschnitt
+ * „Einblicke in die KI-Welt“). Es wird nichts eingebettet: Das Vorschaubild liegt bei uns
+ * (public/aktuelles), erst der Klick öffnet YouTube in einem neuen Fenster. So geht beim
+ * Aufruf der Seite nichts an Google. Die ganze Karte ist klickbar (gestreckter Link am Titel).
  */
 
 type Video = (typeof aktuelles.videos)[number];
@@ -21,7 +19,7 @@ function NoBreak({ text }: Readonly<{ text: string }>) {
     <>
       {text.split(/(\S*\w-\w\S*)/g).map((w, i) =>
         i % 2 ? (
-          <span key={i} className="nb">
+          <span key={i} className="vd-nb">
             {w}
           </span>
         ) : (
@@ -32,53 +30,50 @@ function NoBreak({ text }: Readonly<{ text: string }>) {
   );
 }
 
-function PlayMark() {
+function PfeilRaus() {
   return (
-    <span className="vid-play" aria-hidden="true">
-      <svg viewBox="0 0 44 44" fill="none">
-        <circle cx="22" cy="22" r="21" stroke="currentColor" strokeOpacity="0.55" strokeWidth="1.2" />
-        <path d="M18.2 15.2 29.4 22l-11.2 6.8z" fill="currentColor" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
-      </svg>
-    </span>
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 16 16 8M9.5 8H16v6.5" />
+    </svg>
   );
 }
 
 function Card({ v, lead = false }: Readonly<{ v: Video; lead?: boolean }>) {
   return (
-    <article className={`vid ${lead ? "vid--lead" : ""}`} data-reveal="">
-      <div className="vid-shot">
-        <span className="vid-frame">
-          <Image
-            src={v.bild}
-            alt={v.alt}
-            width={1280}
-            height={720}
-            sizes={lead ? "(max-width: 899px) 92vw, 640px" : "(max-width: 699px) 92vw, (max-width: 1099px) 44vw, (max-width: 1520px) 29vw, 450px"}
-            quality={82}
-            loading={lead ? "eager" : "lazy"}
-            fetchPriority={lead ? "high" : "auto"}
-          />
-          <span className="vid-shade" aria-hidden="true" />
-          <PlayMark />
+    <article className={`vd b-karte${lead ? " vd--lead" : ""}`}>
+      <span className="ak-bild vd-bild">
+        <Image
+          src={v.bild}
+          alt={v.alt}
+          fill
+          sizes={lead ? "(max-width: 899px) calc(100vw - 40px), 640px" : "(max-width: 899px) calc(100vw - 40px), 380px"}
+          quality={82}
+          loading={lead ? "eager" : "lazy"}
+          fetchPriority={lead ? "high" : "auto"}
+        />
+        <span className="ak-play" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path d="M8 5.5v13l11-6.5z" fill="currentColor" />
+          </svg>
         </span>
-      </div>
-      <div className="vid-text">
-        <p className="vid-meta">
-          {lead ? <span className="chip vid-chip">{aktuelles.latest}</span> : null}
+      </span>
+      <div className="vd-text">
+        <p className="vd-meta">
+          {lead ? <span className="vd-chip">{aktuelles.latest}</span> : null}
           <time dateTime={v.datumIso}>{v.datum}</time>
         </p>
-        <h2 className="vid-title">
-          <a className="vid-link" href={v.href} target="_blank" rel="noopener noreferrer">
+        <h2 className="vd-titel">
+          <a className="vd-link" href={v.href} target="_blank" rel="noopener noreferrer">
             <NoBreak text={v.titel} />
             <span className="sr-only"> ({ergebnisse.newWindow})</span>
           </a>
         </h2>
-        <p className="vid-body">
+        <p className="vd-body">
           <NoBreak text={v.body} />
         </p>
-        <span className="vid-go" aria-hidden="true">
+        <span className="vd-mehr" aria-hidden="true">
           {aktuelles.watch}
-          <ArrowOut />
+          <PfeilRaus />
         </span>
       </div>
     </article>
@@ -88,25 +83,29 @@ function Card({ v, lead = false }: Readonly<{ v: Video; lead?: boolean }>) {
 export default function Videos() {
   const [first, ...rest] = aktuelles.videos;
   return (
-    <section className="vids" aria-label={aktuelles.label}>
-      <div className="shell">
-        {first ? <Card v={first} lead /> : null}
+    <section className="vds" aria-label={aktuelles.label}>
+      <div className="sb-wrap">
+        {first ? (
+          <div data-rv="">
+            <Card v={first} lead />
+          </div>
+        ) : null}
 
         {rest.length ? (
-          <ul className="vid-grid">
-            {rest.map((v) => (
-              <li key={v.id}>
+          <ul className="vd-grid">
+            {rest.map((v, i) => (
+              <li key={v.id} data-rv="" style={stufe(i)}>
                 <Card v={v} />
               </li>
             ))}
           </ul>
         ) : null}
 
-        <div className="vid-foot" data-reveal="">
-          <p className="vid-hint">{aktuelles.hint}</p>
-          <a className="btn btn-ghost vid-channel" href={aktuelles.channel.href} target="_blank" rel="noopener noreferrer">
-            <span>{aktuelles.channel.label}</span>
-            <ArrowOut />
+        <div className="vd-fuss" data-rv="">
+          <p className="vd-hinweis">{aktuelles.hint}</p>
+          <a className="ak-yt" href={aktuelles.channel.href} target="_blank" rel="noopener noreferrer">
+            <YouTubeLogo />
+            {aktuelles.channel.label}
             <span className="sr-only"> ({ergebnisse.newWindow})</span>
           </a>
         </div>

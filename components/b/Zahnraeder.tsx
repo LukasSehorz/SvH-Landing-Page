@@ -1,5 +1,5 @@
 import { cta } from "@/app/copy";
-import { zahnradB } from "@/app/(b)/copy";
+import { zahnradB } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
 import { Grad, Haken, stufe } from "./ui";
 

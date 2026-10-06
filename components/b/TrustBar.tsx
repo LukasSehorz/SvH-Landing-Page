@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { trustB } from "@/app/(b)/copy";
+import { trustB } from "@/app/copy-b";
 import { LOGOS } from "./logos";
 
 /* Trust-Bar direkt unter dem Hero: vier Fakten im Markenverlauf (Lila früh im Verlauf). */

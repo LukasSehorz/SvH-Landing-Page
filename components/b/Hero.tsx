@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { cta } from "@/app/copy";
-import { heroB } from "@/app/(b)/copy";
+import { heroB } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
 import { Grad, Haken } from "./ui";
 

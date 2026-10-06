@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { kundenB } from "@/app/(b)/copy";
+import { kundenB } from "@/app/copy-b";
 import { LOGOS } from "./logos";
 import MehrText from "./MehrText";
 import { Grad, stufe } from "./ui";

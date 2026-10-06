@@ -1,5 +1,5 @@
 import { company } from "@/app/content";
-import { fragenB } from "@/app/(b)/copy";
+import { fragenB } from "@/app/copy-b";
 import { Kopf, Symbol } from "./ui";
 
 /* Fragen: schlichte Aufklapper (details/summary), funktionieren auch ohne JavaScript. */

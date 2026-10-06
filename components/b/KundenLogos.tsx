@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { logosB } from "@/app/(b)/copy";
+import { logosB } from "@/app/copy-b";
 import { LOGOS } from "./logos";
 
 /* Logo-Kasten unter der Trust-Bar: fast volle Breite, kräftiger schwarzer Rahmen.

@@ -2,13 +2,20 @@
 
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { company } from "@/app/content";
-import { terminB } from "@/app/(b)/copy";
+import { terminB } from "@/app/copy-b";
 import { EMAIL, GROESSEN, STUNDEN, ZEITFRESSER, mailtoAdresse, type Abwehr, type Anfrage } from "@/app/api/anfrage/format";
 import { Haken } from "./ui";
 
 /* Anmeldung zum KI-Workshop (Variante B): ein einziger, übersichtlicher Schritt.
    Schickt an /api/anfrage wie Variante A (gleiche Felder, Prüfung und Spam-Abwehr).
    Antwort 503 = Versand noch nicht eingerichtet → E-Mail-Programm mit fertiger Nachricht. */
+
+// Meldung „anfrage_gesendet“ an den Google Tag Manager, falls er geladen ist (derzeit nicht eingebunden)
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+  }
+}
 
 const F = terminB.form;
 type Feld = keyof typeof F.errors;
