@@ -1,26 +1,11 @@
 import Image from "next/image";
 import { cta } from "@/app/copy";
-import { assistentenB, automatisierungB, leistungenB, wissenB, workshopB } from "@/app/copy-b";
+import { workshopB } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
-import { ASSISTENTEN_BILDER, AUTOMATISIERUNG_BILDER } from "./Beispiele";
-import Laptop from "./Laptop";
-import LeistungTabs from "./LeistungTabs";
-import { Grad, Haken, Symbol, stufe } from "./ui";
+import { Grad, Haken, stufe } from "./ui";
 
-/* Die vier Leistungen im Detail (Überblick: Unendlich.tsx). */
-
-function MittelKopf({ id, titel, einfach }: { id: string; titel: string; einfach: string }) {
-  return (
-    <div className="lk" data-rv="">
-      <h2 className="b-h2" id={id}>
-        <Grad text={titel} />
-      </h2>
-      <p className="lk-einfach">
-        <span className="lk-einfach-label">{leistungenB.einfachLabel}:</span> {einfach}
-      </p>
-    </div>
-  );
-}
+/* Stufe 0: der kostenlose KI-Workshop als Fahrplan in drei Schritten (Überblick aller Stufen: Unendlich.tsx).
+   Die früheren Detail-Abschnitte (Automatisierung, Assistenten, Wissen) ersetzt seit 06.10.2026 Loesungen.tsx. */
 
 /** Pfeil nach unten zwischen zwei Schritten */
 function PfeilRunter() {
@@ -97,141 +82,6 @@ export function Workshop() {
               <span className="ws-preis-neu">{workshopB.preis.neu}</span>
             </p>
             <p className="ws-preis-text">{workshopB.preis.text}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function Automatisierung() {
-  const d = automatisierungB;
-  return (
-    <section className="sb" id="automatisierung" aria-labelledby="automatisierung-titel">
-      <div className="sb-wrap">
-        <MittelKopf id="automatisierung-titel" titel={d.titel} einfach={d.einfach} />
-        <div data-rv="">
-          <LeistungTabs beispiel="Beispiel" tabs={d.punkte.map((p) => ({ ...p, bild: AUTOMATISIERUNG_BILDER[p.id] }))} />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function Assistenten() {
-  const d = assistentenB;
-  return (
-    <section className="sb sb--tint" id="assistenten" aria-labelledby="assistenten-titel">
-      <div className="sb-wrap">
-        <MittelKopf id="assistenten-titel" titel={d.titel} einfach={d.einfach} />
-        <div data-rv="">
-          <LeistungTabs beispiel="Beispiel" listeRechts tabs={d.punkte.map((p) => ({ ...p, bild: ASSISTENTEN_BILDER[p.id] }))} />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* Wissensmanagement: Wo das Wissen heute steckt (4 Kästen) → Folge → wir bündeln es →
-   vorher/nachher auf zwei Laptops. */
-export function Wissen() {
-  const d = wissenB;
-  return (
-    <section className="sb" id="wissensmanagement" aria-labelledby="wissen-titel">
-      <div className="sb-wrap">
-        <div className="b-kopf b-kopf--mitte" data-rv="">
-          <h2 className="b-h2" id="wissen-titel">
-            <Grad text={d.titel} />
-          </h2>
-          <p className="b-lead">{d.kurz}</p>
-        </div>
-
-        <p className="wm-orte-titel" data-rv="">
-          {d.orteTitel}
-        </p>
-        <ul className="wm-orte">
-          {d.orte.map((o, i) => (
-            <li key={o.titel} className="wm-ort" data-rv="" style={stufe(i)}>
-              <span className="wm-ort-symbol">
-                <Symbol name={o.icon} size={24} farbe="#111" />
-              </span>
-              <p className="wm-ort-titel">{o.titel}</p>
-              <p className="wm-ort-text">{o.text}</p>
-            </li>
-          ))}
-        </ul>
-
-        {/* vier Linien laufen zu einem Pfeil zusammen */}
-        <div className="wm-trichter" aria-hidden="true">
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d="M12.5 0 C 12.5 55, 50 40, 50 94" />
-            <path d="M37.5 0 C 37.5 50, 50 45, 50 94" />
-            <path d="M62.5 0 C 62.5 50, 50 45, 50 94" />
-            <path d="M87.5 0 C 87.5 55, 50 40, 50 94" />
-          </svg>
-          <span className="wm-trichter-spitze" />
-        </div>
-
-        <div className="wm-folge" data-rv="">
-          <p className="wm-folge-text">{d.folge}</p>
-          <p className="wm-loesung">
-            <Image src="/logo/svh-bild-navy.webp" alt="" width={30} height={49} />
-            {d.loesung}
-          </p>
-        </div>
-
-        <div className="wm-laptops">
-          <div className="wm-laptop" data-rv="">
-            <p className="wm-laptop-label wm-laptop-label--vorher">{d.vorher.label}</p>
-            <Laptop label={`${d.beispiel}: ${d.vorher.unter}`}>
-              <div className="sc-vorher">
-                <p className="sc-frage">{d.vorher.frage}</p>
-                <ul className="sc-chaos">
-                  {d.vorher.orte.map((o, i) => (
-                    <li key={o.text} className={`sc-zettel sc-zettel--${i + 1}`}>
-                      <Symbol name={o.icon} size={14} farbe="#555" />
-                      {o.text}
-                    </li>
-                  ))}
-                </ul>
-                <span className="sc-fragezeichen" aria-hidden="true">
-                  ?
-                </span>
-              </div>
-            </Laptop>
-            <p className="wm-laptop-unter">{d.vorher.unter}</p>
-          </div>
-
-          <div className="wm-laptop" data-rv="" style={stufe(1)}>
-            <p className="wm-laptop-label">{d.nachher.label}</p>
-            <Laptop label={`${d.beispiel}: ${d.nachher.unter}`}>
-              <div className="sc-nachher">
-                <aside className="sc-seite">
-                  <p className="sc-app">
-                    <Image src="/logo/svh-bild-navy.webp" alt="" width={10} height={16} />
-                    {d.nachher.app}
-                  </p>
-                  <ul>
-                    {d.nachher.quellen.map((q) => (
-                      <li key={q}>
-                        <Haken size={11} farbe="#16a34a" />
-                        {q}
-                      </li>
-                    ))}
-                  </ul>
-                </aside>
-                <div className="sc-chat">
-                  <p className="sc-blase sc-blase--frage">{d.nachher.frage}</p>
-                  <div className="sc-blase sc-blase--antwort">
-                    <span className="sc-absender">KI</span>
-                    <p>{d.nachher.antwort}</p>
-                    <span className="sc-quelle">{d.nachher.quelle}</span>
-                  </div>
-                  <p className="sc-eingabe">Frag etwas …</p>
-                </div>
-              </div>
-            </Laptop>
-            <p className="wm-laptop-unter">{d.nachher.unter}</p>
           </div>
         </div>
       </div>

@@ -2,7 +2,12 @@
  * Texte der Startseite (ehemals „Variante B“, seit 06.10.2026 die einzige Seite).
  * Gemeinsame Texte (Knopf, Leiste, Aktuelles, Rechtsseiten, 404, Formular-Mail) stehen in app/copy.ts.
  * Leitlinie: so einfach, dass es ein 12-Jähriger und ein 55-jähriger Geschäftsführer verstehen.
- * Aufbau: Problem (Schmerz) → Vorteile (Gewinn) → Leistungen → Kunden (Beweis) → Anmeldung.
+ * Aufbau seit 06.10.2026 nach der Struktur von andreasbaulig.de (nur Aufbau und Psychologie, keine Inhalte):
+ *   Versprechen + Beweis (Hero, Google, Logos) → Problem „nicht deine Schuld“ → Was du gewinnst →
+ *   Lösungsprinzip (Zahnräder) → System (Leistungen 0–4) → konkrete Lösungen (Bento) → Kunden (Beweis) →
+ *   Fahrplan (Workshop) → Programm (Masterplan) → Gründer → „Überzeuge dich selbst“ → Videos →
+ *   Für wen → Fragen → Abschluss.
+ * Jede Überschrift greift den Abschnitt davor auf (roter Faden), die kleinen Labels darüber zeigen das Kapitel.
  * Auszeichnung in Überschriften: _Wort_ = Verlaufswort.
  *
  * Fakten stammen aus der früheren Variante A (Projekte, Kunden, Workshop, Masterplan, Team, Videos),
@@ -19,7 +24,11 @@ export const metaB = {
 export type SubLink = { label: string; text: string; href: string };
 export type NavLink = { label: string; href: string; id: string; sub?: SubLink[]; foot?: { label: string; href: string } };
 
-// Reihenfolge wie auf der Seite: Vorteile vor Leistungen
+// Google-Profil (5,0 Sterne, 5 Bewertungen, Stand 04.10.2026): Hero und Kunden verlinken dorthin
+const GOOGLE_PROFIL =
+  "https://www.google.com/maps/place/SvH+Consulting/@48.3285982,11.8226616,10z/data=!4m6!3m5!1s0x8eafb3c841f9a22f:0xc493185e015a3928!8m2!3d48.3285982!4d11.8226616!16s%2Fg%2F11nvctpln1";
+
+// Reihenfolge wie auf der Seite
 export const navB: { links: NavLink[] } = {
   links: [
     { label: "Vorteile", href: "#vorteile", id: "vorteile" },
@@ -28,14 +37,21 @@ export const navB: { links: NavLink[] } = {
       href: "#leistungen",
       id: "leistungen",
       sub: [
-        { label: "KI-Workshop", text: "Der kostenlose Start für deinen Betrieb", href: "#workshop" },
-        { label: "KI-Automatisierung", text: "Arbeit, die sich von allein erledigt", href: "#automatisierung" },
-        { label: "KI-Assistenten", text: "Telefon, E-Mail und Chat rund um die Uhr", href: "#assistenten" },
-        { label: "KI-Wissensmanagement", text: "Eine KI, die alles über deinen Betrieb weiß", href: "#wissensmanagement" },
+        { label: "Unsere Leistungen 0–4", text: "Fünf Stufen, die aufeinander aufbauen", href: "#leistungen" },
+        { label: "Lösungen", text: "Was wir konkret für dich bauen", href: "#loesungen" },
       ],
       foot: { label: "Alle Leistungen im Überblick", href: "#leistungen" },
     },
     { label: "Kunden", href: "#kunden", id: "kunden" },
+    {
+      label: "Ablauf",
+      href: "#workshop",
+      id: "workshop",
+      sub: [
+        { label: "KI-Workshop", text: "Der kostenlose Start für deinen Betrieb", href: "#workshop" },
+        { label: "KI-Masterplan", text: "Dein Fahrplan, 48 Stunden danach", href: "#masterplan" },
+      ],
+    },
     {
       label: "Über uns",
       href: "#ueber-uns",
@@ -62,6 +78,14 @@ export const heroB = {
   video: {
     titel: "Kurz erklärt: So gewinnst du Zeit mit KI",
     platzhalter: "Video folgt",
+  },
+  // Google-Sterne direkt unter der Überschrift (echte Werte, Link aufs Profil)
+  google: {
+    schnitt: "5,0",
+    text: "bei Google",
+    anzahl: "5 Bewertungen",
+    href: GOOGLE_PROFIL,
+    label: "5,0 von 5 Sternen bei Google, 5 Bewertungen (öffnet in neuem Fenster)",
   },
   // OFFEN: Foto von Jannik und Lukas, z. B. "/b/gruender.jpg". Leer = kein Hintergrundbild.
   hintergrund: "",
@@ -94,6 +118,7 @@ export const logosB = {
 
 // Problem → Folgen → SvH → Vorteile, als ein zusammenhängendes Schaubild
 export const problemB = {
+  label: "Das Problem",
   titel: "Es ist nicht deine _Schuld_.",
   text: "Fast jeder Betrieb probiert KI aus, aber kaum einer bekommt sie richtig zum Laufen. Was fehlt, ist ein klarer Plan.",
   studie1: {
@@ -133,25 +158,66 @@ export const problemB = {
   ],
 };
 
-// Unendlichkeitszeichen: vier Leistungen, die ineinander übergehen.
-// Lage am Zeichen: 1 oben links, 2 unten rechts, 3 oben rechts, 4 unten links.
+/* Unsere Leistungen 0–4 (Lukas, 06.10.2026). Satzbau angelehnt an „Unsere Haupt-Angebote“ von Apex:
+   „Wir tun X – damit du Y“. Eigene Worte, du-Form, Kinder-Test: jede Stufe hat einen „Einfach erklärt“-Satz.
+   0 ist der Start (Workshop), 1–4 bauen aufeinander auf und laufen als Kreislauf im Unendlichkeitszeichen:
+   Lage am Zeichen: 1 oben links, 2 unten rechts, 3 oben rechts, 4 unten links, 0 in der Mitte (Kreuzung). */
 export const leistungenB = {
+  label: "So gehen wir vor",
   titel: "Unsere _Leistungen_",
-  text: "Vier Bausteine, die ineinandergreifen. Wir starten immer mit dem kostenlosen Workshop.",
+  text: "Fünf Stufen, die aufeinander aufbauen. Jedes Projekt startet bei 0, und jede weitere Stufe spart dir mehr Zeit.",
   mehr: "Mehr erfahren",
   einfachLabel: "Einfach erklärt",
+  start: "Start",
   teile: [
-    { nr: 1, kurz: "KI-Workshop", titel: "KI-Workshop", text: "Wir finden gemeinsam heraus, wo KI in deinem Betrieb am meisten Zeit spart. Kostenlos.", href: "#workshop" },
-    { nr: 2, kurz: "Automatisierung", titel: "KI-Automatisierung", text: "Angebote, Rechnungen und Daten erledigen sich von allein, wie am Fließband.", href: "#automatisierung" },
-    { nr: 3, kurz: "Assistenten", titel: "KI-Assistenten", text: "Ein digitaler Kollege geht ans Telefon, beantwortet E-Mails und Chats, rund um die Uhr.", href: "#assistenten" },
-    { nr: 4, kurz: "Wissen", titel: "KI-Wissensmanagement", text: "Eine KI, die alles über deinen Betrieb weiß und deinem Team in Sekunden antwortet.", href: "#wissensmanagement" },
+    {
+      nr: 0,
+      kurz: "KI-Workshop",
+      titel: "KI-Workshop",
+      text: "Wir schauen uns in 45 Minuten an, wie dein Betrieb arbeitet, und finden die Aufgaben, die am meisten Zeit fressen – damit du genau weißt, wo sich KI für dich lohnt.",
+      einfach: "Wir schauen zusammen, wo bei dir die Zeit verloren geht. Kostenlos.",
+      href: "#workshop",
+    },
+    {
+      nr: 1,
+      kurz: "Wissen",
+      titel: "KI-Wissensmanagement",
+      text: "Wir bündeln das Wissen aus Köpfen, Ordnern und Postfächern an einem Ort und machen es per Frage abrufbar – damit dein Team in Sekunden Antworten findet, statt jede Woche Stunden zu suchen.",
+      einfach: "Eine KI, die alles über deinen Betrieb weiß und sofort antwortet.",
+      href: "#loesungen",
+    },
+    {
+      nr: 2,
+      kurz: "Prozesse",
+      titel: "Digitale Prozesse",
+      text: "Wir erfassen deine Abläufe, ersetzen Zettel, Excel-Listen und doppeltes Abtippen durch klare digitale Wege und verbinden deine Programme – damit Daten von allein dorthin fließen, wo sie gebraucht werden.",
+      einfach: "Schluss mit Zettelwirtschaft: Jede Info ist dort, wo sie hingehört.",
+      href: "#loesungen",
+    },
+    {
+      nr: 3,
+      kurz: "Automatisierung",
+      titel: "KI-Automatisierungen",
+      text: "Wir bauen Automatisierungen, die Angebote, Rechnungen, Anfragen und Berichte von allein erledigen – damit dein Team die immer gleiche Arbeit los ist und sich um Kunden und Wachstum kümmert.",
+      einfach: "Wie ein Fließband für deine Büroarbeit.",
+      href: "#loesungen",
+    },
+    {
+      nr: 4,
+      kurz: "Agenten",
+      titel: "KI-Agenten",
+      text: "Deine digitalen Kollegen: KI-Agenten gehen ans Telefon, beantworten E-Mails, Chats und WhatsApp und tragen Termine ein, rund um die Uhr – damit keine Anfrage mehr liegen bleibt, ganz ohne zusätzliche Mitarbeiter.",
+      einfach: "Ein Kollege, der nie Feierabend macht.",
+      href: "#loesungen",
+    },
   ],
 };
 
 // Workshop als Ablauf von oben nach unten (Angaben von Jannik, 04.10.2026)
 export const workshopB = {
+  label: "So startest du",
   titel: "Der kostenlose _KI-Workshop_",
-  text: "Bevor wir irgendetwas bauen, verstehen wir deinen Betrieb. So läuft es ab, Schritt für Schritt.",
+  text: "Dein erster Schritt kostet nichts. Bevor wir irgendetwas bauen, verstehen wir deinen Betrieb. So läuft es ab, Schritt für Schritt.",
   schritte: [
     {
       titel: "KI-Workshop",
@@ -187,67 +253,78 @@ export const workshopB = {
   preis: { titel: "Dein KI-Masterplan", alt: "1.099\u00a0€", neu: "0\u00a0€", text: "für dich kostenlos nach dem Workshop" },
 };
 
-/* Beispiele: Jede Leistung zeigt zu jedem Punkt ein kleines Bild aus dem Alltag.
-   Namen, Zahlen und Inhalte in den Bildern sind erfundene Beispiele und als solche gekennzeichnet. */
-export const automatisierungB = {
-  titel: "_KI-Automatisierung_",
-  einfach: "Wie ein Fließband für deine Büroarbeit: Was du heute von Hand machst, läuft danach automatisch ab, ohne dass jemand danebensitzen muss.",
-  punkte: [
-    { id: "angebote", titel: "Angebote automatisch", text: "Aus der Anfrage wird in Minuten ein fertiges Angebot. Die KI kennt deine Preise und Texte und legt dir den Entwurf zur Freigabe hin." },
-    { id: "rechnungen", titel: "Rechnungen und Belege", text: "Belege werden fotografiert, ausgelesen und verbucht. Offene Rechnungen werden automatisch erinnert." },
-    { id: "anfragen", titel: "Anfragen und Kundenliste", text: "Jede Anfrage landet von allein in deiner Kundenliste, mit Erinnerung zum Nachfassen. Niemand wird vergessen." },
-    { id: "dokumente", titel: "Dokumente auslesen", text: "Lieferscheine, Formulare und PDFs werden gelesen und die Daten übertragen. Nie wieder abtippen." },
-    { id: "berichte", titel: "Berichte und Zahlen", text: "Deine wichtigsten Zahlen sammeln sich von allein zu einem fertigen Bericht, jeden Montag im Postfach." },
+/* Lösungen (Bento wie „Intelligente Automations“ bei Apex, Lukas 06.10.2026): Stil und Bewegung als Vorbild,
+   Texte und Abbildungen eigen. Die sieben Lösungen stammen aus Lukas' Pyramide, jede gehört zu einer Stufe (1–4).
+   Inhalte in den kleinen Abbildungen sind erfundene Beispiele (nur Bild, für Screenreader ausgeblendet). */
+export const loesungenB = {
+  label: "Was wir bauen",
+  titel: "Intelligente _Automatisierungen_. Gebaut für deinen Betrieb.",
+  text: "Aus den fünf Stufen entstehen ganz konkrete Helfer. Keine Vorlagen von der Stange: Wir bauen genau das, was dein Betrieb braucht, und verbinden es mit den Programmen, die du schon hast.",
+  stufe: (nr: number) => `Stufe ${nr}`,
+  karten: [
+    {
+      id: "business",
+      stufe: 3,
+      titel: "Business-Automatisierung",
+      text: "Angebote, Rechnungen, Erinnerungen und Berichte laufen von allein. Dein Team gibt nur noch frei.",
+      ui: { aufgaben: ["Angebot erstellt", "Rechnung verschickt", "Zahlung erinnert", "Bericht für Montag"] },
+    },
+    {
+      id: "crm",
+      stufe: 2,
+      titel: "CRM-Einrichtung & Automatisierungen",
+      text: "Wir richten deine Kundenliste (CRM) ein und verbinden sie mit E-Mail, Kalender, Webseite und Buchhaltung. Jede Anfrage landet von allein am richtigen Platz.",
+      ui: { mitte: "CRM", programme: ["E-Mail", "Kalender", "Webseite", "Telefon", "Buchhaltung", "Tabellen"] },
+    },
+    {
+      id: "wissen",
+      stufe: 1,
+      titel: "KI-Wissensdatenbank",
+      text: "Frag einfach, die KI antwortet sofort und nennt die Quelle. Aus Handbüchern, Preislisten und E-Mails deines Betriebs.",
+      ui: {
+        frage: "Wie lange gilt die Garantie auf Terrassendächer?",
+        antwort: "5 Jahre auf die Konstruktion, 2 Jahre auf Markisen.",
+        quelle: "Garantiebedingungen, S. 2",
+      },
+    },
+    {
+      id: "agenten",
+      stufe: 4,
+      titel: "Personalisierte KI-Agenten",
+      text: "Ein digitaler Kollege, der deine Sprache spricht, deine Preise kennt und nur tut, was du freigibst.",
+      ui: {
+        name: "Dein Vertriebs-Agent",
+        regeln: ["Kennt deine Preise und Produkte", "Antwortet in deinem Ton", "Trägt Termine ein", "Fragt bei Unklarem nach"],
+      },
+    },
+    {
+      id: "fulfilment",
+      stufe: 2,
+      titel: "Fulfilment-Systeme",
+      text: "Vom Auftrag bis zur Lieferung läuft jeder Schritt wie am Fließband. Nichts bleibt liegen, jeder weiß, was als Nächstes kommt.",
+      ui: { schritte: ["Auftrag da", "Eingeplant", "In Arbeit", "Geliefert"] },
+    },
+    {
+      id: "whatsapp",
+      stufe: 4,
+      titel: "KI-WhatsApp-Kundenservice",
+      text: "Deine Kunden schreiben per WhatsApp, die KI antwortet sofort, auch nachts. Schwierige Fälle gibt sie an dein Team weiter.",
+      ui: {
+        nachrichten: [
+          { von: "kunde", text: "Habt ihr am Samstag offen?" },
+          { von: "ki", text: "Ja, von 9 bis 13 Uhr. Soll ich dir einen Termin eintragen?" },
+          { von: "kunde", text: "Gerne, um 10 Uhr." },
+        ],
+      },
+    },
+    {
+      id: "voice",
+      stufe: 4,
+      titel: "Voice- & Chat-Agenten",
+      text: "Am Telefon und im Chat auf deiner Webseite: Der Agent nimmt Anfragen an, beantwortet Fragen und bucht Termine, rund um die Uhr.",
+      ui: { anruf: "Anruf um 21:14 Uhr", status: ["Anruf angenommen", "Frage beantwortet", "Termin eingetragen"] },
+    },
   ],
-};
-
-export const assistentenB = {
-  titel: "_KI-Assistenten_",
-  einfach: "Ein digitaler Kollege, der nie Feierabend macht: Er geht ans Telefon, bereitet E-Mails vor und beantwortet Fragen auf deiner Webseite. Auch nachts und am Wochenende.",
-  punkte: [
-    { id: "telefon", titel: "KI-Telefonassistent", text: "Nimmt Anrufe an, beantwortet einfache Fragen und trägt Termine ein, auch nach Feierabend." },
-    { id: "email", titel: "E-Mail-Assistent", text: "Sortiert deinen Posteingang, schreibt Antworten vor und legt sie dir zur Freigabe hin." },
-    { id: "chat", titel: "KI-Chat auf deiner Webseite", text: "Beantwortet Fragen deiner Kunden rund um die Uhr und nimmt Anfragen direkt auf." },
-    { id: "termine", titel: "Termine und Erinnerungen", text: "Termine buchen, bestätigen und erinnern, ganz ohne Hin und Her." },
-  ],
-};
-
-export const wissenB = {
-  titel: "_KI-Wissensmanagement_",
-  kurz: "Eine KI, die alles über deinen Betrieb weiß und deinem Team in Sekunden antwortet.",
-  orteTitel: "Wo steckt das Wissen in deinem Betrieb heute?",
-  orte: [
-    { icon: "kopf", titel: "In den Köpfen", text: "Erfahrene Mitarbeiter wissen alles. Wenn sie gehen, geht das Wissen mit." },
-    { icon: "ordner", titel: "In Dokumenten und Ordnern", text: "Handbücher, Preislisten, Anleitungen: abgelegt, aber keiner findet sie." },
-    { icon: "laptop", titel: "Irgendwo auf dem Laptop", text: "Wichtige Dateien liegen bei Einzelnen. Für den Rest des Teams unsichtbar." },
-    { icon: "mail", titel: "In alten E-Mails", text: "Absprachen und Lösungen stecken im Postfach und sind nach Wochen vergessen." },
-  ],
-  folge: "Die Folge: Wissen geht verloren, dieselben Fragen werden immer wieder gestellt, und jeder sucht jede Woche Stunden.",
-  // OFFEN: „datenschutzkonform und rechtssicher“ muss für jedes Projekt zutreffen
-  loesung: "Wir bündeln das Wissen deines Unternehmens an einem Ort. Datenschutzkonform und rechtssicher.",
-  vorher: {
-    label: "Vorher",
-    frage: "Wo finde ich die Info zur Garantie?",
-    orte: [
-      { icon: "ordner", text: "Alter Ordner „Projekte 2019“" },
-      { icon: "kopf", text: "Im Kopf von Petra aus dem Büro" },
-      { icon: "mail", text: "E-Mail vom letzten Frühjahr" },
-      { icon: "tabelle", text: "Excel „Kunden_neu_final2“" },
-      { icon: "buch", text: "Irgendwo im Handbuch" },
-      { icon: "notiz", text: "Notiz am Monitor" },
-    ],
-    unter: "Alles verstreut. Jeder sucht, keiner findet.",
-  },
-  nachher: {
-    label: "Nachher",
-    app: "Wissensspeicher",
-    quellen: ["Handbücher", "Preislisten", "E-Mails", "Excel-Tabellen", "Notizen", "Anleitungen"],
-    frage: "Wie lange gilt die Garantie auf unsere Terrassendächer?",
-    antwort: "5 Jahre auf die Konstruktion, 2 Jahre auf bewegliche Teile wie Markisen.",
-    quelle: "Quelle: Garantiebedingungen, Seite 2",
-    unter: "Alles an einem Ort. Einfach fragen, sofort Antwort.",
-  },
-  beispiel: "Beispiel",
 };
 
 /* Kunden: echte Google-Bewertungen (Profil „SvH Consulting“, 5,0 Sterne, Stand 04.10.2026), wortgetreu.
@@ -256,12 +333,17 @@ export const wissenB = {
 export type Bewertung = { name: string; firma: string; logo: string; href: string; sterne: number; datum: string; text: string; umgesetzt: string };
 
 export const kundenB = {
-  label: "Kunden",
+  label: "Ergebnisse",
   titel: "Was unsere Kunden _sagen_",
-  text: "Echte Bewertungen von Google, und darunter, was wir für diese Betriebe gebaut haben.",
+  text: "Klingt gut? Das sagen die Betriebe, für die wir es schon gebaut haben. Echte Bewertungen von Google, dazu, was wir umgesetzt haben.",
   schnitt: "5,0",
   anzahl: "5 Google-Bewertungen",
-  profil: "https://www.google.com/maps/place/SvH+Consulting/@48.3285982,11.8226616,10z/data=!4m6!3m5!1s0x8eafb3c841f9a22f:0xc493185e015a3928!8m2!3d48.3285982!4d11.8226616!16s%2Fg%2F11nvctpln1",
+  profil: GOOGLE_PROFIL,
+  // Karussell: eine Reihe, Pfeile drehen endlos weiter
+  zurueck: "Vorherige Bewertung",
+  vor: "Nächste Bewertung",
+  bereich: "Google-Bewertungen",
+  position: (i: number, n: number) => `Bewertung ${i} von ${n}`,
   profilLink: "Alle Bewertungen auf Google",
   google: "Google-Bewertung",
   umgesetzt: "Was wir umgesetzt haben",
@@ -325,6 +407,7 @@ export const kundenB = {
 };
 
 export const teamB = {
+  label: "Wer dahintersteckt",
   titel: "Die Gründer hinter _SvH Consulting_",
   people: [
     // OFFEN: Fotos ("/b/lukas.jpg", "/b/jannik.jpg"); Texte sind Entwürfe, bitte prüfen und ergänzen
@@ -377,15 +460,19 @@ export const naechsterB = {
   ],
 };
 
-// Zahnräder: KI treibt als großes Rad in der Mitte alle Bereiche des Betriebs an
+/* Zahnräder: das Lösungsprinzip direkt nach dem Problem (Baulig: „Was dich erwartet“).
+   Brücke: Problem „kein klarer Plan, lauter Einzel-Tools“ → Lösung „ein System“ → Leistungen 0–4 „so bauen wir es“. */
 export const zahnradB = {
-  titel: "Spare dir systematisch Zeit und stelle deinen Betrieb _zukunftssicher_ auf.",
-  text: "KI ist wie ein Motor in der Mitte deines Betriebs. Sie greift in jeden Bereich und treibt alle gleichzeitig an. Dreht sich das große Rad, dreht sich der ganze Betrieb mit.",
+  label: "Die Lösung",
+  titel: "Spare dir _systematisch_ Zeit, statt noch ein Tool zu kaufen.",
+  text: "Die meisten Betriebe kaufen hier ein Tool und dort ein Abo. Nichts passt zusammen, und am Ende tippt doch wieder jemand ab. Wir machen es andersrum: KI kommt als Motor in die Mitte deines Betriebs. Dreht sich das große Rad, drehen alle Bereiche mit.",
   punkte: [
     "Jeder Bereich gewinnt Zeit, nicht nur einer",
     "Alles greift ineinander, nichts wird doppelt gemacht",
-    "Dein Betrieb ist bereit für das, was kommt",
+    "Dein Betrieb ist zukunftssicher aufgestellt",
   ],
+  weiter: "So bauen wir das auf: in fünf Stufen",
+  weiterHref: "#leistungen",
   mitte: "KI",
   // lang = Desktop, kurz = Handy (größere Schrift, deshalb mit Trennung)
   bereiche: [
@@ -399,6 +486,7 @@ export const zahnradB = {
 
 // Masterplan-Kasten: schwarz, mit Laptop (Vorbild: andreasbaulig.de „Unser System als Training“). Inhalte wie in A.
 export const masterplanB = {
+  label: "Das bekommst du",
   titel: "Dein KI-Masterplan: der Fahrplan, mit dem dein Betrieb jede Woche Zeit gewinnt.",
   intro: "48 Stunden nach dem Workshop bekommst du deinen persönlichen KI-Masterplan. Kostenlos, und er gehört dir, egal wie du dich danach entscheidest.",
   punkte: [
@@ -427,6 +515,36 @@ export const fragenB = {
 
 // Anmeldung: Felder und Werte passend zu /api/anfrage (gleiche Liste wie Variante A)
 // Anmeldung im Fenster (öffnet sich bei jedem Knopf „Kostenlosen KI-Workshop sichern“)
+// Für wen: ehrliche Ja/Nein-Liste vor den Fragen (Baulig: „Für wen ist das?“)
+export const fuerWenB = {
+  label: "Passt das zu dir?",
+  titel: "Für wen das _passt_, und für wen nicht.",
+  ja: {
+    titel: "Das passt, wenn …",
+    punkte: [
+      "dein Team jede Woche Stunden mit Abtippen, Angeboten oder E-Mails verbringt",
+      "du wachsen willst, ohne gleich neue Leute einzustellen",
+      "ihr KI schon ausprobiert habt, es aber noch nicht richtig läuft",
+      "du offen bist, Abläufe zu ändern, wenn es sich lohnt",
+    ],
+  },
+  nein: {
+    titel: "Das passt nicht, wenn …",
+    punkte: [
+      "du nur ein weiteres Tool-Abo suchst",
+      "du eine Wunderlösung ohne jede Mitarbeit erwartest",
+      "in deinem Betrieb alles bleiben soll, wie es ist",
+    ],
+  },
+};
+
+// Abschluss ganz unten (Baulig: letzter Aufruf), Satz wie das LinkedIn-Banner
+export const abschlussB = {
+  titel: "Wir stellen die KI auf, _du gewinnst die Zeit_.",
+  text: "Starte mit dem kostenlosen KI-Workshop. 45 Minuten, danach weißt du, wo dein Betrieb jede Woche Zeit verliert und was sich zuerst lohnt.",
+  punkte: ["0 € für Workshop und Masterplan", "Der Plan gehört dir, egal wie du dich entscheidest", "Geld zurück, wenn wir dir keine Zeit sparen"],
+};
+
 export const terminB = {
   label: "Dein nächster Schritt",
   title: "Sichere dir deinen kostenlosen _KI\u2011Workshop_.", // geschützter Bindestrich: nie „KI- / Workshop“

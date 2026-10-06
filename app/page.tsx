@@ -6,19 +6,23 @@ import TrustBar from "@/components/b/TrustBar";
 import KundenLogos from "@/components/b/KundenLogos";
 import Problem from "@/components/b/Problem";
 import Unendlich from "@/components/b/Unendlich";
-import { Assistenten, Automatisierung, Wissen, Workshop } from "@/components/b/Leistungen";
+import { Workshop } from "@/components/b/Leistungen";
+import Loesungen from "@/components/b/Loesungen";
 import Masterplan from "@/components/b/Masterplan";
 import Zahnraeder from "@/components/b/Zahnraeder";
 import Kunden from "@/components/b/Kunden";
 import { Aktuelles, UeberUns } from "@/components/b/UeberUns";
 import Naechster from "@/components/b/Naechster";
 import Fragen from "@/components/b/Fragen";
+import FuerWen from "@/components/b/FuerWen";
+import Abschluss from "@/components/b/Abschluss";
 
 // Kanonische Adresse nur für die Startseite (Unterseiten setzen ihre eigene)
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
-/* Startseite. Aufbau: Versprechen → Beweis (Logos) → Problem und Vorteile →
-   Leistungen → Zahnräder → Masterplan → Kunden → Gründer → Einblicke → nächster Schritt → Fragen.
+/* Startseite. Aufbau nach der Struktur von andreasbaulig.de (roter Faden, Erklärung in app/copy-b.ts):
+   Versprechen + Beweis → Problem → Lösungsprinzip (Zahnräder) → Leistungen 0–4 → Lösungen → Kunden →
+   Workshop → Masterplan → Gründer → nächster Schritt → Einblicke → Für wen → Fragen → Abschluss.
    Alle Knöpfe „Kostenlosen KI-Workshop sichern“ öffnen die Anmeldung im Fenster (FormDialog im Layout). */
 export default function Home() {
   return (
@@ -51,18 +55,18 @@ export default function Home() {
       <TrustBar />
       <KundenLogos />
       <Problem />
-      <Unendlich />
-      <Workshop />
-      <Automatisierung />
-      <Assistenten />
-      <Wissen />
       <Zahnraeder />
-      <Masterplan />
+      <Unendlich />
+      <Loesungen />
       <Kunden />
+      <Workshop />
+      <Masterplan />
       <UeberUns />
-      <Aktuelles />
       <Naechster />
+      <Aktuelles />
+      <FuerWen />
       <Fragen />
+      <Abschluss />
     </main>
   );
 }
