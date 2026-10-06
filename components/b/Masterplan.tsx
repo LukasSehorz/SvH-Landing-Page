@@ -1,79 +1,76 @@
-import Image from "next/image";
 import { cta } from "@/app/copy";
 import { masterplanB } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
-import Laptop from "./Laptop";
-import { Haken } from "./ui";
+import MasterplanDokument from "./MasterplanDokument";
+import { Grad, Haken, stufe } from "./ui";
 
-/* Masterplan: dunkler Kasten mit Text links, rechts ragt ein Laptop mit dem Plan heraus
-   (Vorbild: andreasbaulig.de „Unser System als Training“, etwas kleiner).
-   Unter den Punkten steht der Preisanker „1.099 € → 0 €“ als kleines Preisschild (seit Runde 3 hier statt
-   auf dem Workshop-Bild), direkt vor dem Knopf. Der Laptop ist reine Abbildung: Seine Mini-Schrift (7–9 px)
-   ist für Screenreader ausgeblendet, alle Inhalte stehen links als Text. */
+/* KI-Masterplan (neu seit 06.10.2026, Lukas: „muss deutlich hochwertiger aussehen“).
+   Dunkle Bühne über die volle Breite mit weichem Licht von oben, Kopf mittig, darunter der Plan als gezeichnetes
+   Druckstück (MasterplanDokument: Deckblatt mit Siegel, drei Seiten aufgefächert). Die drei Punkte sind echter Text:
+   am Desktop Anmerkungen links und rechts mit feiner Linie auf die Nummer im Dokument, sonst eine nummerierte Liste
+   unter dem Dokument. Darunter Wert (1.099 € → 0 €), Knopf und Mikrozeile.
+   Bewegung einmalig beim Erscheinen (styles/masterplan.css): Seiten fächern auf, Balken wachsen, Linien zeichnen sich.
+   Ohne JavaScript und bei „Bewegung reduzieren“ steht der fertige Zustand da. */
 export default function Masterplan() {
   const d = masterplanB;
   return (
     <section className="mp" id="masterplan" aria-labelledby="mp-titel">
-      <div className="mp-kasten" data-rv="">
-        <div className="mp-text">
+      <div className="mp-wrap">
+        <header className="mp-kopf" data-rv="">
           <p className="b-label mp-label">{d.label}</p>
           <h2 className="mp-titel" id="mp-titel">
-            {d.titel}
+            <Grad text={d.titel} />
           </h2>
+          <p className="mp-unter">{d.unter}</p>
           <p className="mp-intro">{d.intro}</p>
-          {d.punkte.map((p) => (
-            <div key={p.titel} className="mp-punkt">
-              <p className="mp-punkt-titel">{p.titel}</p>
-              <p className="mp-punkt-text">{p.text}</p>
-            </div>
-          ))}
-          <div className="mp-preis">
-            <p className="mp-preis-titel">{d.preis.titel}</p>
-            <p className="mp-preis-zeile">
-              <del className="mp-preis-alt">
-                <span className="sr-only">statt </span>
-                {d.preis.alt}
-              </del>
-              <span className="mp-preis-neu">{d.preis.neu}</span>
-            </p>
-            <p className="mp-preis-text">{d.preis.text}</p>
-          </div>
+        </header>
+
+        <div className="mp-buehne" data-rv="">
+          <figure className="mp-figur">
+            <MasterplanDokument />
+            <figcaption className="mp-beispiel">{d.beispiel}</figcaption>
+          </figure>
+          <ol className="mp-punkte">
+            {d.punkte.map((p, i) => (
+              <li key={p.titel} className={`mp-punkt mp-punkt--${i + 1}`} style={stufe(i)}>
+                <div className="mp-punkt-text">
+                  <p className="mp-punkt-titel">
+                    <span className="mp-punkt-nr" aria-hidden="true">
+                      {i + 1}
+                    </span>
+                    <span>{p.titel}</span>
+                  </p>
+                  <p className="mp-punkt-satz">{p.text}</p>
+                </div>
+                <span className="mp-punkt-linie" aria-hidden="true">
+                  <span className="mp-punkt-ziel" />
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div className="mp-wert" data-rv="">
+          <p className="mp-wert-label">{d.preis.label}</p>
+          <p className="mp-wert-zeile">
+            <del className="mp-wert-alt">
+              <span className="sr-only">statt </span>
+              {d.preis.alt}
+            </del>
+            <span className="mp-wert-neu">{d.preis.neu}</span>
+          </p>
+          <p className="mp-wert-text">{d.preis.text}</p>
           <Cta href="#termin" className="mp-cta">
             {cta.main}
           </Cta>
-        </div>
-
-        <div className="mp-laptop" aria-hidden="true">
-          <Laptop>
-            <div className="sc-plan">
-              <div className="sc-plan-deckblatt">
-                <Image src="/logo/svh-bild-navy.webp" alt="" width={16} height={26} />
-                <p className="sc-plan-titel">{d.doc.titel}</p>
-                <p className="sc-plan-fuer">{d.doc.fuer}</p>
-                <p className="sc-plan-von">{d.doc.von}</p>
-              </div>
-              <div className="sc-plan-seite">
-                <p className="sc-plan-h">{d.doc.zeitfresser}</p>
-                <ul className="sc-plan-balken">
-                  {d.doc.balken.map((b, i) => (
-                    <li key={b}>
-                      <span>{b}</span>
-                      <span className="sc-plan-bar" style={{ width: `${92 - i * 15}%` }} />
-                    </li>
-                  ))}
-                </ul>
-                <p className="sc-plan-h">{d.doc.top3}</p>
-                <ol className="sc-plan-top">
-                  {["Angebote automatisch", "E-Mail-Assistent", "Wissensspeicher"].map((t) => (
-                    <li key={t}>
-                      <Haken size={10} farbe="#16a34a" />
-                      {t}
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            </div>
-          </Laptop>
+          <ul className="mp-mikro">
+            {d.mikro.map((m) => (
+              <li key={m}>
+                <Haken size={16} farbe="#a99cff" />
+                {m}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

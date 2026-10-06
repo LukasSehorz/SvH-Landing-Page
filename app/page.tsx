@@ -24,7 +24,7 @@ export const metadata: Metadata = { alternates: { canonical: "/" } };
    Versprechen + Beweis → Problem → Lösung mit Gewinnen (Zahnräder) → Leistungen 0–4 → Kunden (Beweis) →
    Lösungen → Gründer → Masterplan → Ablauf mit Garantie → nächster Schritt → Für wen → Fragen → Videos → Abschluss.
    Die Videos (Aktuelles, führen zu YouTube) stehen seit Runde 3 hinter den Fragen: vor dem Angebot führt nichts von der Seite weg.
-   Hintergründe wechseln ab: Kunden getönt · Lösungen weiß · Gründer getönt · Masterplan weiß (dunkler Kasten) ·
+   Hintergründe wechseln ab: Kunden getönt · Lösungen weiß · Gründer getönt · Masterplan dunkles Band über die volle Breite ·
    Workshop getönt · nächster Schritt weiß (dunkler Kasten) · Für wen + Fragen weiß · Videos getönt · Abschluss weiß.
    Alle Knöpfe „Kostenlosen KI-Workshop sichern“ öffnen die Anmeldung im Fenster (FormDialog im Layout). */
 export default function Home() {

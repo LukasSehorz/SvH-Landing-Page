@@ -513,19 +513,68 @@ export const zahnradB = {
   ],
 };
 
-// Masterplan-Kasten: schwarz, mit Laptop (Vorbild: andreasbaulig.de „Unser System als Training“). Inhalte wie in A.
+/* Masterplan (Lukas 06.10.2026: „muss nach einem geilen Masterplan aussehen, den man geschenkt bekommt“):
+   dunkle Bühne, der Plan als gezeichnetes Druckstück mit Deckblatt, Siegel und drei Seiten, Anmerkungen ① ② ③.
+   Fakten: 48 Std. nach dem Workshop, kostenlos, 5–10 Zeitfresser, Top 3, Lösungsweg mit Werkzeugen,
+   gemeinsame Besprechung, gehört dir, Wert 1.099 € (Jannik, 05.10.2026).
+   Alles unter „doc“ sind erfundene Beispiele (nur Abbildung, für Screenreader ausgeblendet, sichtbar als „Beispiel“ markiert). */
 export const masterplanB = {
   label: "Das bekommst du",
-  // Preisanker (Wert laut Jannik, 05.10.2026), seit Runde 3 hier statt im Workshop-Bild
-  preis: { titel: "Wert des KI-Masterplans", alt: "1.099\u00a0€", neu: "0\u00a0€", text: "für dich kostenlos nach dem Workshop" },
-  titel: "Dein KI-Masterplan: der Fahrplan, mit dem dein Betrieb jede Woche Zeit gewinnt.",
-  intro: "48 Stunden nach dem Workshop bekommst du deinen persönlichen KI-Masterplan. Kostenlos, und er gehört dir, egal wie du dich danach entscheidest.",
+  titel: "Dein _KI-Masterplan_.",
+  unter: "Der Fahrplan, mit dem dein Betrieb jede Woche Zeit gewinnt.",
+  intro: "48 Stunden nach dem Workshop liegt er fertig bei dir. Kostenlos.",
   punkte: [
-    { titel: "Deine Zeitfresser", text: "Schwarz auf weiß, wo in deinem Betrieb jede Woche die 5 bis 10 größten Zeitfresser stecken." },
-    { titel: "Die 3 besten Automatisierungen", text: "Wo du mit dem wenigsten Aufwand am meisten Zeit oder Geld sparst." },
-    { titel: "So setzt du es um", text: "Verständlich erklärt, welche Werkzeuge es braucht und wie man vorgeht. Danach gehen wir alles gemeinsam durch." },
+    { titel: "Deine Zeitfresser", text: "Schwarz auf weiß: die 5\u00a0bis\u00a010 größten Zeitfresser in deinem Betrieb." },
+    { titel: "Deine Top 3 Automatisierungen", text: "Wo du mit wenig Aufwand am meisten Zeit oder Geld sparst." },
+    { titel: "So setzt du es um", text: "Welche Werkzeuge es braucht und wie du vorgehst. Danach gehen wir alles gemeinsam durch." },
   ],
-  doc: { titel: "KI-Masterplan", fuer: "für deinen Betrieb", von: "erstellt von SvH Consulting", zeitfresser: "Deine größten Zeitfresser", balken: ["Angebote", "E-Mails", "Abtippen", "Suchen", "Nachfassen"], top3: "Top 3 Automatisierungen" },
+  beispiel: "Beispiel. Dein Plan entsteht für deinen Betrieb.",
+  preis: { label: "Wert des Masterplans", alt: "1.099\u00a0€", neu: "0\u00a0€", text: "Er gehört dir, egal wie du dich entscheidest." },
+  mikro: ["Kostenlos", "unverbindlich", "48\u00a0Std. nach dem Workshop"],
+  doc: {
+    titel: "KI-Masterplan",
+    fuer: "für deinen Betrieb",
+    von: "erstellt von SvH Consulting",
+    siegel: { ring: "KI-Masterplan · Wert 1.099 € · für dich", mitte: "0 €" },
+    fuss: "SvH Consulting",
+    beispiel: "Beispiel",
+    zeitfresser: {
+      kicker: "Analyse",
+      titel: "Deine Zeitfresser",
+      einheit: "Stunden pro Woche",
+      zeilen: [
+        { name: "Angebote schreiben", std: 9 },
+        { name: "E-Mails sortieren", std: 7 },
+        { name: "Daten abtippen", std: 6 },
+        { name: "Infos suchen", std: 5 },
+        { name: "Kunden nachfassen", std: 4 },
+        { name: "Termine abstimmen", std: 3 },
+      ],
+      summe: "Zusammen",
+      summeWert: "34 Std./Woche",
+    },
+    top3: {
+      kicker: "Empfehlung",
+      titel: "Deine Top 3",
+      aufwand: "Aufwand",
+      zeilen: [
+        { titel: "Angebote automatisch erstellen", spart: "spart ca. 7 Std./Woche", aufwand: "gering", stufe: 1, werkzeuge: ["CRM", "KI-Assistent"] },
+        { titel: "E-Mail-Assistent", spart: "spart ca. 5 Std./Woche", aufwand: "gering", stufe: 1, werkzeuge: ["Postfach", "KI"] },
+        { titel: "Wissensspeicher", spart: "spart ca. 4 Std./Woche", aufwand: "mittel", stufe: 2, werkzeuge: ["Ablage", "KI-Suche"] },
+      ],
+    },
+    fahrplan: {
+      kicker: "Fahrplan",
+      titel: "So setzt du es um",
+      werkzeugeTitel: "Deine Werkzeuge",
+      schritte: [
+        { wann: "Start", was: "Plan gemeinsam besprechen", wie: "mit SvH Consulting" },
+        { wann: "Schritt 1", was: "Angebote automatisieren", wie: "CRM + KI-Assistent" },
+        { wann: "Schritt 2", was: "E-Mail-Assistent einrichten", wie: "Postfach + KI" },
+        { wann: "Schritt 3", was: "Wissensspeicher aufbauen", wie: "Ablage + KI-Suche" },
+      ],
+    },
+  },
 };
 
 // Auswahl aus den Fragen von Variante A
