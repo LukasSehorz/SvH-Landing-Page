@@ -3,6 +3,7 @@ import { cta } from "@/app/copy";
 import { company } from "@/app/content";
 import { naechsterB } from "@/app/copy-b";
 import Cta from "@/components/system/Cta";
+import FotoFenster from "./FotoFenster";
 import { Symbol } from "./ui";
 
 /* Nächster Schritt (Vorbild: andreasbaulig.de „Überzeuge dich selbst. Ganz unverbindlich.“):
@@ -14,8 +15,12 @@ export default function Naechster() {
   return (
     <section className="nx" id="termin" aria-labelledby="nx-titel">
       <div className="nx-wrap" data-rv="">
-        <div className="nx-bild" aria-hidden="true">
-          <Image src="/logo/svh-bild-navy.webp" alt="" width={150} height={244} />
+        {/* Foto der Gründer (Platzhalter, bis das Foto da ist), unten das Bild-Logo als kleines Siegel */}
+        <div className="nx-bild">
+          <FotoFenster className="nx-foto" src={naechsterB.foto} alt={naechsterB.fotoAlt} hinweis={naechsterB.fotoFolgt} sizes="(max-width: 899px) 100vw, 440px" />
+          <span className="nx-siegel" aria-hidden="true">
+            <Image src="/logo/svh-bild-navy.webp" alt="" width={30} height={49} />
+          </span>
         </div>
         <div className="nx-kasten">
           <h2 className="nx-titel" id="nx-titel">
@@ -32,7 +37,7 @@ export default function Naechster() {
             <p className="nx-direkt-text">{naechsterB.telefon}</p>
             <a className="nx-tel" href={`tel:${company.phoneHref}`}>
               <span className="nx-tel-symbol" aria-hidden="true">
-                <Symbol name="telefon" size={18} farbe="#cfc2ff" />
+                <Symbol name="telefon" size={18} farbe="#fff" />
               </span>
               {company.phone}
             </a>

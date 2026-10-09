@@ -9,8 +9,9 @@ import { Grad, Pfeil, stufe } from "./ui";
    Seit Runde 3 ohne Neon-Schein: flaches Band mit feiner Glanzkante, wie ein Produktbild.
    Auf dem Band laufen die Stufen 1–4: 1 oben links, 2 unten rechts, 3 oben rechts, 4 unten links
    (so läuft das Band auch). Die 0 (KI-Workshop) sitzt als Start-Knopf auf der Kreuzung in der Mitte.
-   Darunter die Karten in Lesereihenfolge 0 → 4 (Handy untereinander, Tablet 0 oben und 2 × 2,
-   Computer alle fünf in einer Reihe). Karten hell wie in den Lösungen, Text linksbündig.
+   Computer (ab 1100 px): die fünf Texte stehen frei rund um das Zeichen, Pfeile zeigen vom Band zu ihnen
+   (1 oben links, 3 oben rechts, 4 unten links, 2 unten rechts, 0 mittig darunter).
+   Kleinere Schirme: Karten in Lesereihenfolge 0 → 4 unter dem Zeichen (Handy untereinander, Tablet 0 oben und 2 × 2).
    Form: Lemniskate von Bernoulli, etwas höher gezogen. Alles wird auf dem Server berechnet. */
 
 const W = 1000;
@@ -124,6 +125,22 @@ const ABSCHNITTE = STUFEN.map((teil, k) => {
 
 type Abschnitt = (typeof ABSCHNITTE)[number];
 
+/* Pfeile (Computer): vom Scheitel jeder Schleife nach außen zu ihrem Text, dazu einer vom Start-Knopf
+   nach unten zum Text der 0. Lage der Texte: 1 oben links, 2 unten rechts, 3 oben rechts, 4 unten links. */
+const PFEILE = [
+  ...STUFEN.map((_, k) => {
+    const oben = k === 0 || k === 2;
+    const links = k === 0 || k === 3;
+    const m = punkt(tVon(k + 0.5));
+    const sx = m.x + (links ? -26 : 26);
+    const sy = m.y + (oben ? -(BAND / 2 + 8) : BAND / 2 + 8);
+    const ex = sx + (links ? -62 : 62);
+    const ey = sy + (oben ? -36 : 36);
+    return `M${sx.toFixed(1)} ${sy.toFixed(1)}Q${(sx + (links ? -6 : 6)).toFixed(1)} ${ey.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+  }),
+  `M${CX} ${CY + 66}C${CX - 10} ${CY + 130} ${CX + 10} ${H - 30} ${CX} ${H + 34}`,
+];
+
 function Beschriftung({ a, b, klasse }: { a: Abschnitt; b: Abschnitt["gross"]; klasse: string }) {
   return (
     <g className={klasse} style={{ fontSize: b.m.schrift } as CSSProperties}>
@@ -173,6 +190,17 @@ function Zeichen() {
         />
       </g>
 
+      <g className="um-pfeile">
+        <defs>
+          <marker id="um-spitze" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0L10 5L0 10" fill="none" stroke="rgba(226,230,255,0.9)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </marker>
+        </defs>
+        {PFEILE.map((d, i) => (
+          <path key={i} d={d} fill="none" stroke="rgba(226,230,255,0.85)" strokeWidth="2.4" strokeLinecap="round" markerEnd="url(#um-spitze)" />
+        ))}
+      </g>
+
       {ABSCHNITTE.map((a) => (
         <g key={`b-${a.id}`}>
           <Beschriftung a={a} b={a.gross} klasse="um-lbl um-lbl--gross" />
@@ -197,7 +225,7 @@ function Karte({ teil, farbe, d }: { teil: Teil; farbe?: string; d: number }) {
     ...(farbe ? { "--f": farbe, "--f-weich": rgba(farbe, 0.16), "--f-text": mische(farbe, "#140c3c", 0.22) } : {}),
   } as CSSProperties;
   return (
-    <li className={`um-karte${start ? " um-karte--start" : ""}`} data-rv="" style={stil}>
+    <li className={`um-karte um-karte--n${teil.nr}${start ? " um-karte--start" : ""}`} data-rv="" style={stil}>
       <h3 className="um-karte-kopf">
         <span className="um-karte-nr">
           <span className="sr-only">Stufe </span>
@@ -231,6 +259,8 @@ export default function Unendlich() {
           <p className="b-lead">{leistungenB.text}</p>
         </div>
 
+        {/* Computer: Texte rund um das Zeichen, Pfeile zeigen hin. Kleinere Schirme: Karten darunter. */}
+        <div className="um-grid">
         <div className="um-zeichen" data-rv="">
           <Zeichen />
           {/* Start-Knopf auf der Kreuzung: hier steigt man ein */}
@@ -247,6 +277,7 @@ export default function Unendlich() {
             <Karte key={a.id} teil={a.teil} farbe={a.farbe} d={k + 2} />
           ))}
         </ol>
+        </div>
 
         <div className="um-ende" data-rv="">
           <Cta href="#termin">{cta.main}</Cta>

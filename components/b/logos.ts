@@ -11,4 +11,6 @@ export const LOGOS: Record<string, { src: string; w: number; h: number }> = {
   "ke-fraestechnik": { src: "/kunden/ke-fraestechnik.svg", w: 278.5, h: 46 },
   // Taxi Izi: Logo aus dem Webdesign-Projekt (auf Schwarz, deshalb auf dunkler Fläche zeigen)
   taxiizi: { src: "/kunden/taxiizi.webp", w: 1142, h: 447 },
+  // Brandmaier & Rauscher GbR (Einlagen): Logo von Jannik geliefert (07.10.2026)
+  "brandmaier-rauscher": { src: "/kunden/brandmaier-rauscher.webp", w: 1882, h: 739 },
 };

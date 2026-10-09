@@ -6,6 +6,7 @@ import { Grad, stufe } from "@/components/b/ui";
 import LoesungenBewegung from "@/components/b/LoesungenBewegung";
 import { BildAgenten, BildBusiness, BildCrm, BildFulfilment, BildVoice, BildWhatsapp, BildWissen } from "@/components/b/LoesungenBilder";
 import { STUFEN_FARBEN } from "@/components/b/Unendlich";
+import FotoFenster from "./FotoFenster";
 
 /* Lösungen als Bento-Raster (Vorbild: Aufbau und Bewegung der Apex-Sektion „Intelligente Automations“;
    Texte, Symbole und Abbildungen sind eigen). Sieben Karten aus Lukas' Pyramide, nach Stufe sortiert
@@ -110,9 +111,21 @@ export default function Loesungen() {
           ))}
         </ul>
 
-        <div className="lo-ende" data-rv="">
-          <p className="lo-ende-zeile">{t.ctaZeile}</p>
-          <Cta href="#termin">{cta.main}</Cta>
+        {/* Übergang zu den Ergebnissen: Foto der Gründer neben der Frage „Welche davon lohnt sich bei dir?“ */}
+        <div className="lo-ende lo-ende--foto" data-rv="">
+          <FotoFenster className="lo-foto" src={t.foto} alt={t.fotoAlt} hinweis={t.fotoFolgt} sizes="(max-width: 899px) 100vw, 560px" />
+          <div className="lo-ende-text">
+            {/* genau zwei Zeilen: Frage, dann Antwort */}
+            <p className="lo-ende-zeile">
+              {t.ctaZeile.split(/(?<=\?) /).map((z) => (
+                <span key={z} className="lo-ende-z">
+                  {z}
+                </span>
+              ))}
+            </p>
+            <p className="lo-ende-satz">{t.ctaText}</p>
+            <Cta href="#termin">{cta.main}</Cta>
+          </div>
         </div>
       </div>
       <LoesungenBewegung />

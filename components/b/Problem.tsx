@@ -39,10 +39,11 @@ function Figur({ weg = false }: { weg?: boolean }) {
   return (
     <span className={`pv-figur${weg ? " pv-figur--weg" : ""}`}>
       <svg viewBox="0 0 60 84" width="60" height="84" aria-hidden="true">
-        <circle cx="30" cy="20" r="13" fill="#fff" stroke="#111" strokeWidth="3" />
-        <path d="M25 18.5h.01M35 18.5h.01" stroke="#111" strokeWidth="4" strokeLinecap="round" />
-        <path d={weg ? "M25 27q5-4 10 0" : "M25 24.5q5 5 10 0"} fill="none" stroke="#111" strokeWidth="2.6" strokeLinecap="round" />
-        <path d="M10 80c0-17 9-27 20-27s20 10 20 27z" fill={weg ? "#fff" : "#111"} stroke="#111" strokeWidth="3" strokeLinejoin="round" />
+        <circle cx="30" cy="20" r="13" fill="#fff" stroke="#1b1640" strokeWidth="3" />
+        <path d="M25 18.5h.01M35 18.5h.01" stroke="#1b1640" strokeWidth="4" strokeLinecap="round" />
+        <path d={weg ? "M25 27q5-4 10 0" : "M25 24.5q5 5 10 0"} fill="none" stroke="#1b1640" strokeWidth="2.6" strokeLinecap="round" />
+        {/* Körper in den Markenfarben (Verlauf aus SvgDefsB), der durchgestrichene bleibt hell */}
+        <path d="M10 80c0-17 9-27 20-27s20 10 20 27z" fill={weg ? "#fff" : "url(#b-verlauf)"} stroke="#1b1640" strokeWidth="3" strokeLinejoin="round" />
       </svg>
       {weg ? (
         <svg className="pv-figur-x" viewBox="0 0 60 60" width="60" height="60" aria-hidden="true">

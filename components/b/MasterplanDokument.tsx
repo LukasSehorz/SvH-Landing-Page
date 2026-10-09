@@ -91,7 +91,7 @@ export default function MasterplanDokument() {
       </div>
 
       {/* Seite 2: Top 3 */}
-      <div className="mpd-blatt mpd-blatt--2" style={v({ "--i": 1 })}>
+      <div className="mpd-blatt mpd-blatt--2 mp-farbe--2" style={v({ "--i": 1 })}>
         <Kopf nr={2} kicker={t.kicker} titel={t.titel} />
         <ol className="mpd-top">
           {t.zeilen.map((r, i) => (
@@ -124,7 +124,7 @@ export default function MasterplanDokument() {
       </div>
 
       {/* Seite 3: Fahrplan */}
-      <div className="mpd-blatt mpd-blatt--3" style={v({ "--i": 2 })}>
+      <div className="mpd-blatt mpd-blatt--3 mp-farbe--3" style={v({ "--i": 2 })}>
         <Kopf nr={3} kicker={f.kicker} titel={f.titel} />
         <ol className="mpd-weg">
           {f.schritte.map((s, i) => (
@@ -148,7 +148,7 @@ export default function MasterplanDokument() {
       </div>
 
       {/* Seite 1: Zeitfresser (liegt vorne) */}
-      <div className="mpd-blatt mpd-blatt--1" style={v({ "--i": 3 })}>
+      <div className="mpd-blatt mpd-blatt--1 mp-farbe--1" style={v({ "--i": 3 })}>
         <Kopf nr={1} kicker={z.kicker} titel={z.titel} />
         <p className="mpd-einheit">{z.einheit}</p>
         <ul className="mpd-balken">

@@ -25,6 +25,26 @@ export default function Masterplan() {
           <p className="mp-intro">{d.intro}</p>
         </header>
 
+        {/* Reihenfolge auf einen Blick: jede Stufe hat ihre Farbe, dieselbe wie auf ihrer Seite im Dokument */}
+        <ol className="mp-reihe" data-rv="" aria-label="Die drei Teile deines Masterplans der Reihe nach">
+          {d.punkte.map((p, i) => (
+            <li key={p.titel} className={`mp-reihe-schritt mp-farbe--${i + 1}`}>
+              <span className="mp-reihe-nr" aria-hidden="true">
+                {i + 1}
+              </span>
+              <span className="mp-reihe-titel">
+                <span className="mp-reihe-wann">{d.reihe[i]}</span>
+                {p.titel}
+              </span>
+              {i < d.punkte.length - 1 ? (
+                <svg className="mp-reihe-pfeil" viewBox="0 0 40 16" width="40" height="16" aria-hidden="true">
+                  <path d="M2 8h33M29 2l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : null}
+            </li>
+          ))}
+        </ol>
+
         <div className="mp-buehne" data-rv="">
           <figure className="mp-figur">
             <MasterplanDokument />
@@ -32,7 +52,7 @@ export default function Masterplan() {
           </figure>
           <ol className="mp-punkte">
             {d.punkte.map((p, i) => (
-              <li key={p.titel} className={`mp-punkt mp-punkt--${i + 1}`} style={stufe(i)}>
+              <li key={p.titel} className={`mp-punkt mp-punkt--${i + 1} mp-farbe--${i + 1}`} style={stufe(i)}>
                 <div className="mp-punkt-text">
                   <p className="mp-punkt-titel">
                     <span className="mp-punkt-nr" aria-hidden="true">

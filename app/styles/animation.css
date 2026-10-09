@@ -146,8 +146,8 @@
 .pv-kasten:hover {
   transform: translateY(-4px);
   box-shadow:
-    0 2px 0 #0b0b0e,
-    0 26px 48px -20px rgba(11, 11, 14, 0.45);
+    0 2px 0 rgba(106, 85, 255, 0.45),
+    0 26px 48px -20px rgba(60, 40, 180, 0.45);
 }
 
 /* ------------------------------------------------------------ Unendlichkeitszeichen: Lichtimpuls */

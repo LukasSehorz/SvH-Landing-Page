@@ -1075,3 +1075,118 @@ html.rv-an .mp-buehne:not([data-rv="in"]) .mp-punkt-text {
   opacity: 0;
   translate: 0 10px;
 }
+
+/* ---------- Reihenfolge klar machen: jede Stufe eine Farbe (1 Blau, 2 Violett, 3 Lila),
+   gleich bei Leiste, Anmerkung, Linie und der zugehörigen Seite im Dokument */
+.mp-farbe--1 { --s: #3f74ff; --s-hell: #9db7ff; }
+.mp-farbe--2 { --s: #7a5cff; --s-hell: #c0b0ff; }
+.mp-farbe--3 { --s: #b45cf2; --s-hell: #e2b8ff; }
+
+.mp-reihe {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px 14px;
+  margin: clamp(26px, 3vw, 40px) auto 0;
+  padding: 0;
+  list-style: none;
+}
+.mp-reihe-schritt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mp-reihe-nr {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--s);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--s) 25%, transparent);
+}
+.mp-reihe-titel {
+  display: grid;
+  font-family: var(--font-display);
+  font-size: 16.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #fff;
+}
+.mp-reihe-wann {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--s-hell);
+}
+.mp-reihe-pfeil {
+  margin-left: 4px;
+  color: rgba(226, 230, 255, 0.55);
+}
+
+/* Nummern und Linien in der Farbe ihrer Stufe */
+html .mp-farbe--1 .mp-punkt-nr,
+html .mp-farbe--2 .mp-punkt-nr,
+html .mp-farbe--3 .mp-punkt-nr,
+html .mpd-blatt.mp-farbe--1 .mpd-nr,
+html .mpd-blatt.mp-farbe--2 .mpd-nr,
+html .mpd-blatt.mp-farbe--3 .mpd-nr {
+  background: var(--s);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--s) 28%, transparent);
+}
+.mp-punkt-titel {
+  color: #fff;
+}
+.mp-farbe--1 .mp-punkt-titel > span:last-child,
+.mp-farbe--2 .mp-punkt-titel > span:last-child,
+.mp-farbe--3 .mp-punkt-titel > span:last-child {
+  text-decoration: underline;
+  text-decoration-color: var(--s);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+}
+@media (min-width: 1320px) {
+  html .mp-punkt.mp-farbe--1 .mp-punkt-linie,
+  html .mp-punkt.mp-farbe--2 .mp-punkt-linie {
+    height: 2px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--s) 30%, transparent) 0%, var(--s) 100%);
+  }
+  html .mp-punkt.mp-farbe--3 .mp-punkt-linie {
+    height: 2px;
+    background: linear-gradient(270deg, color-mix(in srgb, var(--s) 30%, transparent) 0%, var(--s) 100%);
+  }
+  html .mp-punkt .mp-punkt-ziel {
+    background: var(--s);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--s) 30%, transparent);
+  }
+}
+/* farbiger Streifen oben auf jeder Seite des Dokuments */
+.mpd-blatt.mp-farbe--1::before,
+.mpd-blatt.mp-farbe--2::before,
+.mpd-blatt.mp-farbe--3::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 0.45em;
+  background: var(--s);
+}
+@media (max-width: 699px) {
+  /* Handy: untereinander, die Nummern zeigen die Reihenfolge, Pfeile entfallen */
+  .mp-reihe {
+    flex-direction: column;
+    align-items: flex-start;
+    width: fit-content;
+    gap: 12px;
+  }
+  .mp-reihe-pfeil {
+    display: none;
+  }
+}

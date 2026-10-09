@@ -25,7 +25,7 @@ export const metaB = {
 export type SubLink = { label: string; text: string; href: string };
 export type NavLink = { label: string; href: string; id: string; sub?: SubLink[]; foot?: { label: string; href: string } };
 
-// Google-Profil (5,0 Sterne, 5 Bewertungen, Stand 04.10.2026): Hero und Kunden verlinken dorthin
+// Google-Profil (5,0 Sterne, 6 Bewertungen, Stand 07.10.2026): Hero und Kunden verlinken dorthin
 const GOOGLE_PROFIL =
   "https://www.google.com/maps/place/SvH+Consulting/@48.3285982,11.8226616,10z/data=!4m6!3m5!1s0x8eafb3c841f9a22f:0xc493185e015a3928!8m2!3d48.3285982!4d11.8226616!16s%2Fg%2F11nvctpln1";
 
@@ -58,7 +58,7 @@ export const navB: { links: NavLink[] } = {
 
 export const heroB = {
   // Zeile für die Zielgruppe über der Überschrift (Baulig: „Für Agenturen, Berater …“)
-  zielgruppe: "Für Geschäftsführer im Mittelstand und E-Commerce",
+  zielgruppe: "Für mittelständische Unternehmen im DACH-Raum",
   h1: "Die _KI-Automatisierungen_, die deinem Unternehmen fehlen, um jede Woche Zeit zu sparen",
   // „12 Wochen“ am 06.10.2026 entfernt (war unbestätigt)
   sub: "Wie du Angebote, E-Mails und Anfragen mit KI automatisierst – ohne neue Mitarbeiter einzustellen und ohne selbst Technik-Experte zu werden.",
@@ -78,9 +78,9 @@ export const heroB = {
   google: {
     schnitt: "5,0",
     text: "bei Google",
-    anzahl: "5 Bewertungen",
+    anzahl: "6 Bewertungen",
     href: GOOGLE_PROFIL,
-    label: "5,0 bei Google · 5 Bewertungen, Profil öffnen, neues Fenster",
+    label: "5,0 bei Google · 6 Bewertungen, Profil öffnen, neues Fenster",
   },
   // OFFEN: Foto von Jannik und Lukas, z. B. "/b/gruender.jpg". Leer = kein Hintergrundbild.
   hintergrund: "",
@@ -269,6 +269,11 @@ export const loesungenB = {
   titel: "Intelligente _Automatisierungen_. Gebaut für deinen Betrieb.",
   text: "Aus den fünf Stufen entstehen konkrete Helfer, verbunden mit den Programmen, die du schon hast.",
   ctaZeile: "Welche davon lohnt sich bei dir? Das finden wir im Workshop heraus.",
+  ctaText: "Im kostenlosen Workshop sitzt du direkt mit uns beiden zusammen. Wir schauen uns deinen Betrieb an und sagen dir ehrlich, welche Helfer sich für dich lohnen.",
+  // OFFEN: Foto von Lukas und Jannik (Querformat, z. B. im Gespräch am Tisch), "/b/gruender-loesungen.jpg"
+  foto: "",
+  fotoAlt: "Lukas Sehorz und Jannik vom Hofe im Gespräch",
+  fotoFolgt: "Foto folgt",
   // Schild je Karte: „Stufe 1 · Wissen“ (Kurzname wie im Unendlichkeitszeichen darüber)
   stufe: (nr: number) => `Stufe ${nr} · ${leistungenB.teile.find((t) => t.nr === nr)?.kurz ?? ""}`,
   karten: [
@@ -349,7 +354,7 @@ export const loesungenB = {
 };
 
 /* Kunden: echte Google-Bewertungen (Profil „SvH Consulting“, 5,0 Sterne, Stand 04.10.2026), wortgetreu.
-   Zuordnung laut Jannik (04.10.2026). OFFEN: was bei Taxi Izi, Betthupferl und zGraniT RxyaL umgesetzt wurde.
+   Zuordnung laut Jannik (04.10.2026). 
    Bei Izzet Tüymen fehlt bewusst der Schlusssatz „Vielen Dank für deine Unterstützung! 🙌“ (klingt nach unserer Antwort). */
 export type Bewertung = { name: string; firma: string; logo: string; href: string; sterne: number; datum: string; text: string; umgesetzt: string };
 
@@ -361,14 +366,14 @@ export const kundenB = {
   ergebnisse: [
     { firma: "Estera GmbH", logo: "estera", zahl: "bis zu 160 Std.", einheit: "im Monat gespart", gebaut: "Kundenverwaltung (CRM), Automatisierungen und neue Webseite" },
     { firma: "Fuchs Pools", logo: "fuchspools", zahl: "15 Std.", einheit: "pro Woche gespart", gebaut: "Automatische Angebote, automatisiertes Marketing und neue Webseite" },
-    { firma: "Kundenprojekt", logo: "", zahl: "1 Tag → 30 Min.", einheit: "pro Angebot", gebaut: "Automatische Angebote mit einem KI\u2011Wissensspeicher" }, // geschützter Bindestrich: nie „KI- / Wissensspeicher“
+    { firma: "KE Frästechnik", logo: "ke-fraestechnik", zahl: "1 Tag → 30 Min.", einheit: "pro Angebot", gebaut: "Automatische Angebote mit einem KI\u2011Wissensspeicher" }, // geschützter Bindestrich: nie „KI- / Wissensspeicher“
   ],
   gebaut: "Was wir gebaut haben",
   // Pfeil in „1 Tag → 30 Min.“ für Screenreader
   pfeil: "auf",
   ctaZeile: "Das will ich für meinen Betrieb auch.",
   schnitt: "5,0",
-  anzahl: "5 Google-Bewertungen",
+  anzahl: "6 Google-Bewertungen",
   profil: GOOGLE_PROFIL,
   // Karussell: eine Reihe, Pfeile drehen endlos weiter
   zurueck: "Vorherige Bewertung",
@@ -382,6 +387,17 @@ export const kundenB = {
   weiter: "Weiterlesen",
   weniger: "Weniger anzeigen",
   bewertungen: [
+    {
+      // neu seit 06.10.2026, wortgetreu von Google (Zeichensetzung wie im Original); Firma laut Jannik
+      name: "BandyBoe Böhme",
+      firma: "InnNatur Heilpraktiker",
+      logo: "innnatur",
+      href: "https://innnatur-heilpraktiker.de/",
+      sterne: 5,
+      datum: "Oktober 2026",
+      text: "Super Beratung, Schnelle Umsetzung .Auf alle Wünsche eingegangen. Jeder Zeit wieder. Absolute Empfehlung Danke",
+      umgesetzt: "Automatische Terminerinnerungen und eine automatische Beantwortung von Kundenanfragen.",
+    },
     {
       name: "Orfe",
       firma: "Estera GmbH",
@@ -410,8 +426,8 @@ export const kundenB = {
       sterne: 5,
       datum: "Oktober 2026",
       text: "Für mich zählt am Ende vor allem das Ergebnis, und das ist hier wirklich erstklassig. Man sieht an jedem Detail, dass die Jungs sauber und mit hohem Anspruch gearbeitet haben. Nichts wirkt halbfertig oder schnell zusammengeschustert, im Gegenteil: Sie haben an Dinge gedacht, die mir selbst gar nicht aufgefallen wären. Auch aus meinem Umfeld habe ich dazu schon mehrfach positives Feedback bekommen. Die Zusammenarbeit war dabei angenehm und unkompliziert. Wer Wert auf Qualität legt, ist bei Jannik & Lukas genau richtig.",
-      // OFFEN: was umgesetzt wurde (Webdesign-Projekt Taxiizi?), bis zur Bestätigung leer = Block entfällt
-      umgesetzt: "",
+      // laut Jannik (07.10.2026)
+      umgesetzt: "Ein KI-WhatsApp-Kundenservice, der Kundenanfragen sofort beantwortet, rund um die Uhr.",
     },
     {
       name: "Max TV",
@@ -421,18 +437,19 @@ export const kundenB = {
       sterne: 5,
       datum: "Oktober 2026",
       text: "Absolut zuverlässig. Was abgemacht wurde, wurde auch eingehalten!",
-      // OFFEN: was umgesetzt wurde (Webdesign-Projekt Betthupferl?), bis zur Bestätigung leer = Block entfällt
-      umgesetzt: "",
+      // laut Jannik (07.10.2026)
+      umgesetzt: "Automatisierte Buchhaltung.",
     },
     {
       name: "zGraniT RxyaL",
-      firma: "",
-      logo: "",
+      // Firma laut Jannik (07.10.2026)
+      firma: "Brandmaier & Rauscher GbR",
+      logo: "brandmaier-rauscher",
       href: "",
       sterne: 5,
       datum: "September 2026",
       text: "Absolute Empfehlung! Ich habe mich bei SvH Consulting von Anfang an sehr gut aufgehoben gefühlt. Die Beratung war professionell, kompetent und gleichzeitig angenehm persönlich. Auf meine Fragen wurde individuell eingegangen und alles verständlich und transparent erklärt. Besonders positiv fand ich die schnelle und unkomplizierte Kommunikation sowie die zuverlässige Betreuung. Man merkt, dass hier wirklich Wert auf die Bedürfnisse des Kunden gelegt wird. Vielen Dank für die tolle Zusammenarbeit, ich kann SvH Consulting uneingeschränkt weiterempfehlen!",
-      umgesetzt: "",
+      umgesetzt: "Automatisierte Buchhaltung und automatisierte E-Mails.",
     },
   ] as Bewertung[],
 };
@@ -491,6 +508,10 @@ export const naechsterB = {
   ],
   telefon: "Lieber erst kurz sprechen? Ruf uns direkt an:",
   schluss: "Mach noch heute den ersten Schritt.",
+  // OFFEN: Foto von Lukas und Jannik zusammen (Hochformat), z. B. "/b/gruender-naechster.jpg"
+  foto: "",
+  fotoAlt: "Lukas Sehorz und Jannik vom Hofe, die Gründer von SvH Consulting",
+  fotoFolgt: "Foto folgt",
 };
 
 /* Zahnräder: das Lösungsprinzip direkt nach dem Problem (Baulig: „Was dich erwartet“).
@@ -529,6 +550,8 @@ export const masterplanB = {
     { titel: "So setzt du es um", text: "Welche Werkzeuge es braucht und wie du vorgehst. Danach gehen wir alles gemeinsam durch." },
   ],
   beispiel: "Beispiel. Dein Plan entsteht für deinen Betrieb.",
+  // Kennzeichnung über den drei Teilen (Reihenfolge)
+  reihe: ["Zuerst", "Dann", "Zum Schluss"],
   preis: { label: "Wert des Masterplans", alt: "1.099\u00a0€", neu: "0\u00a0€", text: "Er gehört dir. Umsetzen kannst du ihn mit uns oder mit deinem eigenen Team." },
   mikro: ["45\u00a0Minuten", "unverbindlich", "Plan nach 48\u00a0Std."],
   doc: {
