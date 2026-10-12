@@ -4,9 +4,18 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   agentRules: false,
-  // Die frühere Vorschau-Adresse /b (Variante B) führt jetzt auf die Startseite
+  // Weiterleitungen: /b war die Vorschau-Adresse von Variante B. Die übrigen Pfade sind Unterseiten der
+  // bisherigen Seite auf svh-consult.de (bis 12.10.2026), damit Links aus Google und von außen weiter ankommen.
   async redirects() {
-    return [{ source: "/b", destination: "/", permanent: false }];
+    return [
+      { source: "/b", destination: "/", permanent: false },
+      { source: "/ki", destination: "/#leistungen", permanent: true },
+      { source: "/kontakt", destination: "/#termin", permanent: true },
+      { source: "/ueber-uns", destination: "/#ueber-uns", permanent: true },
+      // Marketing und Webseiten bieten wir nicht mehr an
+      { source: "/marketing", destination: "/", permanent: true },
+      { source: "/marketing/:pfad*", destination: "/", permanent: true },
+    ];
   },
   // Sicherheits-Header (HSTS setzt der Hoster)
   async headers() {

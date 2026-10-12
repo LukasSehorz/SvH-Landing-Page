@@ -5,10 +5,11 @@
 export const company = {
   name: "SvH Consulting",
   legalName: "Sehorz Lukas, vom Hofe Jannik GbR",
-  // Sitz laut Lukas (30.09.2026): Dorfen. TODO Straße und Hausnummer fehlen noch (Pflicht fürs Impressum)
-  street: "",
+  // Anschrift wie auf der bisherigen Seite (Lukas, 12.10.2026: „passt“), bis die Straße in Dorfen feststeht.
+  // OFFEN: Umzug nach 84405 Dorfen (Lukas, 30.09.2026) – dann Straße und Ort hier ändern, sonst nirgends.
+  street: "Am Anger 3",
   streetPending: "[Straße folgt]",
-  zipCity: "84405 Dorfen",
+  zipCity: "84539 Zangberg",
   country: "Deutschland",
   phone: "0172 3465896",
   phoneHref: "+491723465896",
