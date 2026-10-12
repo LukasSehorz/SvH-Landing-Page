@@ -202,3 +202,4 @@ ol {
     transform: none !important;
   }
 }
+@import "./styles/mobil.css";
